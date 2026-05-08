@@ -1,0 +1,276 @@
+% ----------------------------------------------------------------------
+% Packages
+
+\usepackage{amsmath,amsthm,amssymb}
+
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, arrows}
+
+\usepackage{hyperref}
+\hypersetup{pdfencoding=unicode}
+
+\usepackage{stmaryrd}
+\usetikzlibrary{cd}
+\usepackage[all,cmtip]{xypic}
+\CompileMatrices
+
+\usepackage{kbordermatrix}
+
+% ----------------------------------------------------------------------
+% For the bibliography
+
+\newcommand{\arxiv}[1]{arXiv:\urlalt{https://arxiv.org/abs/#1}{#1}}
+
+% ----------------------------------------------------------------------
+% Theorem like environments
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{algorithm}[theorem]{Algorithm}
+
+%----------------------------------------------------------------------
+% A hack: \m is similar to \vcenter, but works better.
+% \mp{0.2}{x}: raise the box x so that 20% of it is below the
+% centerline. Unlike \vcenter, don't change the horizontal spacing
+
+\newlength{\localh}
+\newlength{\locald}
+\newbox\mybox
+\def\mp#1#2{\scalebox{0.8}{\setbox\mybox\hbox{#2}\localh\ht\mybox\locald\dp\mybox\addtolength{\localh}{-\locald}\raisebox{-#1\localh}{\box\mybox}}}
+\def\m#1{\mp{0.4}{#1}}
+
+%----------------------------------------------------------------------
+% Ad hoc quantum circuits using TikZ
+
+\newenvironment{qcircuit}{%
+  \begingroup%
+  \def\dot##1{\fill (##1) circle (.15);}%
+  \def\whitedot##1{\filldraw[fill=white,thick] (##1) circle (.15);}%
+  \def\triangle##1{\fill (##1)+(.3,0) --
+    +(-.15,.25) -- +(-.15,-.25) -- cycle;}%
+  \def\triangleadj##1{\fill (##1)+(-.3,0) --
+    +(.15,.25) -- +(.15,-.25) -- cycle;}%
+  \def\notgate##1{\filldraw[fill=white,thick] (##1) circle (.3);
+                  \draw[thick] (##1)+(.3,0) -- +(-.3,0);
+                  \draw[thick] (##1)+(0,.3) -- +(0,-.3);
+                }%
+  \def\dotgate{\dot}%
+  \def\sepgate##1##2##3{
+    \fill[fill=white] (##1-.05,##2-.4) rectangle (##1+.05,##2+.4);
+    \fill[fill=white] (##1-.05,##3-.4) rectangle (##1+.05,##3+.4);
+    \draw[thick, dashed] (##1,##2-.25) -- (##1,##3+.25);
+  }%
+  \def\swapgate##1##2##3{
+    \fill[fill=white] (##1-.45,##2-.4) rectangle (##1+.45,##2+.4);
+    \fill[fill=white] (##1-.45,##3-.4) rectangle (##1+.45,##3+.4);
+    \draw[thick] (##1-.45,##2) -- (##1+.45,##3);
+    \draw[thick] (##1-.45,##3) -- (##1+.45,##2);
+  }%
+  \def\controlledS##1##2{\controlled{\dotgate}{##1}{##2};%
+    \path(##1) node[above right]{$i$}}%              
+  \def\controlledSS##1##2{\controlled{\gate{$S$}}{##1}{##2}}%
+  \def\controlledSSd##1##2{\controlled{\gate{$S^{\dagger}$}}{##1}{##2}}%
+  \def\controlled{\gencontrolled{\dot}}%
+  \def\whitecontrolled{\gencontrolled{\whitedot}}%
+  \def\controlwires##1##2{\foreach\x in {##2} {
+                    \draw[thick] (##1 |- 0,\x) -- (##1);
+                  }}%
+  \def\gencontrolled##1##2##3##4{\controlwires{##3}{##4};
+                  ##2{##3};
+                  \foreach\x in {##4} {
+                    ##1{##3 |- 0,\x};
+                  }}%
+  \def\gate##1##2{\biggate{##1}{##2}{##2}}%
+  \def\colgate##1##2##3{\widebigcolgate{##2}{##3}{##3}{.45}{##1}}%
+  \def\colbiggate##1##2##3##4{\widebigcolgate{##2}{##3}{##4}{.45}{##1}}%
+  \def\biggate##1##2##3{\widebiggate{##1}{##2}{##3}{.45}}%
+  \def\widegate##1##2##3{\widebiggate{##1}{##3}{##3}{##2}}%
+  \def\widebiggate##1##2##3##4{\widebigcolgate{##1}{##2}{##3}{##4}{white}}%
+  \def\widecolgate##1##2##3##4{\widebigcolgate{##3}{##4}{##4}{##1}{##2}}%
+  \def\widebigcolgate##1##2##3##4##5{\filldraw[fill=##5,thick] (##2)+(-1*##4,-.4)
+    rectangle ($(##3)+(##4,.4)$); \draw ($.5*(##2)+.5*(##3)$) node
+    {\small ##1};}%
+  \def\invisiblewidebigcolgate##1##2##3{\path (##1)+(-1*##3,-.4)
+    rectangle ($(##2)+(##3,.4)$);}%
+  \def\invisiblegate##1{\invisiblewidebigcolgate{##1}{##1}{.45}}
+  \def\gridx##1##2##3{\foreach\x in {##3} {
+        \draw[thick] (##1,\x) -- (##2,\x);
+      }}%
+  \def\grid{\gridx{0}}%
+  \def\cross##1{\draw (##1)+(-.3,-.3) -- +(.3,.3);
+             \draw (##1)+(.3,-.3) -- +(-.3,.3);}%
+  \def\bar##1{\fill (##1)+(-.05,-.4) rectangle ($(##1)+(.05,.4)$);}%
+  \def\init##1##2{\bar{##2}; \leftlabel{##1}{##2};}%
+  \def\term##1##2{\bar{##2}; \rightlabel{##1}{##2};}%
+  \def\leftlabel##1##2{\draw (##2) node[left] {##1};}%
+  \def\rightlabel##1##2{\draw (##2) node[right] {##1};}%
+  \def\wirelabel##1##2{\draw (##2)+(0,-.15) node[above] {\footnotesize ##1};}%
+  \def\multiwire##1{\draw (##1)+(-.1,-.3) -- +(.1,.3);}%
+  \begin{tikzpicture}}
+  {\end{tikzpicture}\endgroup}
+
+%----------------------------------------------------------------------
+% Alphabetic labels
+
+{\makeatletter
+\gdef\alphalabels{\def\theenumi{\@alph\c@enumi}\def\labelenumi{(\theenumi)}}}
+
+% ----------------------------------------------------------------------
+% Miscellaneous macros
+
+\newcommand{\xmatrix}[4]{{\renewcommand{\arraystretch}{#1}\arraycolsep=#2ex\left(\begin{array}{#3}#4\end{array}\right)}}       % resizable matrix
+\newcommand{\zmatrix}{\xmatrix{.8}{.8}}         % matrix
+\newcommand{\smatrix}[1]{\begin{bmatrix} #1 \end{bmatrix}}         % matrix
+\newcommand{\s}[1]{\left\{#1\right\}}
+\newcommand{\cC}{{\cal C}}
+\newcommand{\cT}{{\cal T}}
+\newcommand{\cCS}{{\mathcal{CCS}}}
+\newcommand{\Clifford}{\cC}
+\newcommand{\CliffordCS}{\cCS}
+\newcommand{\inv}{^{-1}}
+\newcommand{\da}{^{\dagger}}
+\newcommand{\CZ}{C\kern-.16667em Z}
+\newcommand{\CX}{C\kern-.16667em X}
+\newcommand{\CS}{C\kern-.16667em S}
+\newcommand{\CK}{C\kern-.16667em K}
+\newcommand{\XC}{X\kern-.16667em C}
+\newcommand{\KC}{K\kern-.16667em C}
+\newcommand{\Ex}{E\kern-.16667em x}
+\newcommand{\LS}{L\kern-.16667em S}
+\newcommand{\RS}{R\kern-.16667em S}
+\newcommand{\CCZ}{CCZ}
+\newcommand{\CCX}{CCX}
+\newcommand{\CCK}{CCK'}
+\newcommand{\Swap}{\textit{Swap}}
+\newcommand{\CCS}{Clifford+$\CS$ }
+\newcommand{\pres}[2]{\langle #1\mid #2 \rangle}
+
+
+\newcommand{\Xx}{\mathcal{X}}
+\newcommand{\Yy}{\mathcal{Y}}
+\newcommand{\Rr}{\Delta}
+\newcommand{\Ss}{\Gamma}
+\newcommand{\Ee}{\mathcal{E}}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\jay}{j}
+\newcommand{\kay}{k}
+\newcommand{\tee}{t}
+\newcommand{\svdots}{\scalebox{.55}{$\vdots$}}
+\newcommand{\seq}{\subseteq}
+\newcommand{\gen}[1]{\langle#1\rangle}
+\newcommand{\sem}[1]{[#1]}
+\newcommand{\semG}[1]{\sem{#1}_{G}}
+\newcommand{\semH}[1]{\sem{#1}_{H}}
+\newcommand{\simE}{\sim_{\Ee}}
+\newcommand{\simR}{\sim_{\Rr}}
+\newcommand{\simS}{\sim_{\Ss}}
+\newcommand{\Ys}{Y_{s}}
+\newcommand{\Rsyll}[1]{R_{#1}}
+\newcommand{\ket}[1]{|#1\rangle}
+
+\newcommand{\fst}[1]{\text{fst}(#1)}
+\newcommand{\snd}[1]{\text{snd}(#1)}
+\newcommand{\Zhi}{\Z[\frac{1}{2},i]}
+
+
+
+\newcommand{\Mod}[1]{\,(\mathrm{mod}\ #1)}
+
+\newcommand{\zi}{\Z [i]}
+\newcommand{\di}{\D [i]}
+\newcommand{\simr}{\sim_{\Rr}}
+\newcommand{\oh}{K}
+\newcommand{\lde}[1]{\text{lde}( #1 )}
+\newcommand{\ldeg}[1]{\text{lde}_{\gamma}( #1 )}
+
+\newcommand{\eqmo}{\equiv_{\gamma}}
+\newcommand{\eqmt}{\equiv_{\gamma^2}}
+\newcommand{\eqmth}{\equiv_{\gamma^3}}
+
+
+\newcommand{\level}[1]{\text{level}(#1)}
+\newcommand{\xal}{X_{[\alpha, \alpha+1]}}
+\newcommand{\normalword}{\text{\rm normal}}
+\newcommand{\nf}{\text{\sc nf}}
+
+\newcommand{\tlx}[2]{X_{[#1, #2]}}
+\newcommand{\tlkd}[2]{\oh^{\dagger}_{[#1, #2]}}
+\newcommand{\tlk}[2]{\oh_{[#1, #2]}}
+\newcommand{\tli}[2]{i_{[#1]}^{#2}}
+
+\newcommand{\D}{{\mathbb D}}
+\newcommand{\N}{{\mathbb N}}
+\newcommand{\R}{{\mathbb R}}
+\newcommand{\C}{{\mathbb C}}
+\newcommand{\Gg}{\mathcal{G}}
+\newcommand{\iso}{\cong}
+
+\newcommand{\sfrac}[2]{{#1}/{#2}}   % short fraction
+\newcommand{\norm}[1]{\|#1\|}
+
+
+\newcommand{\eps}{\varepsilon}
+
+
+\makeatletter
+\newcommand{\xRightarrow}[2][]{\ext@arrow 0359\Rightarrowfill@{#1}{#2}}
+\makeatother
+
+
+
+
+% ----------------------------------------------------------------------
+% Macros for large case distinctions
+
+% \newcounter{case}
+% \newcounter{subcase}[case]
+% \newcounter{subsubcase}[subcase]
+% \newcounter{subsubsubcase}[subsubcase]
+% \newcounter{subsubsubsubcase}[subsubsubcase]
+
+% \renewcommand{\thesubcase}{\thecase.\arabic{subcase}}
+% \renewcommand{\thesubsubcase}{\thesubcase.\arabic{subsubcase}}
+% \renewcommand{\thesubsubsubcase}{\thesubsubcase.\arabic{subsubsubcase}}
+% \renewcommand{\thesubsubsubsubcase}{\thesubsubsubcase.\arabic{subsubsubsubcase}}
+
+% \newcommand{\case}[1]{\refstepcounter{case}\par\noindent{\bf Case \thecase.} #1.}
+% \newcommand{\subcase}[1]{\refstepcounter{subcase}\par\noindent{\bf Case \thesubcase.} #1.}
+% \newcommand{\subsubcase}[1]{\refstepcounter{subsubcase}\par\noindent{\bf Case \thesubsubcase.} #1.}
+% \newcommand{\subsubsubcase}[1]{\refstepcounter{subsubsubcase}\par\noindent{\bf Case \thesubsubsubcase.} #1.}
+% \newcommand{\subsubsubsubcase}[1]{\refstepcounter{subsubsubsubcase}\par\noindent{\bf Case \thesubsubsubsubcase.} #1.}
+
+
+
+
+\newcommand{\CliffordT}{\cC\cT}
+
+
+
+
+\newcommand{\De}{\Delta}
+\newcommand{\amal}{*}
+
+
+
+%\newcommand{\sem}[1]{[#1]}
+
+% Make sure this command does the same thing whether we use pdflatex
+% or latex. The problem is that the \urlalt provided in some package
+% (perhaps breakurl?) is different that the one provided by eptcs.
+\providecommand{\urlalt}[2]{\href{#1}{#2}}
+\renewcommand{\urlalt}[2]{\href{#1}{#2}}
+
+\DeclareMathOperator{\rcs}{rcs}
+\DeclareMathOperator{\cs}{cs}
+\DeclareMathOperator{\kc}{kc}
+\DeclareMathOperator{\rkc}{rkc}
+\DeclareMathOperator{\rlen}{rlen}
+\DeclareMathOperator{\len}{len}
+\DeclareMathOperator{\pat}{pat}
