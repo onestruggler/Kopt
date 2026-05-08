@@ -7,64 +7,64 @@
     0 & 0 & 0 & 0\\
     0 & 0 & 0 & 0\\
     0 & 0 & 0 & 0  \end{bmatrix}$};
-		\node [style=none] (5) at (0, -6.25) {iv$\begin{bmatrix}
+		\node [style=none] (5) at (-7.5, -6.25) {iv$\begin{bmatrix}
     1 & 1 & 1 & 1\\
     1 & 1 & 1 & 1\\
     0 & 0 & 0 & 0\\
     0 & 0 & 0 & 0  \end{bmatrix}$};
-		\node [style=none] (6) at (-8.25, -13.75) {};
-		\node [style=none] (7) at (-8.25, -13.75) {};
-		\node [style=none] (8) at (-8.25, -13.75) {iii$\begin{bmatrix}
+		\node [style=none] (6) at (7.5, 0) {};
+		\node [style=none] (7) at (7.5, 0) {};
+		\node [style=none] (8) at (7.5, 0) {iii$\begin{bmatrix}
     1 & 1 & 0 & 0\\
     1 & 1 & 0 & 0\\
     0 & 0 & 1 & 1\\
     0 & 0 & 1 & 1 \end{bmatrix}$};
-		\node [style=none] (11) at (0, -13.75) {v$\begin{bmatrix}
+		\node [style=none] (11) at (0, -6.25) {v$\begin{bmatrix}
     1 & 1 & 0 & 0\\
     1 & 1 & 0 & 0\\
     1 & 1 & 1 & 1\\
     1 & 1 & 1 & 1  \end{bmatrix}$};
-		\node [style=none] (14) at (7.5, -13.75) {vi$\begin{bmatrix}
+		\node [style=none] (14) at (7.5, -6.25) {vi$\begin{bmatrix}
     1 & 1 & 1 & 1\\
     1 & 1 & 1 & 1\\
     1 & 1 & 1 & 1\\
     1 & 1 & 1 & 1  \end{bmatrix}$};
-		\node [style=none] (15) at (0, -2.5) {};
-		\node [style=none] (16) at (0, -4) {};
-		\node [style=none] (17) at (2.25, -3.25) {$\times K_1 \text{ or } K_1\times$};
-		\node [style=none] (18) at (4.75, -16) {};
-		\node [style=none] (19) at (-6, -16) {};
-		\node [style=none] (20) at (-1.25, -17.25) {$K_1\times$};
-		\node [style=none] (22) at (7.5, -11.5) {};
-		\node [style=none] (24) at (4.5, -0.75) {};
-		\node [style=none] (26) at (6.5, -1.5) {$K_1 \times $};
-		\node [style=none] (28) at (0, -8.75) {};
-		\node [style=none] (29) at (0, -11) {};
-		\node [style=none] (30) at (1.25, -9.5) {$K_1 \times$};
-		\node [style=none] (31) at (-8.5, -6.25) {};
-		\node [style=none] (32) at (-8.5, -6.25) {};
-		\node [style=none] (33) at (-8.5, -6.25) {ii$\begin{bmatrix}
+		\node [style=none] (17) at (-3.25, -3.5) {$\times K_1 \text{ or } K_1\times$};
+		\node [style=none] (18) at (7.5, -4) {};
+		\node [style=none] (19) at (7.5, -2.5) {};
+		\node [style=none] (20) at (8.25, -3.25) {$K_1\times$};
+		\node [style=none] (22) at (7, -4) {};
+		\node [style=none] (24) at (2.5, -2) {};
+		\node [style=none] (26) at (5, -2.5) {$K_1 \times $};
+		\node [style=none] (28) at (-4.75, -6.25) {};
+		\node [style=none] (29) at (-2.5, -6.25) {};
+		\node [style=none] (30) at (-3.5, -6.75) {$K_1 \times$};
+		\node [style=none] (32) at (-5.25, 0) {};
+		\node [style=none] (33) at (-7.5, 0) {ii$\begin{bmatrix}
     1 & 1 & 0 & 0\\
     1 & 1 & 0 & 0\\
     0 & 0 & 0 & 0\\
     0 & 0 & 0 & 0 \end{bmatrix}$};
-		\node [style=none] (34) at (-3.5, -6.25) {};
-		\node [style=none] (35) at (-5.5, -6.25) {};
-		\node [style=none] (36) at (-4.5, -6.75) {$K_1 \times$};
-		\node [style=none] (37) at (-4, 0) {};
-		\node [style=none] (38) at (-10.75, -11.75) {};
-		\node [style=none] (39) at (-11, -1) {if lde =1, $K_1 \times$};
-		\node [style=none] (40) at (-4, -0.75) {};
-		\node [style=none] (41) at (-9, -4) {};
-		\node [style=none] (42) at (-4.5, -3.25) {if lde =1, $\CK \times$};
+		\node [style=none] (34) at (-7.5, -4) {};
+		\node [style=none] (35) at (-7.5, -2.5) {};
+		\node [style=none] (36) at (-8.25, -3.25) {$K_1 \times$};
+		\node [style=none] (37) at (2.5, 0) {};
+		\node [style=none] (38) at (5, 0) {};
+		\node [style=none] (39) at (3.75, -0.5) {if lde =1,};
+		\node [style=none] (40) at (-2.5, -2) {};
+		\node [style=none] (41) at (-7, -4) {};
+		\node [style=none] (42) at (-4, -0.5) {if lde =1, };
+		\node [style=none] (46) at (-2.5, 0) {};
+		\node [style=none] (47) at (-4, -1) {$\CK \times$};
+		\node [style=none] (48) at (3.75, -1) {$K_1 \times$};
 	\end{pgfonlayer}
 	\begin{pgfonlayer}{edgelayer}
-		\draw [style=diredge] (16.center) to (15.center);
-		\draw [style=diredge, bend right=45] (19.center) to (18.center);
-		\draw [style=diredge, bend right, looseness=1.25] (22.center) to (24.center);
+		\draw [style=diredge] (19.center) to (18.center);
+		\draw [style=diredge] (22.center) to (24.center);
 		\draw [style=diredge] (29.center) to (28.center);
 		\draw [style=diredge] (35.center) to (34.center);
-		\draw [style=diredge, bend left=60, looseness=1.25] (38.center) to (37.center);
+		\draw [style=diredge] (38.center) to (37.center);
 		\draw [style=diredge] (41.center) to (40.center);
+		\draw [style=diredge] (32.center) to (46.center);
 	\end{pgfonlayer}
 \end{tikzpicture}

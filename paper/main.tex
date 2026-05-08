@@ -44,7 +44,8 @@
 \begin{document}
 
 
-\title{Near-Optimal Exact Synthesis of 2-Qubit Clifford$+$CS Circuits}
+\title{Exact Synthesis of Two-Qubit Clifford+CS Circuits with a
+  Near-Minimal Number of K and CS Gates}
 
 \author{Xiaoning Bian} \email{bian@mail.tsinghua.edu.cn}
 \author{Yuan Feng} \email{yuan\_feng@tsinghua.edu.cn}
@@ -55,32 +56,62 @@
 
 
 \begin{abstract}
-  We give a method for the decomposition of an arbitrary $2$-qubit
-  unitary operator with entries in $\D[i] = \Z[\tfrac{1}{2}, i]$, the
-  Gaussian integers with dyadic denominators, into a Clifford$+$CS
-  circuit. Given unitary $U$, let $k$ be the least natural number such
-  that entries of $(1+i) ^ k U$ are all Gaussian integers, then this
-  method decomposes $U$ into a circuit of $O(k)$ gates without using
-  any ancilla, and the number of scalced H gate is at most 3 times
-  worse than optimal, the number of $\CS$ gate is at most 6 times
-  worse than optimal. The method is similar to the work of Russell and
-  Selinger for the Clifford$+T$ gate set, where the ring in use is
+  We give a method for the decomposition of an arbitrary two-qubit
+  Clifford+CS operator (equivalently a unitary with entries in
+  $\D[i] = \Z[\tfrac{1}{2}, i]$, the Gaussian integers with dyadic
+  denominators), into a Clifford$+$CS circuit. Given unitary $U$, let
+  $k$ be the least natural number such that entries of $(1+i) ^ k U$
+  are all Gaussian integers, then this method decomposes $U$, upto a
+  global phase, into a circuit of length at most $20k+9$, using at
+  most $2k$ scaled H gates and at most $2k+1$ Controlled-S gates,
+  without using any ancilla. Moreover, the number of scaled H gate is
+  at most 2 times worse than optimal, the number of $\CS$ gate is at
+  most 4 times worse than optimal. This method is similar to the work
+  of Russell \cite{russell2014} for the Clifford$+T$ gate set but with
+  more detailed analysis, where the ring in use is
   $\Z[\frac{1}{\sqrt 2}, i]$ which contains $\Z[\tfrac{1}{2}, i]$.
 \end{abstract}
 
 \maketitle
 
-% \tableofcontents
+\tableofcontents
+\newpage
 
-% \newpage
+
 
 \section{Introduction}
 
-In quantum information theory, the decomposition of unitary operators
-into gates from a fixed universal set is a fundamental problem.  In
-this paper we focus on the exact synthesis 2-qubit Clifford+CS
-operators, where CS is the controlled-$S$ gate.
+In quantum computation, the decomposition of unitary operators into
+gates from a fixed universal set is an important problem. In this
+paper we focus on the exact synthesis 2-qubit Clifford+Controlled-S.
+Previous work on synthesis of Clifford+CS operators or Clifford+T
+operators mainly focus on minimizing the use of CS gate or T gate
+since they are more expensive than Clifford operators in certain
+scenerio. But works on T gate optimization
+\cite{Soken2014,AmyTOpt2014,Heyfron_2019,Kissinger2020,debeaudrap2020fast,de_Beaudrap_2020}
+suggested that the H gate is an ``obstruction'' to their
+T-optimization method. Quoting from \cite{Soken2014} summarizes the
+reason: ``It has been shown that T-depth optimizations can be
+implemented efficiently for circuits consisting only of T and CNOT
+gates and that H gates impede the optimization significantly''.
 
+\iffalse
+The solution is either to only deal with the non-H part
+\cite{AmyTOpt2014}; or replacing H by a Hadamard-gadget (introducing
+one ancillae, one measurement, and one classical control)
+\cite{Heyfron_2019,Kissinger2020,debeaudrap2020fast,de_Beaudrap_2020};
+or to minimize the use of H gate \cite{Soken2014}.
+\fi
+
+We propose a method that produces circuits with near-minimal number of
+both the scaled H gate and CS gate, hence alleviate such
+``obstruction''. 
+
+
+
+
+
+\subsection{Background}
 Consider the following unitary operators:
 \begin{equation*}\label{eqn-generators}
   i,\quad
@@ -100,138 +131,47 @@ tensor products, these operators generate the \emph{Clifford group}
 Clifford group --- for our purposes, the scalars $\pm 1$ and $\pm i$
 are sufficient).
 
+
 Every operator $U$ obtained in this way is of size $2^n\times 2^n$ for
 some natural number $n$, and as usual, we say that $U$ is an operator
-on $n$ qubits. We write $\Clifford(n)$ for the group of $n$-qubit
-Clifford operators. It is well-known that this group is finite for any
-given $n$ (see, e.g., {\cite{selinger2013generators}}), and therefore
-not universal for quantum computing. We can obtain a universal gate
-set by adding the controlled phase gate
+on $n$ qubits. We write $\cCLI(n)$ for the group of $n$-qubit Clifford
+operators (just $\cCLI$ if $n=2$). It is well-known that this group is
+finite for any given $n$ (see, e.g., {\cite{selinger2013generators}}),
+and therefore not universal for quantum computing. We can obtain a
+universal gate set by adding the controlled phase gate
 \begin{equation*}
 \CS = \smatrix{1&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&i}.
 \end{equation*}
-The resulting operators are called the Clifford+$\CS$ operators, and
-we write $\CliffordCS(n)$ for the $n$-qubit Clif\-ford+$\CS$
-group. Note that $\CZ = \CS^2$.
+The resulting operators are called the Clifford+$\CS$ operators. Note
+that $\CZ = \CS^2$. The set of 2-qubit Clifford+$\CS$ operators is
+denoted by $\CliffordCS$. The set of 2-qubit Clifford+$\CS$ circuits
+(a circuit is a finite sequence of gates) is denoted by $\cCIR$. Each
+circuit $D \in \cCIR$ implements a unique operator
+$[D] \in \CliffordCS$.
 
-In this paper, we focus on the case $n=2$. Our goal is to give an
-algorithm for synthsis of the $2$-qubit Clifford+$\CS$ unitaries. We
-use the following notations: we write
+We use the following notations: we write
 $K_0 = K \otimes I , K_1 = I \otimes K$, and similarly for $S_0$ and
 $S_1$ where $I$ is the $2 \times 2$ identity operator.  We identify
-the scalar $i$ with the $4\times 4$-matrix $i\,I$. In the notation for
-controlled gates, we use the convention that the target is the last
-index. For example, $\CX_{01}$ is a controlled $X$-gate with control
-qubit $0$ and target qubit $1$, also shorted as $\CX$. $\CX_{10}$ is
-shorted as $\XC$. The controlled $S$- and $Z$-gates are symmetric, in
-the sense that $\CS_{jk}=\CS_{kj}$ and $\CZ_{jk}=\CZ_{kj}$, and
-therefore the order of indices does not matter for them, so we just
-write $\CS$ and $\CZ$.
-
-We use the following circuit notations for $K$, $S$, $\CZ$, and $\CS$,
-respectively:
-\[
-  K = \mp{0.3}{\begin{qcircuit}[scale=0.5]
-      \grid{2.5}{0}
-      \gate{$K$}{1.25,0};
-    \end{qcircuit}
-  },
-  \qquad
-  S = \mp{0.3}{\begin{qcircuit}[scale=0.5]
-      \grid{2.5}{0}
-      \gate{$S$}{1.25,0};
-    \end{qcircuit}
-  },
-  \qquad
-  \CZ = 
-  \mp{0.3}{\begin{qcircuit}[scale=0.5]
-      \grid{2}{0,1}
-      \controlled{\dotgate}{1,0}{1};
-    \end{qcircuit}
-  },
-  \qquad
-  \CS = 
-  \mp{0.3}{\begin{qcircuit}[scale=0.5]
-      \grid{2}{0,1}
-      \controlledS{1,0}{1};
-    \end{qcircuit}
-  }.
-\]
-The $\CZ$ gate is usually denoted
-$
-\mp{0.3}{\begin{qcircuit}[scale=0.5]\grid{2}{0,1}\controlled{\gate{$Z$}}{1,0}{1};\end{qcircuit}},
-$ but since it is symmetric with respect to its two qubits, we prefer
-the more symmetric notation shown above. We also use a similar
-notation for the $\CS$ gate, except that we label it with an
-``$i$\,''. We number the qubits from top to bottom, and we write the
-circuits in the same order as matrix multiplication, i.e., from right
-to left. For example,
-\[
-  \CZ K_0S_1 = \mp{0.25}{\begin{qcircuit}[scale=0.5]
-      \grid{5}{0,1}
-      \controlled{\dotgate}{1.25,0}{1};
-      \gate{$K$}{2.5,1};
-      \gate{$S$}{3.75,1};
-    \end{qcircuit}
-  }.
-\]
-We also use the $Z$-gate, the $X$-gate, the controlled $X$-gate, and
-the swap gate, denoted by $\Ex$. They are related to the ``primitive''
-gates introduced so far by
-\[
-  Z = SS, \quad
-  X = KZKi, \quad
-  \mp{0.3}{\begin{qcircuit}[scale=0.5]
-      \grid{2.00}{0,1}
-      \controlled{\notgate}{1.00,0}{1};
-    \end{qcircuit}
-  }
-  =
-  \mp{0.32}{\begin{qcircuit}[scale=0.5]
-    \grid{6.00}{0,1}
-    \gate{$K$}{1.25,0};
-    \controlledS{2.50,0}{1};
-    \controlledS{3.50,0}{1};
-    \gate{$K$}{4.75,0};
-  \end{qcircuit}
-}\cdot i, \quad
- \Ex = 
-  \mp{0.3}{\begin{qcircuit}[scale=0.5]
-      \grid{2}{0,1}
-      \swapgate{1}{0}{1};
-    \end{qcircuit}
-  }=
-  \mp{0.3}{\begin{qcircuit}[scale=0.5]
-      \grid{5.00}{0,1}
-      \controlled{\notgate}{1.25,0}{1};
-      \controlled{\notgate}{2.5,1}{0};
-      \controlled{\notgate}{3.75,0}{1};
-    \end{qcircuit}
-  }.
-\]
-The controlled-$K$ gate is $\CK = I \oplus K$. Similar to $\CX$ gate,
-$\CK_{01}$ is shorted as $\CK$ and $\CK_{10}$ is shorted as
-$\KC$. Note that $\CK \in \CliffordCS(n)$:
-
+the scalar $i$ with the $4\times 4$-matrix $i\,(I\otimes I)$. In the
+notation for controlled gates, we use the convention that the target
+is the last index. For example, $\CX_{01}$ is a controlled $X$-gate
+with control qubit $0$ and target qubit $1$, also shorted as
+$\CX$. $\CX_{10}$ is shorted as $\XC$. The controlled $S$- and
+$Z$-gates are symmetric, in the sense that $\CS_{jk}=\CS_{kj}$ and
+$\CZ_{jk}=\CZ_{kj}$, and therefore the order of indices does not
+matter for them, so we just write $\CS$ and $\CZ$. We also use the
+$Z$-gate, the $X$-gate, the controlled $K$-gate $\CK = I \oplus K$,
+and the swap gate, denoted by $\Ex$. They are related to the
+``primitive'' gates introduced so far by
+$ Z = S^2, \, X = KZKi, \, \CX = K_1\CZ K_1\cdot i, \,\Ex = \CX \, \XC
+\, \CX$, and
 \begin{equation}
-  \mp{0.3}{
-    \begin{qcircuit}[scale=0.5]
-    \grid{12.00}{0,1}
-    \controlled{\dotgate}{1.00,1}{0};
-    \gate{$S$}{2.25,1};
-    \gate{$S$}{3.75,1};
-    \gate{$S$}{5.25,1};
-    \gate{$S$}{2.25,0};
-    \gate{$S$}{3.75,0};
-    \gate{$S$}{5.25,0};
-    \gate{$K$}{6.75,0};
-    \controlledS{8.00,0}{1};
-    \gate{$K$}{9.25,0};
-    \gate{$S$}{10.75,0};
-  \end{qcircuit} } \cdot i.
-\label{eqn:ck}
+  \label{eqn:ck}
+  \CK = \CZ \cdot Z_0S_0Z_1S_1K_1\CS K_1S_1\cdot i.
 \end{equation}
 
+Similar to $\CX$ gate, $\CK_{01}$ is shorted as $\CK$ and $\CK_{10}$
+is shorted as $\KC$. By Equation \ref{eqn:ck}, $\CK \in \CliffordCS$.
 
 \subsection{Related work}
 There are many works on quantum circuit synthsis. Here we only list a
@@ -253,7 +193,7 @@ is sufficient.
 \begin{table}
 
 \begin{tabular}{|l|l|l|l|l|}
-\hline $n$ & No. of $T$ gates & Time complexity & No. of ancilla & Ref. \\
+\hline $n$ & \# $T$ gates & Time complexity & \# ancilla & Ref. \\
 \hline 1 & $\mathcal{T}(U)$  & $O(\mathcal{T}(U))$ & 0 & [7] \\
 \hline 2 & $\leqslant 10 \mathcal{T}(U)$ & $O(\mathcal{T}(U))$ & 0 & this paper \\
 \hline $\geqslant 1$ & $O\left(3^{2^n} n k\right)$ & $O\left(\operatorname{poly}\left(2^n, 3^{2^n} n k\right)\right)$ & 1 & [15] \\
@@ -267,6 +207,8 @@ is sufficient.
   denominator exponent of the input unitary.}
 
 \end{table}
+
+
 
 \section{Some algebra}
 
@@ -377,9 +319,8 @@ side gives $b_0 = b'_0$. Then cancelling $b_0$ and $b_i'$, and
 dividing both side by $\gamma$ give
 
 \[
-  \sum_{i=1}^{n-1} b_i \gamma^i - \sum_{i=1}^{n-1} b'_i \gamma^i =
-  k\gamma^n \text{ and } \sum_{i=1}^{n-1} b_i \gamma^{i-1} -
-  \sum_{i=1}^{n-1} b'_i \gamma^{i-1} = k\gamma^{n-1}
+  \sum_{i=1}^{n-1} b_i \gamma^{i-1} - \sum_{i=1}^{n-1} b'_i
+  \gamma^{i-1} = k\gamma^{n-1}
 \]
 
 Then modding $(\gamma)$ on both side agian gives $b_1 = b'_1$. Repeat
@@ -537,7 +478,8 @@ by $1$, and if $b\oplus b' = 0$, $\lde{x \pm y}$ decreases by at least
 $2$ if $k \ge 2$. Since dividing $t$ by $\gamma$ obviously increases
 $\lde{t}$ by $1$, we have for $x,y \in \D[i]$ with lde $k>0$ and
 $\rho_3^k(x) = 10b$ and $\rho_3^k(y) = 10b'$,
-  \[
+
+\begin{align*}
   \rho_2^k(K \begin{bmatrix}
     x \\
     y
@@ -551,13 +493,15 @@ $\rho_3^k(x) = 10b$ and $\rho_3^k(y) = 10b'$,
   \LS(\rho_3^k(\begin{bmatrix}
     x+y \\
     x-y
-  \end{bmatrix}))
+  \end{bmatrix}))\\
   =
   \begin{bmatrix}
     0(b \oplus b' \oplus 1) \\
     0(b \oplus b')
   \end{bmatrix}.
-  \]
+\end{align*}
+
+
 
 
 So we have $\lde{K \begin{bmatrix}
@@ -568,7 +512,7 @@ So we have $\lde{K \begin{bmatrix}
 
 In general for $x,y \in \D[i]$ with lde $k>0$ and $\rho_3^k(x) = 1b_0b_1$
 and $\rho_3^k(y) = 1b'_0b_1'$,
-  \[
+\begin{align*}
   \rho_2^k(K \begin{bmatrix}
     x \\
     y
@@ -582,13 +526,14 @@ and $\rho_3^k(y) = 1b'_0b_1'$,
   \LS(\rho_3^k(\begin{bmatrix}
     x+y \\
     x-y
-  \end{bmatrix}))
+  \end{bmatrix}))\\
   =
   \begin{bmatrix}
     (b_0\oplus b_0')(b_1 \oplus b_1' \oplus 1) \\
     (b_0\oplus b_0')(b_1 \oplus b_1')
   \end{bmatrix}.
-  \]
+\end{align*}
+
 
   If $\rho_3^k(x) = 0b_0b_1$ and $\rho_3^k(y) = 0b'_0b_1'$,
   \[
@@ -630,8 +575,8 @@ and $\rho_3^k(y) = 1b'_0b_1'$,
   \]
 
 
-\subsection{Special matrices}
-\subsubsection{Permutation matrices}
+\section{Special unitaries}
+\subsection{Permutation matrices}
 Let $a_0a_1a_2a_3$ be a permutation of $\s{0,1,2,3}$. The permutation
 matrix $P_{a_0a_1a_2a_3}$ is the unitary matrix that maps $e_i$ to
 $e_{a_i}$, where $\s{e_i}$ is the standard basis. All 24 permutation
@@ -642,7 +587,7 @@ of lenght at most $3$, see Table \ref{perm24}.
   \centering
   \[
 \begin{array}{c|c|c|c|c|c}
-  a_0a_1a_2a_3 & \text{circuit} &  a_0a_1a_2a_3 & \text{circuit} &  a_0a_1a_2a_3 & \text{circuit}\\
+  P & \text{circuit} &  P & \text{circuit} & P & \text{circuit}\\
   \hline
 0123 & \text{identity}  & 1023 & X_1 \cdot \CX & 2103 & X_0 \cdot \XC\\
 1203 & \Ex \cdot X_0 \cdot \XC & 2013 & \Ex \cdot X_1 \cdot \CX & 0213 & \Ex\\
@@ -658,7 +603,7 @@ of lenght at most $3$, see Table \ref{perm24}.
 \label{perm24}
 \end{table}
 
-\subsubsection{Diagonal unitary matrices}
+\subsection{Diagonal unitary matrices}
 The only diagonal unitary matrices with entries in $\D[i]$ (and $\Z[i])$ are of the form
 \[
   \text{diag}(i^a,i^b,i^c,i^d), \text{ where } a,b,c,d \in \s{0,1,2,3}.
@@ -670,7 +615,7 @@ most $6$ upto a global phase $i^k$, using at most $1$ $\CS$ gate. This because
 and it is of cardinality $4^4$ which equals to the cardinality of the
 set of diagonal unitary matices.
 
-\subsubsection{Generalized unitary permutation matrices}
+\subsection{Generalized unitary permutation matrices}
 
 A generalized unitary permutation matrix with entres in $\D[i]$ is a
 matrix with the same nonzero pattern as a permutation matrix (there is
@@ -682,7 +627,11 @@ implemented by a circuit of lenght at most $9$ containing at most $1$
 CS gate.
 
 
-\section{Main theorems}
+% ----------------------------------------------------------------------
+\section{The exact synthesis algorithm}\label{ssec:synthesis}
+
+
+\subsection{Main theorems}
 
 \begin{theorem}\label{thm:main}
   For any $A \in U(\D[i])$ with lde $k$, there exists a circuit $C$
@@ -759,9 +708,8 @@ If
   \rcs(D) \le \kc(D) + 1 \implies \cs(D) \le \kc(D) + 1.
 \]
 
-% ----------------------------------------------------------------------
-\section{The exact synthesis algorithm}\label{ssec:synthesis}
 
+\subsection{Lemmas and proofs}
 
 We start with a number of lemmas. Since $\zi$ and $\di$ are subrings
 of $\C$, the usual properties of complex numbers, complex vectors, and
@@ -958,7 +906,7 @@ Note that each $\le$ above is actually $=$, but we don't need this.
 The proof proceeds by a case distinction over $\rho_1^k(A)$. Note that
 requiring $k>0$ eliminates Case i. So start with Case ii.
 
-\subsection{Case ii}
+\subsubsection{Case ii}
 If $k>1$, by Lemma \ref{lem:v1}, upto multilying generalized
 permutations on the left and right, $\pat(A)$ refines to
 \[
@@ -1010,7 +958,7 @@ As before, we have $a=0$. Apply $X_0 \cdot \CK \cdot X_0$ on the left
 decreases the lde.
 
 
-\subsection{Case iii}
+\subsubsection{Case iii}
 If $k>1$, by Lemma \ref{lem:v1}, upto multilying generalized
 permutations on the left and right, pat(A) refines to
 \[
@@ -1062,7 +1010,7 @@ permutations on the left and right, pat(A) refines to
 As before, we have $a=0,d=0$. Applying $K_1$ on the left decrease the
 lde.
 
-\subsection{Case iv}
+\subsubsection{Case iv}
 This case only happens for $k>1$. By Lemma \ref{lem:v1}, upto
 multilying generalized permutations on the left and right, pat(A)
 refines to
@@ -1082,7 +1030,7 @@ permutation of columns, we may assume $d=1, e=f=0$. For both cases,
 right multiplication of $K_1$ decrease the lde.
 
 
-\subsection{Case v}
+\subsubsection{Case v}
 This case only happens for $k>1$. By Lemma \ref{lem:v1}, upto
 multilying generalized permutations on the left and right, pat(A)
 refines to
@@ -1116,7 +1064,7 @@ Applying $K_1$ on the left bring us to Case iv.
 
 
 
-\subsection{Case vi}
+\subsubsection{Case vi}
 This case only happens for $k>1$. By Lemma \ref{lem:v1}, upto
 multilying generalized permutations on the left and right, pat(A)
 refines to
@@ -1135,6 +1083,8 @@ Taking inner product of first two columns
 Upto a permutation, we maybe assume $a=0$. Then $b = c$. Similarly
 $d = g$.
 
+
+
 \iffalse
 
 If $d = g = 0$. Taking inner product of the first and third column
@@ -1147,6 +1097,8 @@ $K_1$ reduces the lde.
 
 \fi
 
+
+
 If $b=c=1$, and $d=g=1$, pat(A) is
 \[
   \begin{bmatrix}
@@ -1156,6 +1108,7 @@ If $b=c=1$, and $d=g=1$, pat(A) is
     10 & 11 & 1f & 1x
   \end{bmatrix},
 \]
+
 
 Taking inner product of the first and third column gives
 $f = \bar{e}$. Similarly, $h=\bar{e}$ and $x=\bar{f}$. Now pat(A) is
@@ -1188,11 +1141,9 @@ have
 \end{align*}
 Taking inner product of the second and thired column gives
 \begin{align*}
-  &101 + 11(u\oplus \bar{x}) + (1ev + 01e + 00\bar{y}) + (1\bar{e}w + 01\bar{e} + 00\bar{z}) = 000 \\
-  &\implies x\oplus y \oplus z \oplus u\oplus v \oplus w = 1, \text{ a contradiction.}
+  &101 + 11(u\oplus \bar{x}) + (1ev + 01e + 00\bar{y}) + (1\bar{e}w + 01\bar{e} + 00\bar{z})\\
+  &= 000 \implies x\oplus y \oplus z \oplus u\oplus v \oplus w = 1, \text{ a contradiction.}
 \end{align*}
-
-
 
 If $b=c=0$, taking inner product of the first and third column gives
 $e=h$, similarly, $f=x$. So pat(A) refines to
@@ -1237,7 +1188,8 @@ The transitions between cases in summarized in Figure \ref{fig:trans}.
 
 
 
-\section{Complexity}
+
+\subsection{Complexity}
 The time complexity is $O(\lde U)$.
 
 \section{Experiment}
