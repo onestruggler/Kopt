@@ -57,26 +57,28 @@
 
 \begin{abstract}
   We give a method for the decomposition of an arbitrary two-qubit
-  Clifford+CS operator (equivalently a unitary with entries in
-  $\D[i] = \Z[\tfrac{1}{2}, i]$, the Gaussian integers with dyadic
-  denominators), into a Clifford$+$CS circuit. Given unitary $U$, let
-  $k$ be the least natural number such that entries of $(1+i) ^ k U$
-  are all Gaussian integers, then this method decomposes $U$, upto a
-  global phase, into a circuit of length at most $20k+9$, using at
-  most $2k$ scaled H gates and at most $2k+1$ Controlled-S gates,
-  without using any ancilla. Moreover, the number of scaled H gate is
-  at most 2 times worse than optimal, the number of $\CS$ gate is at
-  most 4 times worse than optimal. This method is similar to the work
-  of Russell \cite{russell2014} for the Clifford$+T$ gate set but with
-  more detailed analysis (e.g. bound 2k v.s. $O(k)$), where the ring
-  in use is $\Z[\frac{1}{\sqrt 2}, i]$ which contains
-  $\Z[\tfrac{1}{2}, i]$.
+  Clifford+CS operator (equivalently a $4\times 4$ unitary with
+  entries in $\D[i] = \Z[\tfrac{1}{2}, i]$, the Gaussian integers with
+  dyadic denominators), into a Clifford$+$CS circuit. Given unitary
+  $U$, let $k$ be the least natural number such that entries of
+  $(1+i) ^ k U$ are all Gaussian integers, then this method decomposes
+  $U$, upto a global phase, into a circuit of length at most $20k+9$,
+  using at most $2k$ K (i.e. a scaled H) gates and at most $2k+1$
+  Controlled-S gates, without using any ancilla. Moreover, the number
+  of K gate is at most 2 times worse than optimal, the number
+  of $\CS$ gate is at most 4 times worse than optimal. In practice,
+  this method always acheives the optimal CS-count, and the K-count is
+  always smaller than the best known. This method is similar to the
+  work of Russell \cite{russell2014} for the Clifford$+T$ gate set but
+  with a more concrete bound analysis (e.g. bound 20k+9 v.s. $O(k)$),
+  where the ring in use is $\Z[\frac{1}{\sqrt 2}, i]$ which is more
+  complicated than and contains the ring here $\Z[\tfrac{1}{2}, i]$.
 \end{abstract}
 
 \maketitle
 
-\tableofcontents
-\newpage
+% \tableofcontents
+% \newpage
 
 
 
@@ -106,7 +108,7 @@ or to minimize the use of H gate \cite{Soken2014}.
 \fi
 
 We propose a method that produces circuits with a near-minimal number
-of the scaled-H gates and CS gates, hence alleviate such
+of the K (i.e., a scaled H) gates and CS gates, hence alleviate such
 ``obstruction''. Synthesis problem that aims to minimize the use of
 two different gates simultaneously is also of mathematical
 interest. One of the reason is that previous work on single-qubit
@@ -213,7 +215,7 @@ T-count, let alone T-optimality.
 
 The only work on multi-qubit synthesis that guaranteed T-optimality or
 CS-optimality is the work on 2-qubit Clifford+T \cite{Li_2023_CT2} and
-the work on 2-qubit Clifford+CS \cite{glaudell2021CS2} synthesis. The
+the work on 2-qubit Clifford+CS \cite{Glaudell2021} synthesis. The
 first gave an algrithm that is near T-optimal (the worst case uses at
 most 10 times the minimum possible T gates). The later gave an
 algrithm that is CS-optimal. Both used the exceptional isomorphism
@@ -252,19 +254,22 @@ several gate sets under one theory.
 We list two works on two-qubit synthesis that guaranteed
 $T$-optimality or $CS$-optimality: 2-qubit Clifford+$T$ synthesis
 \cite{Li_2023_CT2} and the work on 2-qubit Clifford+$CS$ synthesis
-\cite{glaudell2021CS2} synthesis. The first gave an algorithm that is
+\cite{Glaudell2021} synthesis. The first gave an algorithm that is
 near $T$-optimal (the worst case uses at most 10 times the minimum
 possible $T$ gates). The latter gave an algorithm that is
-$CS$-optimal. Glaudell et al.~\cite{GlaudellJarret2026} later gave a
-high-performance exact synthesis framework for two-qubit Clifford+$T$
-circuits that optimizes $T$-count exactly, using meet-in-the-middle
-with algebraic canonicalization and lookup tables. The above 3 works
-depends on the exceptional isomorphism between two Lie groups
+$CS$-optimal; they didn't mention the H-count, but we can deduce from
+their work that their H-count enjoys the same property as our method:
+the K-count is at most 2 times worse then optimal. Glaudell et
+al.~\cite{GlaudellJarret2026} later gave a high-performance exact
+synthesis framework for two-qubit Clifford+$T$ circuits that optimizes
+$T$-count exactly, using meet-in-the-middle with algebraic
+canonicalization and lookup tables. The above 3 works depends on the
+exceptional isomorphism between two Lie groups
 $S U(4) \cong \operatorname{spin}(6)$. Our work is about the
 $CS$-optimality and $H$-optimality of 2-qubit Clifford+$CS$ synthesis,
 but without using this exceptional isomorphism. Our work use the
-similar ``residue'' method as in Russell \cite{russell2014}, but over
-a simpler ring $\Z[\tfrac{1}{2}, i]$ contained in their ring
+similar ``residue'' analysis method as in Russell \cite{russell2014},
+but over a simpler ring $\Z[\tfrac{1}{2}, i]$ contained in their ring
 $\Z[\frac{1}{\sqrt 2}, i]$. Given a unitary U, Russell's method output
 circuit of gate count $O(k)$, where $k$ is the least natural number
 such that entries of $(1+\omega) ^ k U$ are in the ring $\Z[\omega]$.
@@ -300,6 +305,7 @@ gate optimality.
 
 % ----------------------------------------------------------------------
 \section{Some algebra}
+\label{sec:algebra}
 \subsection{Rings}
 
 As usual, we write $\N=\s{0,1,\ldots}$ for the set of natural numbers.
@@ -361,7 +367,7 @@ following definition.
   of a 2-qubit Clifford operator is at most 2.
 \end{remark}
 
-\subsection{Residue ring}
+\subsection{Residue rings}
 It is well-known that
 \[
   \zi/(\gamma ^ n) = \left\{ \sum_{i=0}^{n-1} b_i \gamma^i \text{ mod
@@ -547,7 +553,7 @@ left shift of $x$ and $\RS$ for the right shift.
   \]
 \end{lemma}
 
-Given a $x,y \in \D[i]$ with lde $k>0$, we know $\rho_2^k(x) = 1b$ and
+Given $x,y \in \D[i]$ with lde $k>0$, we know $\rho_2^k(x) = 1b$ and
 $\rho_2^k(y) = 1b'$ for some $b,b' \in \s{0,1}$. So
 $\rho_2^k(x + y) = 1b + 1b' = 0(b\oplus b')$. Then
 $\rho_1^{k-1}({x + y}) = \LS(\rho_2^k(x + y)) = b\oplus
@@ -697,21 +703,33 @@ most $6$ upto a global phase $i^k$, using at most $1$ $\CS$ gate. This because
 and it is of cardinality $4^4$ which equals to the cardinality of the
 set of diagonal unitary matices.
 
-\subsection{Generalized unitary permutation matrices}
+\subsection{Generalized permutation unitary matrices}
+\label{ssec:gp}
 
-A generalized unitary permutation matrix with entres in $\D[i]$ is a
+A generalized permutation unitary matrix with entries in $\D[i]$ is a
 matrix with the same nonzero pattern as a permutation matrix (there is
 exactly one nonzero entry in each row and each column), but the
-nonzero entry can be any number of unit length, i.e, powers of $i$. It
-is easy to see all $4 \times 4$ generalized permutation matrices are
-product of a permutation matrix and a diagonal matrix, hence can be
-implemented by a circuit of lenght at most $9$ containing at most $1$
-CS gate.
+nonzero entry can be any number of unit length, i.e, powers of $i$. We
+will call such a matrix a generalized permutation. It is easy to see
+each $4 \times 4$ generalized permutation is product of a permutation
+matrix and a diagonal matrix, hence can be implemented by a circuit of
+lenght at most $9$ containing at most $1$ CS gate, and no K gate.
 
 
 % ----------------------------------------------------------------------
 \section{The exact synthesis algorithm}\label{ssec:synthesis}
+The method used is similar to the work of Russell \cite{russell2014}
+for the ring $\Z[\frac{1}{\sqrt 2}, i]$ which is more complicated than
+and contains the ring here $\Z[\tfrac{1}{2}, i]$. Such residue
+analysis method is widely used in exact synthesis, e.g., in
+\cite{giles2013remarks,GilesSelinger2013,Glaudell2021,Li_2023_CT2,amy2023improved}. Note
+that, comparing to the ad hoc use of residues in each work, we have
+given in Section \ref{sec:algebra} a uniform way of dealing with
+residue of different rings using binnary residues, which, we
+conjecture, works for any $\xi$-ring proposed in
+\cite{KliuchnikovSchonnenbeck2024}.
 
+We start with the main theorem.
 
 \subsection{Main theorems}
 
@@ -732,21 +750,31 @@ algorithm for computing such circuit.
   \begin{itemize}
   \item $\rkc(D)=$ the number of K gate that appears in D.
   \item
-    $\kc(D)= \min \s{\rkc(C)\,|\,C \in \cCS \text{ and } \sem{C}
+    $\kc(D)= \min \s{\rkc(C)\,|\,C \in \cCIR \text{ and } \sem{C}
       = \sem{D}}.$
   \item $\rcs(D)=$ the number of CS gate that appears in D.
   \item
-    $\cs(D)= \min \s{\rcs(C)\,|\,C \in \cCS \text{ and } \sem{C} =
+    $\cs(D)= \min \s{\rcs(C)\,|\,C \in \cCIR \text{ and } \sem{C} =
       \sem{D}}.$
   \item $\rlen(D)=$ the number of gate that D contains.
   \item
-    $\len(D)= \min \s{\rlen(C)\,|\,C \in \cCS \text{ and } \sem{C} =
+    $\len(D)= \min \s{\rlen(C)\,|\,C \in \cCIR \text{ and } \sem{C} =
       \sem{D}}.$
   \end{itemize}
   We say D is K-optimal, CS-optimal, and shortest if
   $\rkc(D) = \kc(D)$, $\rcs(D) = \cs(D)$, and $\rlen(D) = \len(D)$
-  repectively.
+  repectively. We call $\rkc(D)$ and $\rcs(D)$ the K-count and
+  CS-count of D repectively, and $\kc(D)$, $\cs(D)$ the optimal
+  K-count and the optimal CS-count of D respectively.
 \end{definition}
+
+\begin{remark}
+  Note that this calling differs with the other convention in
+  e.g. \cite{GKMR}, where they would call, e.g. $\cs(D)$ the CS-count
+  of D. In other words, the other convention has no definition for
+  ``raw'' K-count (rkc) or CS-count (rcs), and the ``count'' they have
+  is only optimal.
+\end{remark}
 
 
 Any Clifford+CS circuit $D$ is an alternating sequence of Clifford part
@@ -756,43 +784,82 @@ $C_i$ and a $\CS$ gate
   D = C_0 \cdot \CS \cdot C_1 \cdot \CS \cdot \ldots \cdot C_n.
 \end{equation}
 
-By enumerating all 2-qubit Clifford circuit, we know
-$\lde{C_i} \le 2$.  If (\ref{eq:ccs}) is $\CS$-optimal, i.e.,
-$\cs(D) = n$, then
+By enumerating all 2-qubit Clifford circuit, we know $C_i$ is
+implementable by at most 2 K gate and $\lde{C_i} \le 2$. By
+subadditivity of lde, we have
 $\lde{D} \le \lde{C_0} + \lde{\CS} + \lde{C_1} \ldots \lde{C_n} \le
-2(n+1)$. We have the relation
-\[\lde{D} \le 2( \cs(D) + 1).\]
+2(n+1)$, that is, $\lde{D} \le ( 2(\rcs(D) + 1)$ which implies
+\[
+  \lde{D} \le 2(\cs(D) + 1).
+\]
+Suppose \ref{eq:ccs} is CS-optimal, i.e., $\cs(D) = n$, We have
+$\rkc(D) \le 2\cs(D) + 1)$ which implies
+\[
+  \kc(D) \le 2(\cs(D) + 1).
+\]
 
-On the other hand, our synthesis algorithm output at most
-$2\cdot\lde{D}$ K gates and $2\cdot\lde{D} + 1$ CS gates. So our
-synthesis algorithm is at most 4 times worse than optimal CS-count
-(experiments show it is 2 times worse, see Section \ref{sec:exp}). To
-acheive the lde, we need at least $\lde{D}$ many K gates, so our
-algorithm is at most 2 times worse than the optimal K-count.
-
-
-
-Clifford+CS circuit $D$ is also an alternating sequence of generalized
-permutation part $P_i$ and a $K_1$ gate (by replacing all appearences
-of $K_0$ by $Ex \cdot K_1 \cdot Ex$):
+Any Clifford+CS circuit $D$ is also an alternating sequence of
+generalized permutation part $P_i$ and a $K_1$ gate (by replacing all
+appearences of $K_0$ by $Ex \cdot K_1 \cdot Ex$):
 \begin{equation} \label{eq:ccs-k}
   D = P_0 \cdot K_1 \cdot P_1 \cdot K_1 \cdot \ldots \cdot P_n.
 \end{equation}
-So we have $\lde{D} \le \rkc(D)$ and then $\lde{D} \le \kc(D)$.  On
-the other hand, Theorem \ref{thm:main} outputs $D'$ such that
-$\rkc(D') \le 2\lde{D}$, so we have $\kc(D) \le 2\lde{D}$.
+Each generalized permutation is implementable by at most 1 CS gate and
+uses no K gate. So we have $\cs(D) \le \rkc(D) + 1$, which implies
 \[
+  \cs(D) \le \kc(D) + 1.
+\]
+We also have, by subadditivity of lde, that $\lde{D} \le \rkc(D)$,
+which implies
+\[
+  \lde{D} \le \kc(D).
+\]
+Theorem \ref{thm:main} outputs $D'$ such that $\rkc(D') \le 2\lde{D}$
+and $\rcs(D') \le 2\lde{D} + 1$, which, together with the provious
+inequalities, implies
+\begin{equation}
   \lde{D} \le \kc(D) \le 2\lde{D}
-\]
+\end{equation}
+\begin{equation} \label{eq:csi}
+\lde{D} / 2 - 1 \le  \cs(D) \le 2\lde{D} + 2
+\end{equation}
+From above equation, our synthesis algorithm is at most 2 times worse
+than the optimal K-count, and at most 4 times worse than the optimal
+CS-count (experiments show it always acheives the optimal CS-count,
+and better K-count than best-known, see Section \ref{sec:exp}). Note
+that Inequality \ref{eq:csi} is similar to Propsition 6 in
+\cite{Glaudell2021} but slightly tigher.
 
-If
-(\ref{eq:ccs-k}) is $K$-optimal, i.e., $\kc(D) = n$, then
-\[
-  \rcs(D) \le \kc(D) + 1 \implies \cs(D) \le \kc(D) + 1.
-\]
+
+\subsubsection{K optimality of Glaudell et al's algorithm
+  \cite{Glaudell2021}}
+The work of Glaudell et al. didn't consider the K-count at all, but we
+can derive from their CS optimality that for a unitary A,
+\[\cs(A) \le \kc(A) \le 2 \cs(A) + 2.\]
+This is because the output of their algorithm is of the form Equation
+\ref{eq:ccs} with the CS-count being optimal and the Clifford in
+between CS gate has K-count 1 or 2. Take a $C_i$ that is in between CS
+gate and call it $E$. First, $\kc(E) \neq 0$, becuase then $E$ is also
+a generalized permutation which contains no CS gate because it is
+Clifford. So the two CS in $CSECS$ will cancell decreasing the
+CS-count, whcih contradicts the optmality. The cancelling can be shown
+by direct calculation since the generalized permutations are finite,
+or using the semi-direct product structure that the permuations and
+diagonals together form. We can show $\kc(E) \le 2$ by enumerating all
+two-qubit Cliffords.
+
+So Glaudell et al's algorithm enjoys the same property as ours: the
+K-count is at most 2 times worse then optimal.
+
+\begin{remark}
+  Note that exmperiments show that most of the case $\lde{A} < \cs(A)$
+  for random generated A. So our bound $\kc(A) \le 2 \lde{A}$ is
+  strictly better in practice, and indeed experiments show that our
+  method always acheives better K-count.
+\end{remark}
 
 \subsection{Complexity}
-The time complexity is $O(\lde U)$.
+The time complexity is $O(\lde U)$. 
 
 
 \subsection{Lemmas and proofs}
@@ -1035,14 +1102,21 @@ right, $\pat(A)$ refines to
   \begin{bmatrix}
     10 & 10 & 00 & 00\\
     10 & 1a & 00 & 00\\
-    00 & 00 & 0d & 0e\\
-    00 & 00 & 0f & 0g
+    00 & 00 & 00 & 00\\
+    00 & 00 & 00 & 00
   \end{bmatrix},
 \]
 
 As before, we have $a=0$. Apply $X_0 \cdot \CK \cdot X_0$ on the left
 decreases the lde.
 
+\begin{remark} \label{rmk:dummy} Note that the two generalized
+  permutations we use to refine the pattern can be choosen to be
+  CS-free. This is because the (2,k)-residue of the two rows (columns)
+  of even entries are stable under multipicaton of i and we can
+  introduce ``dummy'' i at a proper place to make a generalized
+  permutation CS-free.
+\end{remark}
 
 \subsubsection{Case iii}
 If $k>1$, by Lemma \ref{lem:v1}, upto multilying generalized
@@ -1112,9 +1186,13 @@ Taking inner product of the first two cloumn gives
 \[10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.\] Similarly we have
 $b=c=0$. Since the third row is of lde $k-1>0$, either $d=e=f=1$ or
 one of $d,e,f$ is 1 and the rest are 0. For the later, upto a
-permutation of columns, we may assume $d=1, e=f=0$. For both cases,
-right multiplication of $K_1$ decrease the lde.
+permutation of columns, we may assume $d=1, e=f=0$. Then, for both
+cases, right multiplication of $K_1$ decrease the lde.
 
+\begin{remark}
+  As in Remark \ref{rmk:dummy}, the left generalized permutation can
+  be choosen to be CS-free.
+\end{remark}
 
 \subsubsection{Case v}
 This case only happens for $k>1$. By Lemma \ref{lem:v1}, upto
@@ -1207,7 +1285,7 @@ $f = \bar{e}$. Similarly, $h=\bar{e}$ and $x=\bar{f}$. Now pat(A) is
   \end{bmatrix}.
 \]
 We prove this pattern cannot happen by looking at its
-(3,k)-residue. Upto multiplication oof powers of $-1$ on the proper
+(3,k)-residue. Upto multiplication of powers of $-1$ on the proper
 rows and columns, the (3,k)-residue refines to
 \[
   \begin{bmatrix}
@@ -1257,7 +1335,7 @@ pat(A) refines to
 Note that $e=f$, which is implied by taking inner product of the first
 and third column. So left multiplication of $K_1$ reduces the lde.
 
-The transitions between cases in summarized in Figure \ref{fig:trans}.
+The transitions is summarized in Figure \ref{fig:trans}.
 \begin{figure}[h]
   \centering
   \scalebox{0.8}{\tikzfig{transition}}    
@@ -1270,31 +1348,66 @@ The transitions between cases in summarized in Figure \ref{fig:trans}.
   \label{fig:trans}
 \end{figure}
 
+\begin{proof}[Proof of Theorem \ref{thm:main}]
+  Let $k=\lde{A}$, by Lemma \ref{lem:main2}, possibly merging adjacent
+  generalized permutaions, there exist generalized permutations
+  $L_1,L_2,...,L_p,R_1,R_2,...,R_q$ such that
+  \[
+    \lde{L_pK_1L_{p-1}K_1...L_2K_1L_1AR_1K_1R_2K_1...,R_q} = 0
+  \]
+  So there exists a generalized permutation $P$ such that
+  \begin{equation*}
+    L_pK_1L_{p-1}K_1...L_2K_1L_1AR_1K_1R_2K_1...,R_q = P
+  \end{equation*}
+  Note the rkc of left-handside $\le 2k$. Then we have
+  \begin{equation*}
+    A = L_1^{-1}iK_1L_2^{-1}...L_p^{-1}PR_q^{-1}iK_1...R_2^{-1}iK_1R_1^{-1}
+  \end{equation*}
+  Note that the rkc of the right handside is at most $2k$, after
+  merging adjacent generalized permutaions, the number of generalized
+  permutations is at most $2k+1$. Each generalized permutation is
+  implementable by at most 9 gates and at most 1 CS gate, upto a
+  global phase. So we have a circuit that implements A, using at most
+  2k K gates, at most 2k +1 CS gates, and at most 9(2k +1)+2k gates
+  upto a global phase.
+\end{proof}
 
 
 
 
 
+\section{Experiment} \label{sec:exp}
 
-\section{Experiment}
 We implemented our algorithm in Haskell and did an comparison with the
-CS-optimal synthesis algorithm. Circuits are randomly genrated feeded
-to both algorithm, and output circuits are compared on metrics
-$\rcs,\rkc,\rlen$.
+CS-optimal synthesis algorithm in \cite{Glaudell2021}. A unitary of
+given lde range is randomly genrated and feeded to both algorithm, and
+output circuits are compared on metrics $\rcs,\rkc,\rlen$.
+
+
 
 Statistics show our algorithm alway acheives the optimal CS-count,
-which suggests that part of our analysis is not tight, and could be
-improved. This is left to futurn work.
+which suggests that part of our bound analysis is not tight, and could
+be improved. This is left to futurn work. Also our method always
+acheives the better K-count than best-known.
 
+We also observe from our data that
+\[\lde{D} \le \cs(D)\]
+for any two-qubit CS operator D, which we couldn't prove.
+
+\section{Code and data availability}
 
 \section{Conclusion and future work}
-In conclusion, we proposed an efficient and optimal algorithm for the
-exact synthesis of Clifford+$\CS$ circuits from a given unitary
-matrix.
+In conclusion, we proposed an efficient and near-optimal algorithm for
+the exact synthesis of two-qubit Clifford+$\CS$ circuits from a given
+unitary matrix. In theory, we proved the CS-count is at most 4 times
+worse than optimal, but in practice, our method always acheives the
+optimal CS-count. In theory, we proved the K-count is at most 2 times
+worse than optimal, and in practice, our method always acheives the
+better K-count than best-known.
 
-The algorithm Li et al. gave outputs a circuit that is at most 10
-times worse than optimal in T-count. We believe our method can be used
-to improve the bound 10.
+The algorithm of Li et al. \cite{Li_2023_CT2} outputs a circuit that
+is at most 10 times worse than the optimal T-count. We believe our
+method can be used to improve the bound 10.
 
 
 \iffalse
@@ -2243,13 +2356,15 @@ In conclusion, we have presented an efficient algorithm for the exact synthesis 
 \fi
 
 \section{Acknowledgements}
-Four citations
+The authors acknowledge support from the National Natural Science
+Foundation of China under Grant 92465202. Four citations
 \cite{Forest2015,KliuchnikovYard2015,KliuchnikovSchonnenbeck2024,GlaudellJarret2026}
-on exact synthesis and their one-line summary in the related work
-section are created by Claude Opus 4.6. We also used Opus 4.6 for
-improving the wording of the paper.
+and their one-line summary in the related work section are created by
+Claude Opus 4.6. We also used Opus 4.6 for improving the wording of
+the paper.
 
 %------------------------------------------------
+
 
 
 
