@@ -62,22 +62,20 @@
 \begin{abstract}
   We give a method for the decomposition of an arbitrary two-qubit
   Clifford+CS operator (equivalently a $4\times 4$ unitary with
-  entries in $\D[i] = \Z[\tfrac{1}{2}, i]$, the Gaussian integers with
-  dyadic denominators), into a Clifford$+$CS circuit. Given unitary
-  $U$, let $k$ be the least natural number such that entries of
-  $(1+i) ^ k U$ are all Gaussian integers, then this method decomposes
-  $U$, upto a global phase, into a circuit of length at most $20k+9$,
-  using at most $2k$ K (i.e. a scaled H) gates and at most $2k+1$
-  Controlled-S gates, without using any ancilla. Moreover, the number
-  of K gate is at most 2 times worse than optimal, the number of $\CS$
-  gate is at most 4 times worse than optimal. In practice, this method
-  always acheives the optimal CS-count, and roughly the K-count is
-  $k/2$ smaller than the best known, acheiving roughly a 25\% K-count
-  reduction. This method is similar to the work of Russell
-  \cite{russell2014} for the Clifford$+T$ gate set but with a more
-  concrete bound analysis (e.g. bound 20k+9 v.s. $O(k)$), where the
-  ring in use is $\Z[\frac{1}{\sqrt 2}, i]$ which is more complicated
-  than and contains the ring here $\Z[\tfrac{1}{2}, i]$.
+  entries in $\D[i] = \Z[\tfrac{1}{2}, i]$), into a Clifford$+$CS
+  circuit. Given unitary $U$, let $k$ be the least natural number such
+  that entries of $(1+i) ^ k U$ are all Gaussian integers, then this
+  method decomposes $U$, upto a global phase, into a circuit of length
+  at most $20k+9$, using at most $2k$ K (i.e. a scaled H) gates and at
+  most $2k+1$ Controlled-S gates, without using any ancilla. Moreover,
+  the number of K gate is at most 2 times the optimal, the number of
+  $\CS$ gate is at most 4 times the optimal. In expriment, this method
+  acheives the optimal CS-count always, and on average a 19\% K-count
+  reduction than the best-known. The method used is similar to the
+  work of Russell \cite{russell2014} for the Clifford$+T$ gate set but
+  with a more concrete bound analysis (e.g. bound 20k+9 v.s. $O(k)$),
+  where the ring in use is $\Z[\frac{1}{\sqrt 2}, i]$ which is more
+  complicated than and contains the ring here $\Z[\tfrac{1}{2}, i]$.
 \end{abstract}
 
 \maketitle
@@ -85,32 +83,23 @@
 % \tableofcontents
 % \newpage
 
-
-
 \section{Introduction}
 
 In quantum computation, the decomposition of unitary operators into
 gates from a fixed universal set is an important problem
-\cite{Nielsen-Chuang}. In this paper we focus on the exact synthesis
-2-qubit Clifford+Controlled-S. Previous work on multi-qubit synthesis
-of Clifford+CS operators or Clifford+T operators mainly focus on
-minimizing the use of CS gate or T gate since they are more expensive
-than Clifford operators in certain scenerio. But works on T gate
-optimization
+\cite{Nielsen-Chuang}. Like the Clifford+T gate set, the
+Clifford+Controlled-S is also universal. We study the exact synthesis
+2-qubit Clifford+Controlled-S (the Controlled-S gate is abbreviated as
+CS). Previous work on two-qubit synthesis of Clifford+CS operators or
+Clifford+T operators mainly focus on minimizing the use of CS gate or
+T gate since they are more expensive than Clifford operators in
+certain scenerio. But works on T gate optimization
 {\cite{Soken2014,AmyTOpt2014,Heyfron_2019,Kissinger2020,debeaudrap2020fast,de_Beaudrap_2020}}
 suggested that the H gate is an ``obstruction'' to their
 T-optimization method. Quoting from \cite{Soken2014} summarizes the
 reason: ``It has been shown that T-depth optimizations can be
 implemented efficiently for circuits consisting only of T and CNOT
 gates and that H gates impede the optimization significantly''.
-
-\iffalse
-The solution is either to only deal with the non-H part
-\cite{AmyTOpt2014}; or replacing H by a Hadamard-gadget (introducing
-one ancillae, one measurement, and one classical control)
-\cite{Heyfron_2019,Kissinger2020,debeaudrap2020fast,de_Beaudrap_2020};
-or to minimize the use of H gate \cite{Soken2014}.
-\fi
 
 We propose a method that produces circuits with a near-minimal number
 of the K (i.e., a scaled H) gates and CS gates, hence alleviate such
@@ -122,47 +111,45 @@ Hadamard and T gates \cite{matsumoto2008,kliuchnikov2013fast,
   giles2013remarks}, an extension of which to multi-qubit case has
 been an open problem.
 
-
-
-
-
 \subsection{Background}
 Consider the following unitary operators:
 \begin{equation*}\label{eqn-generators}
-  i,\quad
-  K = e^{-i\pi/4} H = \frac{1}{1+i}\begin{bmatrix}1&1\\1&-1\end{bmatrix},\quad
-  S = \smatrix{1&0\\0&i},
+  i,\,\,
+  K = \omega^{7} H = \frac{1}{1+i}\begin{bmatrix}1&1\\1&-1\end{bmatrix},\,\,
+  S = \smatrix{1&0\\0&i}, \text{ and}
 \end{equation*}
 \begin{equation*}
   \displaystyle \CZ =
   \smatrix{1&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&-1}.
 \end{equation*}
-Here, $i$ is a scalar, namely the usual complex unit. $H$ is the
-Hadamard gate, and $K$ is a scaled version of the Hadamard gate. $S$
-is sometimes called the \emph{phase gate}, and $\CZ$ is the
+Here, $i$ the complex unit; $\omega = e^{\frac{i\pi}{4}}$ is the 8th
+roof of unity; $H$ is the Hadamard gate, and $K$ is a scaled version
+of H; $S$ is sometimes called the \emph{phase gate}, and $\CZ$ is the
 controlled-$Z$ gate. When closed under multiplication, identities, and
 tensor products, these operators generate the \emph{Clifford group}
 (possibly up to scalars, depending which scalars are included in the
-Clifford group --- for our purposes, the scalars $\pm 1$ and $\pm i$
-are sufficient).
-
+Clifford group; we only include the scalars $\pm 1$ and $\pm i$ in our
+defintion; hence, the above gates generate the Clifford group
+precisely).
 
 Every operator $U$ obtained in this way is of size $2^n\times 2^n$ for
 some natural number $n$, and as usual, we say that $U$ is an operator
-on $n$ qubits. We write $\cCLI(n)$ for the group of $n$-qubit Clifford
-operators (just $\cCLI$ if $n=2$). It is well-known that this group is
-finite for any given $n$ (see, e.g., {\cite{selinger2013generators}}),
-and therefore not universal for quantum computing. We can obtain a
-universal gate set by adding the controlled phase gate
+on $n$ qubits.  It is well-known that the group of $n$-qubit Clifford
+operators is finite for any given $n$ (see, e.g.,
+{\cite{selinger2013generators}}), and therefore not universal for
+quantum computing. We can obtain a universal gate set by adding the
+controlled phase gate
 \begin{equation*}
 \CS = \smatrix{1&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&i}.
 \end{equation*}
 The resulting operators are called the Clifford+$\CS$ operators. Note
-that $\CZ = \CS^2$. The set of 2-qubit Clifford+$\CS$ operators is
-denoted by $\CliffordCS$. The set of 2-qubit Clifford+$\CS$ circuits
-(a circuit is a finite sequence of gates) is denoted by $\cCIR$. Each
-circuit $D \in \cCIR$ implements a unique operator
-$[D] \in \CliffordCS$.
+that $\CZ = \CS^2$. We write $\cCLI$ for the group of $2$-qubit
+Clifford operators; $\CliffordCS$ for the 2-qubit Clifford+$\CS$
+operators; and $\cCIR$ for the set of 2-qubit Clifford+$\CS$ circuits
+(a circuit is a finite sequence of gates). Each circuit $D \in \cCIR$
+implements a unique operator in $\CliffordCS$, denoted by $[D]$. In
+other words, $[\_]$ is the matrix semantic function from $\cCIR$ to
+$\CliffordCS$.
 
 We use the following notations: we write
 $K_0 = K \otimes I , K_1 = I \otimes K$, and similarly for $S_0$ and
@@ -184,56 +171,9 @@ $ Z = S^2, \, X = KZKi, \, \CX = K_1\CZ K_1\cdot i, \,\Ex = \CX \, \XC
   \label{eqn:ck}
   \CK = \CZ \cdot Z_0S_0Z_1S_1K_1\CS K_1S_1\cdot i.
 \end{equation}
-
-
-
 Similar to $\CX$ gate, $\CK_{01}$ is shorted as $\CK$ and $\CK_{10}$
-is shorted as $\KC$. By Equation \ref{eqn:ck}, $\CK \in \CliffordCS$.
-
-\iffalse
-\subsection{Related work --- bak}
-Operator synthesis can be done exactly or approximately. Here we only
-list a few of the close related ones on exact synthesis.
-
-For single-qubit synthesis of Clifford+T operators, works
-\cite{matsumoto2008,kliuchnikov2013fast,giles2013remarks} acheieved
-the minimum use of both Hadamard and T gate. The work
-\cite{Glaudell_2019,Prakash2018} acheieved the minimum use of T gate
-for single-qutrit synthesis of Clifford+T operators. The work \cite
-{Amolak2020} considered the single-qudit synthesis of Clifford+T
-operators.
-
-
-Multi-qubit synthesis of Clifford+T operators is solved by Giles and
-Selinger \cite{GilesSelinger2013} using at most 1 ancillae. The
-algorithm’s worst case gate count is $O\left(3^{2^n} n
-  k\right)$. Later work \cite{kliuchnikov2013} improved the gate count
-to $O\left(4^n n k\right)$. Glaudell et al later solved the exact
-multi-qubit synthesis problem of several subclasses of Clifford+T
-operators \cite{Amy-Glaudell-Ross} such as the class of operators
-generated by $\s{X,\CX,C\CX, H}$, known as the Toffoli+Hadamard
-operators. Amy et al. adapted the method used in
-\cite{kliuchnikov2013} to the Toffoli+Hadamard operators acheiving a
-similar improvement on gate count \cite{amy2023improved}. All the
-works on multi-qubit synthesis introduced so far said nothing about
-T-count, let alone T-optimality.
-
-The only work on multi-qubit synthesis that guaranteed T-optimality or
-CS-optimality is the work on 2-qubit Clifford+T \cite{Li_2023_CT2} and
-the work on 2-qubit Clifford+CS \cite{Glaudell2021} synthesis. The
-first gave an algrithm that is near T-optimal (the worst case uses at
-most 10 times the minimum possible T gates). The later gave an
-algrithm that is CS-optimal. Both used the exceptional isomorphism
-between two Lie groups $S U(4) \cong \operatorname{spin}(6)$. Our work
-is about the CS-optimality and H-optimality of 2-qubit Clifford+CS
-synthesis, but without using this exceptional isomorphism.
-
-The work \cite{Glaudell2024a,Dinh_2025} considered exact synthesis of
-multi-qubit Clifford+Cyclotomic operators. The work
-\cite{Glaudell2024b} considered exact synthesis of multi-qutrit
-Clifford+Cyclotomic operators.
-\fi
-
+is shorted as $\KC$. Note that by Equation \ref{eqn:ck},
+$\CK \in \CliffordCS$.
 
 \subsection{Related work}
 
@@ -256,57 +196,56 @@ several gate sets under one theory.
 
 \subsubsection{Two-qubit}
 
-We list two works on two-qubit synthesis that guaranteed
-$T$-optimality or $CS$-optimality: 2-qubit Clifford+$T$ synthesis
-\cite{Li_2023_CT2} and the work on 2-qubit Clifford+$CS$ synthesis
-\cite{Glaudell2021} synthesis. The first gave an algorithm that is
-near $T$-optimal (the worst case uses at most 10 times the minimum
-possible $T$ gates). The latter gave an algorithm that is
-$CS$-optimal; they didn't mention the H-count, but we can deduce from
-their work that their H-count enjoys the same property as our method:
-the K-count is at most 2 times worse then optimal. Glaudell et
-al.~\cite{GlaudellJarret2026} later gave a high-performance exact
-synthesis framework for two-qubit Clifford+$T$ circuits that optimizes
-$T$-count exactly, using meet-in-the-middle with algebraic
-canonicalization and lookup tables. The above 3 works depends on the
-exceptional isomorphism between two Lie groups
-$S U(4) \cong \operatorname{spin}(6)$. Our work is about the
-$CS$-optimality and $H$-optimality of 2-qubit Clifford+$CS$ synthesis,
-but without using this exceptional isomorphism. Our work use the
-similar ``residue'' analysis method as in Russell \cite{russell2014},
-but over a simpler ring $\Z[\tfrac{1}{2}, i]$ contained in their ring
+Two works on two-qubit synthesis have guaranteed $T$-optimality or
+$CS$-optimality: 2-qubit Clifford+$T$ synthesis \cite{Li_2023_CT2} and
+2-qubit Clifford+$CS$ synthesis \cite{Glaudell2021}. The first gave an
+algorithm that is near $T$-optimal (the worst case uses at most 10
+times the minimum possible $T$ gates). The latter gave an algorithm
+that is $CS$-optimal. Both haven't considered the H-count
+optimization, but we can deduce, for the latter work, that their
+H-count enjoys the same property as ours: the K-count is at most 2
+times the optimal. Glaudell et al.~\cite{GlaudellJarret2026} later
+gave a high-performance exact synthesis framework for two-qubit
+Clifford+$T$ circuits that optimizes $T$-count exactly, using
+meet-in-the-middle with algebraic canonicalization and lookup
+tables. The above 3 works depends on the exceptional isomorphism
+between two Lie groups $S U(4) \cong \operatorname{spin}(6)$. Our work
+is about the $CS$-optimality and $H$-optimality of 2-qubit
+Clifford+$CS$ synthesis, but without using this exceptional
+isomorphism. Our work use the similar ``residue'' analysis method as
+in Russell \cite{russell2014}, but over a simpler ring
+$\Z[\tfrac{1}{2}, i]$ contained in their ring
 $\Z[\frac{1}{\sqrt 2}, i]$. Given a unitary U, Russell's method output
 circuit of gate count $O(k)$, where $k$ is the least natural number
 such that entries of $(1+\omega) ^ k U$ are in the ring $\Z[\omega]$.
 
 \subsubsection{Multi-qubit and multi-qutrit}
 
-Multi-qubit synthesis of Clifford+$T$ operators is solved by Giles and
-Selinger \cite{GilesSelinger2013} using at most 1 ancilla. The
-algorithm's worst case gate count is $O\left(3^{2^n} n
-  k\right)$. Later work \cite{kliuchnikov2013} improved the gate count
-to $O\left(4^n n k\right)$. Glaudell et al.\ later solved the exact
-multi-qubit synthesis problem of several subclasses of Clifford+$T$
-operators \cite{Amy-Glaudell-Ross} such as the class of operators
-generated by $\s{X,\CX,C\CX, H}$, known as the Toffoli+Hadamard
-operators. Amy et al.\ adapted the method used in
-\cite{kliuchnikov2013} to the Toffoli+Hadamard operators achieving a
-similar improvement on gate count \cite{amy2023improved}. All the
-works on multi-qubit synthesis introduced so far said nothing about
-$T$-count, let alone $T$-optimality. Kliuchnikov and
-Sch\"onnenbeck~\cite{KliuchnikovSchonnenbeck2024} recently developed
-new optimal and heuristic algorithms for multi-qubit exact synthesis
-using $A^*$ search instantiated with Hermitian lattice theory over
-number fields, achieving runtime proportional to the $T$-count for
-two-qubit circuits. The work \cite{Glaudell2024a,Dinh_2025} considered
-exact synthesis of multi-qubit Clifford+Cyclotomic operators. The work
+Multi-qubit synthesis of Clifford+$T$ operators is proposed by Giles
+and Selinger \cite{GilesSelinger2013}. The algorithm's worst case gate
+count is $O\left(3^{2^n} n k\right)$. Later work
+\cite{kliuchnikov2013} improved the gate count to
+$O\left(4^n n k\right)$. Glaudell et al.\ later gave the exact
+multi-qubit synthesis of several subclasses of Clifford+$T$ operators
+\cite{Amy-Glaudell-Ross} such as the class of operators generated by
+$\s{X,\CX,C\CX, H}$, known as the Toffoli+Hadamard operators. Amy et
+al.\ adapted the method used in \cite{kliuchnikov2013} to the
+Toffoli+Hadamard operators achieving a similar improvement on gate
+count \cite{amy2023improved}. All the works on multi-qubit synthesis
+introduced so far haven't considered $T$-count optimality. Kliuchnikov
+and Sch\"onnenbeck~\cite{KliuchnikovSchonnenbeck2024} recently
+developed a optimal search algorithm for multi-qubit exact synthesis
+using $A^*$ search. In particular, for two-qubit circuits, the runtime
+is proportional to the $T$-count. The work
+\cite{Glaudell2024a,Dinh_2025} considered exact synthesis of
+multi-qubit Clifford+Cyclotomic operators. The work
 \cite{Glaudell2024b,Amolak2024} considered exact synthesis of
 multi-qutrit Clifford+Cyclotomic operators. The work
-\cite{glaudell-metaplectic} proved ``qutrit metaplectic gates are a
-subset of Clifford+T''. The works
+\cite{glaudell-metaplectic} proved that qutrit metaplectic gates are a
+subset of Clifford+T. The works
 \cite{Mosca2020,Gheorghiu2021,Gheorghiu2021b,Mukhopadhyay2024,Mukhopadhyay2024b}
-proposed heuristic algorithms that acheive some kinds of non-Clifford
-gate optimality.
+proposed heuristic algorithms that acheive kinds of non-Clifford gate
+optimality.
 
 % ----------------------------------------------------------------------
 \section{Some algebra}
@@ -335,11 +274,10 @@ other. Using Euclidean division, it is further easy to check that
 \text{and}\quad
 \zi /(\gamma^3) = \{\pm 1,\pm i, 0, 1+i, 1- i, 2\}.
 \]
-
 Note that the above is a slight abuse of notation. Normally,
 $\zi/(\gamma)$ denotes the quotient ring of $\zi$ modulo the ideal
 $(\gamma)$ whose elements are residues nomrally denoted by
-$x\, \text{mod} (\gamma)$ for any $x \in \zi$. Here we omit the
+$x\, \text{mod} (\gamma)$ for $x \in \zi$. Here we omit the
 $\mod (\gamma)$ for simlicity. Note that $\{0,1\}$ etc. are complete
 sets of residue classes and also the reminders from the Euclidean
 division of $x$ divided by $\gamma$.
@@ -347,16 +285,16 @@ division of $x$ divided by $\gamma$.
 
 Let $\D=\Z[\frac{1}{2}]=\s{\frac{a}{2^k}\mid a\in\Z, k\in\N}$ be the
 ring of {\em dyadic fractions}, i.e., fractions whose denominator is a
-power of 2. Consider $\D[i] = \s{r+si \mid r, s \in
-  \D} = \Z[\frac{1}{2},i]$.  For every $t \in \di$, there exists some
-natural number $k$ such that $\gamma^kt \in \zi$. This motivates the
-following definition.
+power of 2. Consider the ring
+$\D[i] = \s{r+si \mid r, s \in \D} = \Z[\frac{1}{2},i]$.  For every
+$t \in \di$, there exists some natural number $k$ such that
+$\gamma^kt \in \zi$. This motivates the following definition.
 
 \begin{definition}
   Let $t \in \di$. A natural number $k \in \N$ is called a
   \emph{denominator exponent} for $t$ if $\gamma^{k} t \in \Z[i]$. The
   least such $k$ is called the \emph{least denominator exponent} of
-  $t$, denoted by $\ldeg t$. Equivalently, the least denominator
+  $t$, denoted by $\lde t$. Equivalently, the least denominator
   exponent of $t$ is the smallest $k\in \N$ such that $t$ can be
   written in the form $\frac{s}{\gamma^k}$, where $s \in \Z[i]$.
 
@@ -398,9 +336,9 @@ $k$ in and some rewrite gives
 
 For simplicity, we omit the $\text{ mod } (\gamma^n)$ in
 $\sum_{i=0}^{n-1} b_i \gamma^i \text{ mod } (\gamma^n) $. Since
-$b_i \in \s{0,1}$, we write binary string $(b_0b_1...)_2$ for the
+$b_i \in \s{0,1}$, we then write binary string $(b_0b_1...)_2$ for the
 summation, and the parenthesis and subscript $_2$ can be omitted if we
-can infer that $b_0b_1...$ are residues in binary format from the
+can infer that $b_0b_1...$ is a residue in binary format from the
 context.
 
 Moreover, residue classes are distinct, i.e. if $b_0b_1...b_{n-1}$ and
@@ -418,13 +356,13 @@ dividing both side by $\gamma$ give
 Then modding $(\gamma)$ on both side agian gives $b_1 = b'_1$. Repeat
 this process proves $b_i= b'_i$.
 
-We write $\rho_n(x)$ for the binary residue $ x \Mod{\gamma^n}$. From
-the proof, we see $\rho_n(x)$ is ``stable'' w.r.t increase of $n$,
-i.e., the first $n$ digits of $\rho_{n+1}(x)$ is $\rho_{n}(x)$. Also
-$\rho_2$ is ``stable'' under taking complex conjugation, i.e.,
-$\rho_2(x{\da}) = \rho_2(x)$.
+We write $\rho_n(x)$ for the cannonical projection from $\Z[i]$ to
+n-digit residues. From the proof, we see $\rho_n(x)$ is ``stable''
+w.r.t increase of $n$, i.e., the first $n$ digits of $\rho_{n+1}(x)$
+is $\rho_{n}(x)$. Note that $\rho_2$ is ``stable'' under taking
+complex conjugation, i.e., $\rho_2(x{\da}) = \rho_2(x)$.
 
-We sometimes also write $x \equiv_{\gamma^n} y$ as an abbreviation for
+We sometimes write $x \equiv_{\gamma^n} y$ as an abbreviation for
 $x \equiv y \text{ mod } {\gamma^n}$.  Modulo $\gamma^3$, we have
 \[
 \begin{array}{c|c|c|c|c|c|c|c}
@@ -436,12 +374,12 @@ $x \equiv y \text{ mod } {\gamma^n}$.  Modulo $\gamma^3$, we have
 \]
 
 
-The $\Mod{\gamma ^ n}$ residue classes form a commutative ring and
-there is a canonical ring homomorphism from $\zi$. In particular,
-modulo $\gamma^2$, the addition of the ring coincides with the bitwise
-exclusive or (denoted by $\oplus$) operation; $(10)_2$ is the ring
-identity; $(00)_2$ the zero of the ring; multiplication by $(01)_2$ is
-the right shift operation; by distributivity
+The $\Mod{\gamma ^ n}$ residue classes, as the quotient ring, is a
+commutative ring. In particular, modulo $\gamma^2$, the addition of
+the ring coincides with the bitwise exclusive or (denoted by $\oplus$)
+operation; $(10)_2$ is the ring identity; $(00)_2$ the zero of the
+ring; multiplication by $(01)_2$ is the right shift operation; by
+distributivity
 $11 \cdot b_0b_1 = 10 \cdot b_0b_1 + 01 \cdot b_0b_1 = b_0(b_1\oplus
 b_0)$. Note that since $\rho_{2}(i) = 11$, if $\rho_1(x)=1$, then
 either $\rho_2(x) = 10$ or $\rho_2(ix) = 10$. Similarly, modulo
@@ -513,36 +451,24 @@ matrix $A$, $\rho_n^k(A)$ is defined entry-wise.
 
 \begin{lemma}
   For any $x \in \D[i]$ with denominator exponent $k$,
-  $\rho_2^k(\bar{x}) = \rho_2^k(x)$, where $\bar{\cdot}$ is the
-  complex conjugation.
+  $\rho_2^k(x^\dagger) = \rho_2^k(x)$ and
+  $\rho_3^k(x^\dagger) = \rho_2^k(x) + 001$.
 \end{lemma}
-
-
-\begin{lemma} \label{lem:rho-AB} For $A$ a matrix with lde $k$,
-  $B$ another matrix of proper size with lde $0$, then
-  $\rho_n^k(AB) = \rho_n^k(A) \rho_n^{0}(B)$ and
-  $\rho_n^k(BA) = \rho_n^{0}(B)\rho_n^k(A)$.
-\end{lemma}
-This is because $\rho_n^k(\cdot)$ is a ring homomorphism and matrix
-multiplication only involves ring operations on matrix entries.
-
 
 
 \subsection{Action on residues}
  
 Suppose $\rho_2(x) = b_0b_1$, then $\rho_2(ix) = b_0(b_1\oplus
 b_0)$. We say $i$ acts on $b_0b_1$ by sending it to
-$b_0(b_1\oplus b_0)$.
-
-
-Given an $n$ residue $b_0b_1...b_{n-1}$, a right shift of it is an
-$n+1$ residue $0b_0b_1...b_{n-1}$. Given an $n+1$ residue
-$0b_0b_1...b_{n-1}$, a left shift is $b_0b_1...b_n$. Note that we
-choose to only allow ``well-defined'' shifts in the sense no
-information is lost and no unknown is introduced. Note that the usual
-right shift is used previously when explaining the multiplication of
-$\Z[i]/(\gamma^2)$ and $\Z[i]/(\gamma^3)$. We use $\LS(x)$ for the
-left shift of $x$ and $\RS$ for the right shift.
+$b_0(b_1\oplus b_0)$. Given an $n$ residue
+$b_0b_1...b_{n-1}$, a right shift of it is an $n+1$ residue
+$0b_0b_1...b_{n-1}$. Given an $n+1$ residue $0b_0b_1...b_{n-1}$, a
+left shift is $b_0b_1...b_n$. Note that we choose to only allow
+``well-defined'' shifts in the sense no information is lost and no
+unknown is introduced. Note that the usual right shift is used
+previously when explaining the multiplication of $\Z[i]/(\gamma^2)$
+and $\Z[i]/(\gamma^3)$. We use $\LS(x)$ for the left shift of $x$ and
+$\RS$ for the right shift.
 
 
 \begin{lemma} \label{lem:right-shift} For $t\in \di$, $k$ a
@@ -697,16 +623,20 @@ of lenght at most $3$, see Table \ref{perm24}.
 \end{table}
 
 \subsection{Diagonal unitary matrices}
-The only diagonal unitary matrices with entries in $\D[i]$ (and $\Z[i])$ are of the form
+The only diagonal unitary matrices with entries in $\D[i]$ (and
+$\Z[i])$ are of the form
 \[
   \text{diag}(i^a,i^b,i^c,i^d), \text{ where } a,b,c,d \in \s{0,1,2,3}.
 \]
 They can all be implemented by Clifford+CS circuits with length of at
-most $6$ upto a global phase $i^k$, using at most $1$ $\CS$ gate. This because
-\[Z_0^{b_0}Z_1^{b_1}S_0^{b_2}S_1^{b_3}\CZ^{b_4}\CS^{b_5}\cdot i ^ k,
-  b_i \in \s{0,1}, k \in \s{0,1,2,3}.\] are all distinct and diagonal,
-and it is of cardinality $4^4$ which equals to the cardinality of the
-set of diagonal unitary matices.
+most $6$ upto a global phase $i^k$, using at most $1$ $\CS$ gate. This
+because
+\[
+  Z_0^{b_0}Z_1^{b_1}S_0^{b_2}S_1^{b_3}\CZ^{b_4}\CS^{b_5}\cdot i ^ k,
+  b_i \in \s{0,1}, k \in \s{0,1,2,3},
+\]
+are all distinct and diagonal, and it is of cardinality $4^4$ which
+equals to the cardinality of the set of diagonal unitary matices.
 
 \subsection{Generalized permutation unitary matrices}
 \label{ssec:gp}
@@ -717,8 +647,17 @@ exactly one nonzero entry in each row and each column), but the
 nonzero entry can be any number of unit length, i.e, powers of $i$. We
 will call such a matrix a generalized permutation. It is easy to see
 each $4 \times 4$ generalized permutation is product of a permutation
-matrix and a diagonal matrix, hence can be implemented by a circuit of
-lenght at most $9$ containing at most $1$ CS gate, and no K gate.
+matrix and a diagonal unitary matrix, hence can be implemented by a
+circuit of lenght at most $9$ containing at most $1$ CS gate, and no K
+gate. Also the group of generalied permutation is semi-direct product
+of the group of permutations and the group of diagonal unitaries. Then
+in particular, for any permuation matrix $P$ and diagonal matrix $D$,
+there exists $D'$ such that
+\[
+  PD = D'P
+\]
+and the CS-count (see Definition \ref{def:count}) of $D$ and $D'$ are
+the same.
 
 
 % ----------------------------------------------------------------------
@@ -727,16 +666,16 @@ The method used is similar to the work of Russell \cite{russell2014}
 for the ring $\Z[\frac{1}{\sqrt 2}, i]$ which is more complicated than
 and contains the ring here $\Z[\tfrac{1}{2}, i]$. Such residue
 analysis method is widely used in exact synthesis, e.g., in
-\cite{giles2013remarks,GilesSelinger2013,Glaudell2021,Li_2023_CT2,amy2023improved}. Note
+{\cite{giles2013remarks,GilesSelinger2013,Glaudell2021,Li_2023_CT2,amy2023improved}}. Note
 that, comparing to the ad hoc use of residues in each work, we have
 given in Section \ref{sec:algebra} a uniform way of dealing with
-residue of different rings using binnary residues, which, we
+residues of different rings using binary residues, which, we
 conjecture, works for any $\xi$-ring proposed in
 \cite{KliuchnikovSchonnenbeck2024}.
 
 We start with the main theorem.
 
-\subsection{Main theorems}
+\subsection{Main theorem}
 
 \begin{theorem}\label{thm:main}
   For any $A \in U(\D[i])$ with lde $k$, there exists a circuit $C$
@@ -745,13 +684,14 @@ We start with the main theorem.
 \end{theorem}
 
 
-Note that the proof (given later) is constructive, so it gives an
-algorithm for computing such circuit.
+The proof, given later, is constructive, so it gives an algorithm for
+computing such circuit.
 
 \subsection{Optimality}
 
-\begin{definition} \label{def:kc} Let $D$ be a Clifford+CS
-  circuit. Let $\sem{D}$ be the unitary operator it implements. Define
+\begin{definition} \label{def:count} Let $D$ be a Clifford+CS
+  circuit. Recall that $\sem{D}$ is the unitary operator it
+  implements. Define
   \begin{itemize}
   \item $\rkc(D)=$ the number of K gate that appears in D.
   \item
@@ -765,30 +705,30 @@ algorithm for computing such circuit.
   \item
     $\len(D)= \min \s{\rlen(C)\,|\,C \in \cCIR \text{ and } \sem{C} =
       \sem{D}}.$
+  \item by abuse of notation, $\cs, \kc,\len$ are also defined on
+    operators that are implementable by circuits.
   \end{itemize}
   We say D is K-optimal, CS-optimal, and shortest if
   $\rkc(D) = \kc(D)$, $\rcs(D) = \cs(D)$, and $\rlen(D) = \len(D)$
-  repectively. We call $\rkc(D)$ and $\rcs(D)$ the K-count and
-  CS-count of D repectively, and $\kc(D)$, $\cs(D)$ the optimal
+  repectively. We call $\rkc(D)$ and $\rcs(D)$ the (raw) K-count and
+  (raw) CS-count of D repectively, and $\kc(D)$, $\cs(D)$ the optimal
   K-count and the optimal CS-count of D respectively.
 \end{definition}
 
 \begin{remark}
   Note that this calling differs with the other convention in
-  e.g. \cite{GKMR}, where they would call, e.g. $\cs(D)$ the CS-count
+  e.g. \cite{GKMR}, where they would call, e.g., $\cs(D)$ the CS-count
   of D. In other words, the other convention has no definition for
   ``raw'' K-count (rkc) or CS-count (rcs), and the ``count'' they have
   is only optimal.
 \end{remark}
 
 
-Any Clifford+CS circuit $D$ is an alternating sequence of Clifford part
-$C_i$ and a $\CS$ gate
-
+Any Clifford+CS circuit $D$ is an alternating sequence of Clifford
+parts $C_i$ and a $\CS$ gate
 \begin{equation} \label{eq:ccs}
   D = C_0 \cdot \CS \cdot C_1 \cdot \CS \cdot \ldots \cdot C_n.
 \end{equation}
-
 By enumerating all 2-qubit Clifford circuit, we know $C_i$ is
 implementable by at most 2 K gate and $\lde{C_i} \le 2$. By
 subadditivity of lde, we have
@@ -797,14 +737,14 @@ $\lde{D} \le \lde{C_0} + \lde{\CS} + \lde{C_1} \ldots \lde{C_n} \le
 \[
   \lde{D} \le 2(\cs(D) + 1).
 \]
-Suppose \ref{eq:ccs} is CS-optimal, i.e., $\cs(D) = n$, We have
-$\rkc(D) \le 2\cs(D) + 1)$ which implies
+Suppose \ref{eq:ccs} is CS-optimal, i.e., $\cs(D) = n$, we have
+$\rkc(D) \le 2(\cs(D) + 1)$ which implies
 \[
   \kc(D) \le 2(\cs(D) + 1).
 \]
 
 Any Clifford+CS circuit $D$ is also an alternating sequence of
-generalized permutation part $P_i$ and a $K_1$ gate (by replacing all
+generalized permutation parts $P_i$ and a $K_1$ gate (by replacing all
 appearences of $K_0$ by $Ex \cdot K_1 \cdot Ex$):
 \begin{equation} \label{eq:ccs-k}
   D = P_0 \cdot K_1 \cdot P_1 \cdot K_1 \cdot \ldots \cdot P_n.
@@ -825,22 +765,26 @@ inequalities, implies
 \begin{equation}
   \lde{D} \le \kc(D) \le 2\lde{D}
 \end{equation}
-\begin{equation} \label{eq:csi}
-\lde{D} / 2 - 1 \le  \cs(D) \le 2\lde{D} + 2
+\begin{equation}
+  \label{eq:csi}
+  \kc(D) / 2 - 1 \le \cs(D) \le
+  2\lde{D} + 1
 \end{equation}
-From above equation, our synthesis algorithm is at most 2 times worse
-than the optimal K-count, and at most 4 times worse than the optimal
-CS-count (experiments show it always acheives the optimal CS-count,
-and better K-count than best-known, see Section \ref{sec:exp}). Note
-that Inequality \ref{eq:csi} is similar to Propsition 6 in
-\cite{Glaudell2021} but slightly tigher.
+From above inequalities, our synthesis algorithm is at worst 2 times
+the optimal K-count, and at worst 4 times the optimal CS-count
+(experiments show it always acheives the optimal CS-count, and better
+K-count than best-known, see Section \ref{sec:exp}). Note that
+Inequality \ref{eq:csi} is similar to Propsition 6 of
+\cite{Glaudell2021}, but slightly tigther.
 
 
-\subsubsection{K optimality of Glaudell et al's algorithm
-  \cite{Glaudell2021}}
-The work of Glaudell et al. didn't consider the K-count at all, but we
-can derive from their CS optimality that for a unitary A,
-\[\cs(A) \le \kc(A) \le 2 \cs(A) + 2.\]
+\subsubsection{K optimality of Glaudell et al's algorithm}
+The work of Glaudell et al. \cite{Glaudell2021} didn't consider the
+K-count at all, but we can derive from their CS optimality that for a
+unitary A,
+\[
+  \cs(A) \le \kc(A) \le 2 \cs(A) + 2.
+\]
 This is because the output of their algorithm is of the form Equation
 \ref{eq:ccs} with the CS-count being optimal and the Clifford in
 between CS gate has K-count 1 or 2. Take a $C_i$ that is in between CS
@@ -854,29 +798,30 @@ diagonals together form. We can show $\kc(E) \le 2$ by enumerating all
 two-qubit Cliffords.
 
 So Glaudell et al's algorithm enjoys the same property as ours: the
-K-count is at most 2 times worse then optimal.
+K-count is at most 2 times worse than optimal.
 
 \begin{remark}
   Note that exmperiments show that most of the case $\lde{A} < \cs(A)$
   for random generated A. So our bound $\kc(A) \le 2 \lde{A}$ is
-  strictly better in practice, and indeed experiments show that our
-  method always acheives better K-count.
+  strictly better in practice.
 \end{remark}
 
 \subsection{Complexity}
-The time complexity is $O(\lde U)$. 
-
+Since we only need finite many (not depending on the lde; proved
+later) operations to decrease the lde by 1, and the unitaries with lde
+0 are generalized permutations, the time complexity is $O(\lde U)$ for
+any input $U \in \CliffordCS$.
 
 \subsection{Lemmas and proofs}
 
 We start with a number of lemmas. Since $\zi$ and $\di$ are subrings
 of $\C$, the usual properties of complex numbers, complex vectors, and
-complex matrices, such as complex conjugation (denoted by
-$\bar{\cdot}$), inner product, norm, and conjugate transposition
-(denoted by ${\cdot}\da$) are naturally inherited.  For example, for a
-vector $v \in \di^n$, the \emph{norm} of $v$ is
-$\|v\|= \sqrt {v^{\dagger}v}$, where $v^{\dagger}$ is the conjugate
-transpose of $v$. Note that $\|v\|^2 = v^{\dagger}v \in \D$, since
+complex matrices, such as complex conjugation (denoted by $\_\da$),
+inner product, norm, transpostion (denoted by $\_^T$), and conjugate
+transposition (also denoted by $\_\da$) are naturally inherited.  For
+example, for a vector $v \in \di^n$, the \emph{norm} of $v$ is
+$\|v\|= \sqrt {v^{\dagger}v}$. Note that
+$\|v\|^2 = v^{\dagger}v \in \D$, since
 $v^{\dagger}v \in \D[i] \cap \R$. Similarly if $v\in \zi$, then
 $v^{\dagger}v \in \Z$.  A {\em unit vector} is a vector of norm 1.
 
@@ -887,7 +832,7 @@ entries are numbered starting from $j=0$.
 
 \begin{lemma}\label{lem:main}
   For any $A \in U(\D[i])$ with lde $k$, there exists permutation
-  matrix $L$ and $R$ such that, $\rho_1^k(LAR)$ or $\rho_1^k((LAR)^T)$
+  matrix $L$ and $R$ such that, $\rho_1^k(LAR)$ or $\rho_1^k(LAR)^T$
   equals one of the following
 \[
   (i)\begin{bmatrix}
@@ -937,47 +882,46 @@ and (vi) only if $\lde{A}>1$.
 
 Before proving this lemma, we prove serveral useful lemmas.
 
-\begin{lemma} \label{lem:v1} Let $v$ be a unit vector in $\D[i]^4$
-  with lde $k>0$ then there exists a generalized unitary permutation
-  matrix $Q$ such that $\rho_1^k(Qv)$ equals $(1,1,0,0)^T$ or
-  $(1,1,1,1)^T$. Moreover if $k>1$ there exists a generalized unitary
-  permutation matrix $Q$ such that $\rho_2^k(Qv)$ equals to
-  $(10,10,01,00)^T$ or $(10,10,10,10)^T$, and if $k=1$, $\rho_2^1(Qv)$
-  equals to $(10,10,00,00)^T$.
+\begin{lemma} \label{lem:uvec} Let $v$ be a unit vector in $\D[i]^4$
+  with lde $k>0$. There exists a generalized unitary permutation
+  matrix $P$ such that $\rho_1^k(Pv)= (1,1,0,0)^T$ or $(1,1,1,1)^T$,
+  $\rho_2^k(Pv) =(10,10,01,00)^T$ or $(10,10,10,10)^T$ provided $k>1$,
+  and $\rho_2^1(Pv) = (10,10,00,00)^T$ provided if $k=1$.
 \end{lemma}
 
 \begin{proof}
   Let $w=\gamma^k v \in \zi^4$. We first show $w$ has an even number
   of odd entries.  We have
   \[
-    \sum_{\jay=0}^{3} \|w_\jay\|^2 = \norm{w} = |\gamma|^{2k}\norm{v}
-    = (\gamma\gamma^{\dagger})^k\equiv 0 \Mod{\gamma}.
+    \sum_{\jay=0}^{3} \|w_\jay\|^2 = \norm{w}^2 =
+    |\gamma|^{2k}\norm{v}^2 = (\gamma^{\dagger}\gamma)^k\equiv 0
+    \Mod{\gamma}.
   \]
   Therefore, there are an even number of $\jay \in \{0,...,3\}$ such
   that $\|w_\jay\|^2$ is odd. It follows by
   Lemma~\ref{lem:parity-dagger-norm} that an even number of $w_\jay$
   are odd.
 
-  We can find a permutation matrix $P$ such that
+  Then we can find a permutation matrix $P$ such that
   $\rho_2^k(Pv)= (1a,1b,0c,0d)^T$ or $(1a,1b,1c,1d)^T$. For the later,
-  by muliplying a diagonal matrix, i.e., multiplying $i$ to the
+  by multiplying a diagonal matrix, i.e., multiplying $i$ to the
   required entries, we can make the second digit all zero, i.e.,
   $(10,10,10,10)^T$.
 
   For the former, by muliplying a diagonal matrix, we can make second
   digit of the odd entries zero, i.e., $(10,10,0c,0d)^T$. Now applying
-  $K$ to the pair of odd entries we get $(00,01,0c,0d)^T$ or
-  $(01,00,0c,0d)^T$. Note that multiplication of $v$ and a unitary is
-  still a uinit vector, so is applying $K$ to the pair of odd
-  entries. So $(01,00,0c,0d)^T$ or $(00,01,0c,0d)^T$ is a residue of a
-  unit vector with lde $k-1$, then its one-digit $k-1$ residue must of
-  the form $(1,1,0,0)^T$ upto a permutation, that is $c=1$ and $d=0$
-  upto a permutation.
+  $\CK$ (equivalently applying $K$ to the pair of odd entries) to it,
+  we get $(00,01,0c,0d)^T$ or $(01,00,0c,0d)^T$. Note that
+  multiplication of a unitary and a unit vector is still a uinit
+  vector, so is applying $\CK$. So $(01,00,0c,0d)^T$ or
+  $(00,01,0c,0d)^T$ is a residue of a unit vector with lde $k-1$, then
+  its one-digit $k-1$ residue must of the form $(1,1,0,0)^T$ upto a
+  permutation if $k>1$, that is $c=1$ and $d=0$ upto a permutation.
 
   If $k=1$, the only unit vectors are
-  $\frac{1}{\gamma}(i^l,i^m,0,0)^T$ upto a permutation.
+  $\frac{1}{\gamma}(i^l,i^m,0,0)^T$ for $l,m \in \s{0,1,2,3}$ upto a
+  permutation.
 \end{proof}
-
 
 
 \begin{lemma} \label{lem:v2} Let $u,v$ be two unit vectors in
@@ -1019,7 +963,7 @@ Before proving this lemma, we prove serveral useful lemmas.
 \end{lemma}
 
 \begin{proof}
-  By Lemma \ref{lem:v1}, there can be only even number of 1s in each
+  By Lemma \ref{lem:uvec}, there can be only even number of 1s in each
   column. The only missing case is
   \[
   \begin{bmatrix}
@@ -1038,8 +982,8 @@ is 1 must be even.
 
 \begin{proof}[Proof of Lemma \ref{lem:main}]
   Since the rows and columns of a unitary matrix are unit vectors and
-  all row(column) vectors are perpendicular to each other. Lemma
-  \ref{lem:v1} and \ref{lem:v2} forces the pattern to be (ii) - (vi)
+  all row (column) vectors are perpendicular to each other. Lemma
+  \ref{lem:uvec} and \ref{lem:v2} forces the pattern to be (ii) - (vi)
   if $k>0$. If $k=0$, the only unitaries with lde 0 are the
   generalized permutations which has pattern (i). If $k=1$, the only
   unit vectors are $\frac{1}{\gamma}(i^l,i^m,0,0)^T$ upto a
@@ -1047,11 +991,9 @@ is 1 must be even.
   (iv), (v), and (vi) only happens if the lde $>1$.
 \end{proof}
 
-
-
 \begin{lemma}\label{lem:main2}
-  For any $A \in U(\D[i])$ with lde $k>0$, there exist generalized
-  permutations $L,R,L',R'$ such that
+  For any $A \in \CliffordCS$ with lde $k>0$, there exist generalized
+  permutations $L,R,L',R'$ such that one of the following holds:
   \begin{itemize}
   \item $\lde{K_1LAR} \le k-1$;
   \item or $\lde{LARK_1}\le k-1$;
@@ -1065,7 +1007,7 @@ The proof proceeds by a case distinction over $\rho_1^k(A)$. Note that
 requiring $k>0$ eliminates Case i. So start with Case ii.
 
 \subsubsection{Case ii}
-If $k>1$, by Lemma \ref{lem:v1}, upto multilying generalized
+If $k>1$, by Lemma \ref{lem:uvec}, upto multilying generalized
 permutations on the left and right, $\pat(A)$ refines to
 \[
   \begin{bmatrix}
@@ -1075,12 +1017,12 @@ permutations on the left and right, $\pat(A)$ refines to
     00 & 0\bar{c} & 0f & 0g
   \end{bmatrix},
 \]
-where $\bar{b}=b\oplus 1$ and $b,c,d,e,f,g$ are indeterminates. We
+where $\bar{b}=b\oplus 1$ and $b,c,d,e,f,g$ are indeterminates (later
+we use indeterminates in a residue matrix without declaring them). We
 claim $a=0,b=c=1$. Taking inner product of the first two cloumn gives
-\[10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.\]
-Taking inner product of the second and third row gives
-\[01 + 0c + 00 + 00 = 00 \Rightarrow c = 1.\] Similarly, we have
-$b = 1$. Now pat(A) refines to
+\[10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.\] Taking inner product of
+the second and third row gives $c = 1$; similarly, we have $b =
+1$. Now pat(A) refines to
 \[
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
@@ -1090,7 +1032,8 @@ $b = 1$. Now pat(A) refines to
   \end{bmatrix}.
 \]
 Moreover, since $k>1$ and the third and fourth row (column) is of lde
-$k-1>0$, $d=f$, $d=e$, $e=g$, i.e., $d=e=f=g$. Now pat(A) refines to
+$k-1>0$, so $d=f$, $d=e$, $e=g$ by Lemma \ref{lem:uvec}. So
+$d=e=f=g$. Now pat(A) refines to
 \[
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
@@ -1099,7 +1042,7 @@ $k-1>0$, $d=f$, $d=e$, $e=g$, i.e., $d=e=f=g$. Now pat(A) refines to
     00 & 00 & 0d & 0d
   \end{bmatrix}.
 \]
-Applying $K_1 \cdot S_1$ on the left gives Case iv.
+Applying $K_1 S_1$ on the left gives Case iv.
 
 If $k=1$, upto multilying generalized permutations on the left and
 right, $\pat(A)$ refines to
@@ -1124,7 +1067,7 @@ decreases the lde.
 \end{remark}
 
 \subsubsection{Case iii}
-If $k>1$, by Lemma \ref{lem:v1}, upto multilying generalized
+If $k>1$, by Lemma \ref{lem:uvec}, upto multilying generalized
 permutations on the left and right, pat(A) refines to
 \[
   \begin{bmatrix}
@@ -1134,11 +1077,9 @@ permutations on the left and right, pat(A) refines to
     00 & 0\bar{c} & 10 & 1d
   \end{bmatrix},
 \]
-Taking inner product of the first two cloumn gives
-\[10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.\] Similarly $d=0$.  Taking
-inner product of the second and third row gives
-\[01 + 0c + 0b + 0\bar{b} = 00 \Rightarrow c = 0.\] Similary, we have
-$b = 0$. pat(A) refines to
+Taking inner product of the first two cloumn gives $a = 0$.  Taking
+inner product of the second and third row gives $c = 0$; similary, we
+have $b = 0$. Now pat(A) refines to
 \[
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
@@ -1149,20 +1090,7 @@ $b = 0$. pat(A) refines to
 \]
 Applying $K_1S_1$ on the left bring us to Case vi.
 
-\iffalse
-, moreover, precisely
-with residue
-\[
-  \begin{bmatrix}
-    1a & 1b & 1c & 1d\\
-    1\bar{a} & 1\bar{b} & 1c & 1d\\
-    1e & 1f & 1g & 1h\\
-    1e & 1f & 1\bar{g} & 1\bar{h}
-  \end{bmatrix}.
-\]
-\fi
-
-If $k=1$. By Lemma \ref{lem:v1}, upto multilying generalized
+If $k=1$. By Lemma \ref{lem:uvec}, upto multilying generalized
 permutations on the left and right, pat(A) refines to
 \[
   \begin{bmatrix}
@@ -1176,7 +1104,7 @@ As before, we have $a=0,d=0$. Applying $K_1$ on the left decrease the
 lde.
 
 \subsubsection{Case iv}
-This case only happens for $k>1$. By Lemma \ref{lem:v1}, upto
+This case only happens for $k>1$. By Lemma \ref{lem:uvec}, upto
 multilying generalized permutations on the left and right, pat(A)
 refines to
 \[
@@ -1187,10 +1115,9 @@ refines to
     00 & 0\bar{d} & 0\bar{e} & 0\bar{f}
   \end{bmatrix}.
 \]
-Taking inner product of the first two cloumn gives
-\[10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.\] Similarly we have
-$b=c=0$. Since the third row is of lde $k-1>0$, either $d=e=f=1$ or
-one of $d,e,f$ is 1 and the rest are 0. For the later, upto a
+Taking inner product of the first two cloumns $a = 0$; similarly we
+have $b=c=0$. Since the third row is of lde $k-1>0$, either $d=e=f=1$
+or one of $d,e,f$ is 1 and the rest are 0. For the later, upto a
 permutation of columns, we may assume $d=1, e=f=0$. Then, for both
 cases, right multiplication of $K_1$ decrease the lde.
 
@@ -1200,7 +1127,7 @@ cases, right multiplication of $K_1$ decrease the lde.
 \end{remark}
 
 \subsubsection{Case v}
-This case only happens for $k>1$. By Lemma \ref{lem:v1}, upto
+This case only happens for $k>1$. By Lemma \ref{lem:uvec}, upto
 multilying generalized permutations on the left and right, pat(A)
 refines to
 \[
@@ -1211,16 +1138,10 @@ refines to
     10 & 1c & 1e & 10
   \end{bmatrix},
 \]
-We claim $a=0, b=c=e=1$. Taking inner product of the first two row
-gives
-\[10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.\]
-Taking inner product of the first and third row gives
-\[10 + 1b + 01 + 00 = 00 \Rightarrow b = 1.\] Taking inner product of
-the second and fourth row gives
-\[10 + 1c + 00 + 01 = 00 \Rightarrow c = 1.\]
-Taking inner product of the second and third column gives
-\[01 + 00 + 11 + 1\bar{e} = 00 \Rightarrow e = 1.\] Similarly
-$f=1$. Now pattern is
+We claim $a=0, b=c=e=1$. Taking inner product of the first two rows
+gives $a =0.$ Taking inner product of the first and third row gives
+$b = 1$; similarly $c = 1$. Taking inner product of the second and
+third column gives $e = 1$; similarly $f=1$. Now the pattern is
 \[
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
@@ -1231,10 +1152,8 @@ $f=1$. Now pattern is
 \]
 Applying $K_1$ on the left bring us to Case iv.
 
-
-
 \subsubsection{Case vi}
-This case only happens for $k>1$. By Lemma \ref{lem:v1}, upto
+This case only happens for $k>1$. By Lemma \ref{lem:uvec}, upto
 multilying generalized permutations on the left and right, pat(A)
 refines to
 \[
@@ -1242,31 +1161,12 @@ refines to
     10 & 10 & 10 & 10\\
     10 & 1a & 1d & 1g\\
     10 & 1b & 1e & 1h\\
-    10 & 1c & 1f & 1x
+    10 & 1c & 1f & 1j
   \end{bmatrix},
 \]
-Taking inner product of first two columns
-\[
-  a + b + c = 0 \Rightarrow a,b,c \text{ cannot be all } 1.
-\]
-Upto a permutation, we maybe assume $a=0$. Then $b = c$. Similarly
-$d = g$.
-
-
-
-\iffalse
-
-If $d = g = 0$. Taking inner product of the first and third column
-gives $e=f$, similarly, $h=x$. So left multiplication of $K_1$ reduces
-the lde.
-
-If $b = c = 0$. Taking inner product of the first and third
-column gives $e=h$, similarly, $f=x$. So Right multiplication of
-$K_1$ reduces the lde.
-
-\fi
-
-
+Taking inner product of first two columns gives that $a,b,c$ cannot be
+all 1. Upto a permutation, we may assume $a=0$. Then $b = c$;
+similarly $d = g$.
 
 If $b=c=1$, and $d=g=1$, pat(A) is
 \[
@@ -1274,13 +1174,11 @@ If $b=c=1$, and $d=g=1$, pat(A) is
     10 & 10 & 10 & 10\\
     10 & 10 & 11 & 11\\
     10 & 11 & 1e & 1h\\
-    10 & 11 & 1f & 1x
+    10 & 11 & 1f & 1j
   \end{bmatrix},
 \]
-
-
 Taking inner product of the first and third column gives
-$f = \bar{e}$. Similarly, $h=\bar{e}$ and $x=\bar{f}$. Now pat(A) is
+$f = \bar{e}$; similarly, $h=\bar{e}$ and $j=\bar{f}$. Now pat(A) is
 \[
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
@@ -1295,27 +1193,25 @@ rows and columns, the (3,k)-residue refines to
 \[
   \begin{bmatrix}
     101 & 101 & 101 & 101\\
-    101 & 10x & 11u & 11a\\
-    101 & 11y & 1ev & 1\bar{e}b\\
-    101 & 11z & 1\bar{e}w & 1ec
+    101 & 10x & 11u & 11p\\
+    101 & 11y & 1ev & 1\bar{e}q\\
+    101 & 11z & 1\bar{e}w & 1er
   \end{bmatrix}.
 \]
-Unitarity of $A$ and the $k>1$ requires that the any two rows
-(columns) are perperdicular to each other. In particular, by taking
-inner product of the first columns and the second, third column, we
-have
+Taking inner product of the first column with the second and third
+column, we have
 \begin{align*}
-  101 + 10x + 11y + 11z = 000 &\implies x\oplus y \oplus z = 1\\
-  101 + 11u + 1ev + 1\bar{e}w = 000 &\implies u\oplus v \oplus w = 1
+  101 + 10x + 11y + 11z = 000 &\implies x\oplus y \oplus z = 1,\\
+  101 + 11u + 1ev + 1\bar{e}w = 000 &\implies u\oplus v \oplus w = 1.
 \end{align*}
-Taking inner product of the second and thired column gives
+Taking inner product of the second and third column gives
 \begin{align*}
   &101 + 11(u\oplus \bar{x}) + (1ev + 01e + 00\bar{y}) + (1\bar{e}w + 01\bar{e} + 00\bar{z})\\
   &= 000 \implies x\oplus y \oplus z \oplus u\oplus v \oplus w = 1, \text{ a contradiction.}
 \end{align*}
 
-If $b=c=0$, taking inner product of the first and third column gives
-$e=h$, similarly, $f=x$. So pat(A) refines to
+If $b=c=0$, taking inner product of the first and third row gives
+$e=h$, similarly, $f=j$. So pat(A) refines to
 \[
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
@@ -1324,8 +1220,8 @@ $e=h$, similarly, $f=x$. So pat(A) refines to
     10 & 10 & 1f & 1f
   \end{bmatrix},
 \]
-Taking inner product of the first and third row gives
-$d\oplus e \oplus f = 0$, then at leat one of $d,e,f$ is 0, upto a
+Taking inner product of the first and third column gives
+$d\oplus e \oplus f = 0$, then at leat one of $d,e,f$ is 0. Upto a
 permutation of rows, we may assume $d=0$. Similar analysis applies if
 $d=g=0$. So, for either case, upto permutations of rows and columns
 pat(A) refines to
@@ -1337,10 +1233,11 @@ pat(A) refines to
     10 & 10 & 1f & 1f
   \end{bmatrix},
 \]
-Note that $e=f$, which is implied by taking inner product of the first
-and third column. So left multiplication of $K_1$ reduces the lde.
+Taking inner product of the first and third column implies $e=f$. So
+left multiplication of $K_1$ reduces the lde.
 
-The transitions is summarized in Figure \ref{fig:trans}.
+Thus we have exhausted all cases. The transitions is summarized in
+Figure \ref{fig:trans}.
 \begin{figure}[h]
   \centering
   \scalebox{0.8}{\tikzfig{transition}}    
@@ -1348,25 +1245,25 @@ The transitions is summarized in Figure \ref{fig:trans}.
     annotated arrow means if $A$ is of the pattern at the tail, then
     $K_1LAR$ ($LARK_1$) is of the pattern at the head for appropritate
     choosen generalized permutations $L$ and $R$. Similarly, for other
-    annotations. Note that $\CK$ decomposes to two $K$ gates as in
-    Equation \ref{eqn:ck}.}
+    annotated arrows. Note that $\CK$ decomposes to a circuit with two
+    $K$ gates as in Equation \ref{eqn:ck}.}
   \label{fig:trans}
 \end{figure}
 
 \begin{proof}[Proof of Theorem \ref{thm:main}]
-  Let $k=\lde{A}$, by Lemma \ref{lem:main2}, possibly merging adjacent
-  generalized permutaions, there exist generalized permutations
-  $L_1,L_2,...,L_p,R_1,R_2,...,R_q$ such that
+  Let $k=\lde{A}$, by Lemma \ref{lem:main2}, by possibly merging
+  adjacent generalized permutaions, there exist generalized
+  permutations $L_1,L_2,...,L_p,R_1,R_2,...,R_q$ such that
   \[
-    \lde{L_pK_1L_{p-1}K_1...L_2K_1L_1AR_1K_1R_2K_1...,R_q} = 0
+    \lde{L_pK_1...L_2K_1L_1AR_1K_1R_2K_1...,R_q} = 0.
   \]
-  So there exists a generalized permutation $P$ such that
+  That is there exists a generalized permutation $P$ s.t.
   \begin{equation*}
-    L_pK_1L_{p-1}K_1...L_2K_1L_1AR_1K_1R_2K_1...,R_q = P
+    L_pK_1...L_2K_1L_1AR_1K_1R_2K_1...,R_q = P
   \end{equation*}
   Note the rkc of left-handside $\le 2k$. Then we have
   \begin{equation*}
-    A = L_1^{-1}iK_1L_2^{-1}...L_p^{-1}PR_q^{-1}iK_1...R_2^{-1}iK_1R_1^{-1}
+    A = L_1^{-1}iK_1L_2^{-1}iK_1...L_p^{-1}PR_q^{-1}iK_1...R_2^{-1}iK_1R_1^{-1}.
   \end{equation*}
   Note that the rkc of the right handside is at most $2k$, after
   merging adjacent generalized permutaions, the number of generalized
@@ -1378,1065 +1275,98 @@ The transitions is summarized in Figure \ref{fig:trans}.
 \end{proof}
 
 
+\section{Experiment}
 
-
-
-\section{Experiment} \label{sec:exp}
-
-We implemented our algorithm in Haskell and did an comparison with
+\label{sec:exp}
+We implemented our algorithm in Haskell and did a comparison with
 Glaudell et al.'s CS-optimal synthesis algorithm
-\cite{Glaudell2021}. A unitary of given lde range is randomly genrated
-and feeded to both algorithms, and the output circuits are compared on
-metrics $\rcs,\rkc$.
-
-The output of their algorithm is of the form Equation \ref{eq:ccs}
-with the CS-count being optimal. We added one step to their algorithm
-to keep the K-count as small as possible: for each $C_i$, we find an
-equivalent ciruit with minimum K-count (could be 0,1,2).
-
-We generated randomly 1{,}351 two-qubit Clifford+$CS$ operators with
-lde ranging from 2 to 58, available in \ref{sec:code}.
-Figure~\ref{fig:lde-dist} is the distribution of lde, which has mean
-27 and median 28. Figure~\ref{fig:k-reduction-dist} is the
-distribution of the relative K-count reduction, which has mean 19.4\%,
-median of 19.8\%, and maximum of 47.7\%.
-
-\input{figures}
-
-From the data, we also observe the following facts.
+\cite{Glaudell2021}. A unitary of given lde range is randomly
+generated and fed to both algorithms, and the output circuits are
+compared on metrics $\rcs,\rkc$.  The output of their algorithm is of
+the form Equation \ref{eq:ccs} with the CS-count being optimal. We
+added one step to their algorithm to keep the K-count as small as
+possible: for each $C_i$, we replace it with an equivalent circuit of
+minimum K-count (could be 0,1,2). We generated randomly 1{,}346
+two-qubit Clifford+$CS$ operators with lde ranging from 2 to 58,
+available in \ref{sec:code}.  Figure~\ref{fig:lde-dist} is the
+distribution of lde. Figure~\ref{fig:k-reduction-dist} is the
+distribution of the relative K-count reduction. From the data, we
+observe the following facts. \input{figures}
 
 \subsection{$CS$-count agreement}
-Across all 1{,}351 operators, our $CS$-count and Glaudell et al.'s
-$CS$-count are identical. Both algorithms are $CS$-optimal.
+Across all 1{,}346 operators, our $\CS$-count and Glaudell et al.'s
+$\CS$-count are identical. So our algorithm is also $\CS$-optimal in
+practice.
 
 \subsection{$K$-count improvement}
 Our algorithm produces a $K$-count less than or equal to that of
 Glaudell et al.\ in every case. It strictly improves the $K$-count in
-95.4\% of cases (1{,}289 out of 1{,}351), with a mean reduction of
-19.4\%, a median reduction of 19.8\%, and a maximum reduction of
-47.7\%. Only 62 operators (4.6\%) have identical $K$-counts under both
-methods; see Figure~\ref{fig:k-reduction-dist}.
+95.5\% of cases; see Figure~\ref{fig:k-reduction-dist}.
 
-\subsection{Empirical relations between CS-count and K-count, lde}
+\subsection{Tighter bound of the optimal CS-count}
 The inequalities
-\[
-  \mathit{CS}\text{-count} \leq K_{\mathrm{ours}} \text{ and }
-  \mathrm{lde} -6 \le \mathit{CS}\text{-count}
-\]
-hold for every operator in the dataset. In particular, most of case,
-the $CS$-count is greater than or equal to the lde, but not
-always. Out of 1{,}351 operators:
+$ \mathrm{lde} -2 \le \mathit{CS}\text{-count} \leq K_{\mathrm{ours}}$
+hold for every operator in the dataset. In particular,
 \begin{itemize}
-\item $\mathit{CS}\text{-count} > \mathrm{lde}$: 1{,}283 cases (95.0\%),
-\item $\mathit{CS}\text{-count} = \mathrm{lde}$: 45 cases (3.3\%),
-\item $\mathit{CS}\text{-count} < \mathrm{lde}$: 23 cases (1.7\%).
+\item $\mathrm{lde} \le \mathit{CS}\text{-count}$: 1{,}324 cases
+  (98.4\%),
+\item $\mathrm{lde} > \mathit{CS}\text{-count}$: 22 cases (1.6\%).
 \end{itemize}
-In the 23 cases where $\mathit{CS}\text{-count} < \mathrm{lde}$, the
-deficit is usually 1 (i.e.\ $\mathit{CS}\text{-count} = \mathrm{lde}
-- 1$), with the largest gaps being $\mathrm{lde} = 38$,
-$\mathit{CS}\text{-count} = 32$ and $\mathrm{lde} = 20$,
-$\mathit{CS}\text{-count} = 18$.
-
+In the 22 cases, the deficit is usually 1, with the largest gap being
+2 for $\mathrm{lde} = 20$, $\mathit{CS}\text{-count} = 18$.
 \subsection{Source of improvement}
-
 Two tight linear relationships emerge from the data. First, the
 $K$-count of Glaudell et al.\ is well approximated by twice the
-$CS$-count:
+$\CS$-count:
 \[
   K_{\mathrm{Glaudell}} \approx 2 \cdot \mathit{CS}\text{-count}.
 \]
-The residual $K_{\mathrm{Glaudell}} - 2 \cdot
-\mathit{CS}\text{-count}$ lies in $\{-4, -3, -2, -1, 0, 1, 2\}$ for
-all 1{,}351 operators, with 99.3\% of values in $\{-4, \ldots, 0\}$.
-Second, our $K$-count is well approximated by twice the lde:
+The residual
+$K_{\mathrm{Glaudell}} - 2 \cdot \mathit{CS}\text{-count}$ lies in
+$\s{-4, -3, -2, -1, 0, 1, 2}$, with 93.5\% of values in
+$\s{-4, \ldots, 0}$. Second, our $K$-count is well approximated by
+twice the lde:
 \[
   K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}.
 \]
-The residual $K_{\mathrm{ours}} - 2 \cdot \mathrm{lde}$ equals $-1$
-or $0$ for 80.2\% of operators, and satisfies $|K_{\mathrm{ours}} - 2
-\cdot \mathrm{lde}| \leq 2$ for 99.6\% of operators. These two
-relationships are also reflected in the Pearson correlations: the
-correlation between $\mathrm{lde}$ and $K_{\mathrm{ours}}$ is $r =
-0.9987$, while the correlation between $\mathit{CS}\text{-count}$ and
-$K_{\mathrm{Glaudell}}$ is $r = 0.9991$.
-
-Since $K_{\mathrm{Glaudell}} \approx 2 \cdot
-\mathit{CS}\text{-count}$ and $K_{\mathrm{ours}} \approx 2 \cdot
-\mathrm{lde}$, the absolute $K$-count saving is approximately $2
-\cdot (\mathit{CS}\text{-count} - \mathrm{lde})$. In other words, the
-improvement is governed by the gap between the $CS$-count and the lde.
-The relative reduction percentage is roughly stable across lde values,
-hovering around 19--21\% for lde between 5 and 40, and tapering off
-for very small or very large lde.
-
+The residual $K_{\mathrm{ours}} - 2 \cdot \mathrm{lde}$ lies in
+$\{-2, -1, 0\}$, with $\s{-1,0}$ accounting for 80.5\% of cases. These
+two relationships are also reflected in the Pearson correlations: the
+correlation between $\mathrm{lde}$ and $K_{\mathrm{ours}}$ is
+$0.9996$, while the correlation between $\mathit{CS}\text{-count}$ and
+$K_{\mathrm{Glaudell}}$ is $0.9991$.  Since
+$K_{\mathrm{Glaudell}} \approx 2 \cdot \mathit{CS}\text{-count}$ and
+$K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}$, the absolute
+$K$-count saving is approximately
+$2 \cdot (\mathit{CS}\text{-count} - \mathrm{lde})$. In other words,
+the improvement is governed by the gap between the $CS$-count and the
+lde.  The relative reduction percentage is roughly stable across lde
+values, hovering around 19--21\% for lde between 5 and 40, and
+tapering off for very small or very large lde.
 
 \section{Code and data availability}
 \label{sec:code}
+Code and data are available from \cite{Bian_Kopt}.
+
 
 \section{Conclusion and future work}
-In conclusion, we proposed an efficient and near-optimal algorithm for
-the exact synthesis of two-qubit Clifford+$\CS$ circuits from a given
-unitary matrix. In theory, we proved the CS-count is at most 4 times
-worse than optimal, but in practice, our method always acheives the
-optimal CS-count. In theory, we proved the K-count is at most 2 times
-worse than optimal, and in practice, our method always acheives the
-better K-count than best-known.
+In conclusion, we gave an efficient and near-optimal algorithm for the
+exact synthesis of two-qubit Clifford+$\CS$ circuits from a given
+unitary matrix. In theory, the CS-count is at worest 4 times the
+optimal, but in practice, our method always acheives the optimal
+CS-count. In theory, the K-count is at worest 2 times the optimal, and
+in practice, our method always acheives the better K-count than the
+best-known.
 
-The algorithm of Li et al. \cite{Li_2023_CT2} outputs a circuit that
-is at most 10 times worse than the optimal T-count. We believe our
+The algorithm of Li et al. \cite{Li_2023_CT2} outputs a circuit whose
+T-count is at worest 10 times the optimal T-count. We believe our
 method can be used to improve the bound 10.
 
 
-\iffalse
-\newpage
-
-
-
-
-For brevity, we sometimes write $\alpha(\gamma^{\ell})$ to denote any
-member of the congruence class of $\alpha$ modulo $\gamma^{\ell}$.  In
-other words, we write $\alpha(\gamma^{\ell})$ for any element of
-$\Z[i]$ of the form $\alpha+\beta\gamma^{\ell}$, when the value of
-$\beta$ is not important.
-
-
-
-
-\begin{lemma} \label{lem:halfk-1} Let $v$ be a unit vector in
-  $\D[i]^n$ with least denominator exponent $k > 1$. Let $N_k$ be the
-  number of entries in $v$ that has lde $k$. Then $N_k/2 + N_{k-1}$ is
-  even.
-\end{lemma} 
-
-\begin{proof}
-  
-  We have
-  \[
-  \sum_{\jay=0}^{n-1} \|w_\jay\|^2 = \norm{w} = |\gamma|^{2k}\norm{v}
-  = (\gamma\gamma^{\dagger})^k\equiv 0 \Mod{\gamma}.
-  \]
-  Therefore, there are an even number of $\jay \in \{0,...,n-1\}$ such
-  that $\|w_\jay\|^2$ is odd. It follows by
-  Lemma~\ref{lem:parity-dagger-norm} that an even number of $w_\jay$
-  are odd.
-\end{proof}
-
-
-
-\begin{lemma}[Row operation] \label{lem:row-op}
-  Let $v\in \D[i]^{n}$ be a vector with $\ldeg{v_\jay} = \ldeg{v_\ell}
-  = k>0$. Then there exists an exponent $q \in\{0,1\}$ such that,
-  if we let $v' = \tlkd{\jay}{\ell}\tli{\ell}{q} v$, then
-  $\ldeg{v'_\jay} , \ldeg{v'_\ell} <k$. The remaining entries of $v$
-  are unchanged.
-\end{lemma}
-
-\begin{proof}
-  Let $w_\jay = \gamma^k v_\jay$ and $w_\ell = \gamma^k v_\ell$. Then
-  both $w_\jay$ and $w_\ell$ are odd. By Lemma~\ref{lem:modulo-1-3},
-  there exists $q \in \s{0,1}$ such that $w_\jay \equiv i^q
-  w_\ell\Mod{\gamma^2}$. Then we have
-  \[
-  K\da\tli{1}{q} \begin{bmatrix}
-    w_\jay \\
-    w_\ell
-  \end{bmatrix} =
-  K\da\begin{bmatrix}
-    w_\jay \\
-    i^qw_\ell
-  \end{bmatrix}
-  = K\da \begin{bmatrix}
-    w_\jay \\
-    w_\jay + \alpha\gamma^2
-  \end{bmatrix}
-  = \frac{1}{\gamma\da}\begin{bmatrix}
-    2w_j+\alpha\gamma^2 \\
-    -\alpha\gamma^2
-  \end{bmatrix}
-  = \begin{bmatrix}
-    (w_j+\alpha i)\gamma \\
-    -\alpha i\gamma
-  \end{bmatrix}
-  = \begin{bmatrix}
-    0(\gamma) \\
-    0(\gamma)
-  \end{bmatrix}.
-  \]
-  This means $\ldeg{K\da\tli{1}{q} \begin{bmatrix} v_\jay
-      \\ v_\ell\end{bmatrix}}<k$. Clearly, performing
-  $\tlkd{\jay}{\ell}\tli{\ell}{q}$ on $v$ has the same effect, and
-  does not change any entries of $v$ besides $v_\jay$ and $v_\ell$,
-  proving the lemma.
-\end{proof}
-
-\begin{lemma}[Column lemma]
-  Let $v$ be a unit vector in $\D[i]^n$, and
-  $p\in\{0,1,...,n-1\}$. Then there exists a matrix $G$ that is a
-  product of one- and two-level matrices of types $X$, $K\da$, and $i$,
-  such that $Gv=e_p$.
-\end{lemma}
-
-\begin{proof}
-  By induction on $k$, the least denominator exponent of $v$, and
-  nested induction on the number of entries of $v$ with least
-  denominator exponent $k$. If $k=0$, then the result follows from
-  Corollary~\ref{cor:base-case}. Otherwise, by
-  Lemma~\ref{lem:evenodd}, $v$ has at least two entries with least
-  denominator exponent $k$. Pick a pair of such
-  entries. Lemma~\ref{lem:row-op} yields some one- and two level
-  matrices that decrease this pair's least denominator
-  exponent. The result then follows by the induction hypothesis.
-\end{proof}
-
-Since each column of a unitary matrix is a unit vector, the column
-lemma naturally gives a way to ``fix'' every column of a unitary
-matrix to the $j$th standard basis vector.
-
-
-
-  
-\subsection{Quotient mappings}
-
-\newtheorem{mydef2}{Definition}
-
-\begin{mydef2}
-\rm{Let $n\geq0$. Recall that $(\delta^{n})$ is the ideal generated by $\delta^{n}$, i.e., $(\delta^n)$ is the set of all $t\in\mathbb{Z}[\omega]$ that are divisible by $\delta^n$. Let $\rho_{n}:\mathbb{Z}[\omega]\rightarrow\mathbb{Z}[\omega]/\left(\delta^{n}\right)$
-be the standard quotient mapping $x\mapsto x+\left(\delta^{n}\right)$.}\end{mydef2}
-
-We note that the elements of $\mathbb{Z}[\omega]/\left(\delta^{n}\right)$ are the the equivalence classes of elements of $\mathbb{Z}[\omega]\pmod{\delta^{n}}$.
-
-\newtheorem{remark2}{Remark}
-\begin{remark2}
-\rm{For $n\geq0$, $\mathbb{Z}[\omega]/\left(\delta^{n}\right)$ has $2^{n}$ elements. For example,
-\[
-\mathbb{Z}[\omega]/\left(\delta\right)=\{0,\:1\},
-\]
-\[
-\mathbb{Z}[\omega]/\left(\delta^{2}\right)=\{0,\:1,\:\omega,\:1+\omega\},
-\]
-\[
-\mathbb{Z}[\omega]/\left(\delta^{3}\right)=\{0,\:1,\:\omega,\:\omega^{2},\:\omega^{3},\:1+\omega,\:1+\omega^{2},\:1+\omega^{3}\}.
-\]}
-\end{remark2}
-
-\subsection{Denominator exponents}
-\newtheorem{mydef3}{Definition}
-\begin{mydef3}
-\rm{Let $t\in\mathbb{D}[\omega]$. A natural number $k\in\mathbb{N}$
-is called a \textit{$\delta$-exponent} for $t$ if $\delta^{k}t\in\mathbb{Z}[\omega]$.
-From Remark 2, it is obvious such a $k$ exists, and the
-least such $k$ is called the \textit{least $\delta$-exponent} for $t$.}
-\end{mydef3}
-When dealing with a vector or matrix $U$, $k$ is a $\delta$-exponent for $U$ if it is a $\delta$-exponent for all of its entries. The least $\delta$-exponent of $U$ is thus the least $k$ that is a $\delta$-exponent for all of its entries.
-
-\subsection{Residues}
-
-\newtheorem{mydef4}{Definition}
-\begin{mydef4}
-\rm{Let $t\in\mathbb{D}[\omega]$, and let $k$ be a (not necessarily least) $\delta$-exponent for $t$. The \textit{$(n,k)$-residue} of $t$, in symbols $\rho_{n}^{k}(t)$, is defined to be}
-\[
-\rho_{n}^{k}(t)=\rho_{n}(\delta^{k}t).
-\]
-Similarly for a matrix $U$ with entries in $\mathbb{D}[\omega]$, we let $\rho_{n}^{k}(U)$ signify the matrix made up of the $(n,k)$-residues of the entries of $U$.
-\end{mydef4}
-
-\subsection{Reducibility}
-
-\newtheorem{mydef5}{Definition}
-\begin{mydef5}
-\rm{We say $x\in\mathbb{Z}[\omega]$ is \textit{reducible}
-if $\delta|x$.}
-\end{mydef5}
-
-\newtheorem{remark3}{Remark}
-
-\begin{remark3}
-\rm{The following are equivalent for $x\in\mathbb{Z}[\omega]$:
-
-(a) $x$ is reducible;
-
-(b) $\rho_{1}(x)=0$;
-
-(c) $\rho_{3}(x)\in\{0,\:1+\omega,\:1+\omega^{2},\:1+\omega^{3}\}$.}
-\end{remark3}
-
-\section{Decomposition into elementary matrices}
-
-\subsection{Elementary matrices}
-
-\newtheorem{2leveldef}{Definition}
-\begin{2leveldef}
-\rm{The elementary matrices $\omega_{[j]}$, $H_{[j,m]}$, and $X_{[j,m]}$ are defined to be
-
-\[
-\omega_{[j]}=
- \bordermatrix{&\ldots&j&\ldots\cr
-            \vdots&I&0&0\cr
-            j&0&\omega&0\cr
-            \vdots&0&0&I\cr
-            }
-\quad
-H_{[j,m]}=
- \bordermatrix{&\ldots&j&\ldots&m&\ldots\cr
-            \vdots&I&0&0&0&0\cr
-            j&0&\frac{1}{\sqrt{2}}&0&\frac{1}{\sqrt{2}}&0\cr
-            \vdots&0&0&I&0&0\cr
-            m&0&\frac{1}{\sqrt{2}}&0&-\frac{1}{\sqrt{2}}&0\cr
-            \vdots&0&0&0&0&I\cr
-            }
-\]
-
-\[
-X_{[j,m]}=
- \bordermatrix{&\ldots&j&\ldots&m&\ldots\cr
-            \vdots&I&0&0&0&0\cr
-            j&0&0&0&1&0\cr
-            \vdots&0&0&I&0&0\cr
-            m&0&1&0&0&0\cr
-            \vdots&0&0&0&0&I\cr
-            }.
-\]
-Note that $\omega_{[j]}$ is a $1$-level matrix and $H_{[j,m]}$, and $X_{[j,m]}$ are $2$-level matrices.}
-\end{2leveldef}
-
-\subsection{Properties of unitary matrices}
-
-\newtheorem{lemma1}{Lemma}
-\begin{lemma1}
-Let $U$ be an $n\times n$ unitary matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k$. Then if $k>0$, there is an even number of 1's in each row and each column of $\rho_{1}^{k}(U)$.
-\end{lemma1}
-\begin{proof}
-Let $u_{jm}$ denote the element of $U$ in the $j$-th row and $m$-th column, and let $v_{jm} = \delta^{k}u_{jm}$. Then, because $U$ is unitary,
-$u_{11}^{\dagger}u_{11}+u_{21}^{\dagger}u_{21}+...+u_{n1}^{\dagger}u_{n1}=1$,
-which implies that $\frac{1}{\left(\delta^{\dagger}\delta\right)^{k}}(v_{11}^{\dagger}v_{11}+v_{21}^{\dagger}v_{21}+...+v_{n1}^{\dagger}v_{n1})=1$, so $v_{11}^{\dagger}v_{11}+v_{21}^{\dagger}v_{21}+...+v_{n1}^{\dagger}v_{n1}=\left(\delta^{\dagger}\delta\right)^{k}\equiv0\pmod{\delta}$.
-Therefore an even number
-of $v_{11},...,v_{n1}$ must be congruent to $1\pmod{\delta}$, and the lemma follows.
-\end{proof}
-
-\newtheorem{evennumb1s}[lemma1]{Lemma}
-\begin{evennumb1s}
-Let $U$ be an $n\times n$ unitary matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k$. Then if $k>0$, any two distinct rows of $\rho_{1}^{k}(U)$ will have an even number of 1's in common.
-\end{evennumb1s}
-\begin{proof}
-Assume that two distinct rows of $\rho_{1}^{k}(U)$ do not have an even number of 1's in common. Then, the inner product of these two rows will be congruent to $1\pmod{\delta}$, a contradiction because the inner product of any two rows must be congruent to $0\pmod{\delta}$. The lemma follows.
-\end{proof}
-
-\newtheorem{lemma2}[lemma1]{Lemma}
-\begin{lemma2}
-If $t\in\mathbb{D}[\omega]$ and $t^{\dagger}t\leq1$
-and $(t^{\dagger}t)^{\bullet}\leq1$, then the least denominator exponent
-of $t$ is not $1$.
-\end{lemma2}
-
-\begin{proof}
-If $k=0$, then there is nothing to show, so assume that $k\ge1$.
-Then we can write $t=\frac{a\omega^{3}+b\omega^{2}+c\omega+d}{\delta}$. Assume $t^{\dagger}t\le1$ and $(t^{\dagger}t)^{\bullet}\le1$.
-Then, we have $\delta^{\dagger}\delta t^{\dagger} t =(a^{2}+b^{2}+c^{2}+d^{2})+(cd+bc+ab-da)\sqrt{2}\le\delta^{\dagger}\delta=2+\sqrt{2}$
-and $(\delta^{\dagger}\delta t^{\dagger} t)^{\bullet}=(a^{2}+b^{2}+c^{2}+d^{2})-(cd+bc+ab-da)\sqrt{2}\le(\delta^{\dagger}\delta)^{\bullet}=2-\sqrt{2}$. Averaging the two equations, we get that $a^2 + b^2 + c^2 + d^2 \le2$. By a simple case distinction, one can see that the only solutions are $a=b=c=d=0$; $a,\:b=\pm1,\: c=d=0$; $b,\:c=\pm1,\: a=d=0$; $c,\:d=\pm1,\: a=b=0$; and $a,\:d=\pm1,\: b=c=0$. All these solutions
-are reducible, so we must have $k>1$, and we are done.
-\end{proof}
-
-\newtheorem{corollary1}{Corollary}
-\begin{corollary1}
-For any unitary matrix $U$ with entries in $\mathbb{D}[\omega]$, the least $\delta$-exponent of $U$ is not $1$.
-\end{corollary1}
-
-\begin{proof}
-This result follows directly from the previous lemma, as all entries of $U$ satisfy the required property.
-\end{proof}
-
-\subsection{Properties of \texorpdfstring{$\mathbb{Z}[\omega]/(\delta^{n})$}{ℤ[ω]/(δⁿ)}}
-
-\newtheorem{denomexponent}[lemma1]{Lemma}
-\begin{denomexponent}
-Let $\begin{bmatrix}a\\
-b\end{bmatrix}$ be a column vector with $a,\:b\in\mathbb{Z}[\omega]$ and $a\equiv b\pmod{\delta^{2}}$.
-Then, the entries of $H_{[1,2]}\begin{bmatrix}a\\
-b\end{bmatrix}$ are in $\mathbb{Z}[\omega]$.
-\end{denomexponent}
-\begin{proof}
-We see that
-\[
-H_{[1,2]}\begin{bmatrix}a\\
-b
-\end{bmatrix}=\begin{bmatrix}\frac{a+b}{\sqrt{2}}\\
-\frac{a-b}{\sqrt{2}}
-\end{bmatrix}.
-\]
-Because $a\equiv b\pmod{\delta^{2}}$, this means $\delta^{2}\mid a-b$.
-Because $\delta^{2}\sim\sqrt{2}$, we then have $\sqrt{2}\mid a-b$.
-We also know that $\sqrt{2}\mid2b$, thus $\sqrt{2}|a+b$ and we are done.
-\end{proof}
-
-\newtheorem{corollarydenomexpon}[corollary1]{Corollary}
-\begin{corollarydenomexpon}
-Let $U$ be an $n\times n$ matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k>1$. If the $j$-th and $m$-th row of $\rho_{2}^{k}(U)$ are equal, $H_{[j,m]}U$ has least $\delta$-exponent $k'\le k$.
-\end{corollarydenomexpon}
-
-\begin{proof}
-This follows from the previous lemma.
-\end{proof}
-
-\newtheorem{corollarydenomexpon3}[lemma1]{Lemma}
-\begin{corollarydenomexpon3}
-Let $\begin{bmatrix}a\\
-b\end{bmatrix}$ be a column vector with $a,\:b\in\mathbb{Z}[\omega]$ and $a\equiv b\pmod{\delta^{3}}$.
-Then, the entries of $H_{[1,2]}\begin{bmatrix}a\\
-b\end{bmatrix}$ are in $\mathbb{Z}[\omega]$ and are divisible by $\delta$.
-\end{corollarydenomexpon3}
-
-\begin{proof}
-We see that
-\[
-H_{[1,2]}\begin{bmatrix}a\\
-b
-\end{bmatrix}=\begin{bmatrix}\frac{a+b}{\sqrt{2}}\\
-\frac{a-b}{\sqrt{2}}
-\end{bmatrix}.
-\]
-Because $a\equiv b\pmod{\delta^{3}}$, this means $\delta^{3}|a-b$. Because $\delta^{3}\sim\delta\sqrt{2}$, we then have $\delta\sqrt{2}|a-b$. We also know that $\delta\sqrt{2}|2b$, thus $\delta\sqrt{2}|a+b$ and we are done.
-\end{proof}
-
-
-\newtheorem{corollarydenomexpon1}[corollary1]{Corollary}
-\begin{corollarydenomexpon1}
-Let $U$ be an $n\times n$ matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k>1$. If the $j$-th and $m$-th row of $\rho_{3}^{k}(U)$ are equal, then the $j$-th and $m$-th rows of $H_{[j,m]}U$ have least $\delta$-exponent $k'<k$.
-\end{corollarydenomexpon1}
-
-\begin{proof}
-This follows from the previous lemma.
-\end{proof}
-
-
-\newtheorem{remark6}{Remark}
-\begin{remark6}
-\rm{When working with exponents of $\omega$ in $\mathbb{Z}[\omega]/(\delta^{3})$, we work modulo $4$. This is because $\omega^{4}\equiv 1\pmod{\delta^{3}}$.}
-\end{remark6}
-
-\newtheorem{congruent02}[lemma1]{Lemma}
-\begin{congruent02}
-If $\omega^{x}+\omega^{y}\equiv0\pmod{\delta^{3}}$ then $x\equiv y\pmod{4}$.
-\end{congruent02}
-\begin{proof}
-We note that $\omega^{x}+\omega^{y}\equiv0\pmod{\delta^{3}}$ if and only if $\omega^{x}\equiv\omega^{y}\pmod{\delta^{3}}$. The claim then becomes obvious by Remark 3.
-\end{proof}
-
-\newtheorem{congruent04}[lemma1]{Lemma}
-\begin{congruent04}
-If $\omega^{x}+\omega^{y}+\omega^{z}+\omega^{u}\equiv0\pmod{\delta^{3}}$, then there are three cases up to permutations of $x$, $y$, $z$, and $u$:\\
-(a)\: $x\equiv y\equiv z\equiv u\pmod{4}$;\\
-(b)\: $x\equiv y\pmod{4}$, $z\equiv u\pmod{4}$, and $x\not\equiv z\pmod{4}$;\\
-(c)\: $x$, $y$, $z$, and $u$ are distinct modulo 4.
-\end{congruent04}
-\begin{proof}
-If $x$, $y$, $z$, and $u$ are distinct, we are in case (c) and are done. Otherwise, two are equal, say $x\equiv y\pmod{4}$. Then, we have $\omega^{x}+\omega^{y}\equiv\omega^{z}+\omega^{u}\equiv0\pmod{\delta^{3}}$, so by Lemma 6, $z\equiv u\pmod{4}$. Then, case (a) holds if $z\equiv x\pmod{4}$, and case (b) holds if $z\not\equiv x\pmod{4}$.
-\end{proof}
-
-\newtheorem{remark7}{Remark}
-\begin{remark7}
-\rm{Let $U$ be an $n\times n$ unitary matrix with entries in $\mathbb{D}[\omega]$ and (not necessarily least) $\delta$-exponent $k$. We introduce the following notation for $\rho_{m}^{k}(U)$:
-\[
-\rho_{m}^{k}(U)=A_{0}+\delta A_{1}+\delta^{2}A_{2}+\ldots+\delta^{m-1}A_{m-1},
-\]
-where $A_{i}$ is an $n\times n$ matrix with entries in $\{0,\:1\}$, noting that $\{1,\:\delta,\:\delta^{2}\,\ldots,\:\delta^{m-1}\}$ forms a basis for $\mathbb{Z}[\omega]/(\delta^{m})$ over $\{0,\:1\}$. For example, when $m=3$ we have:
-\[
-\begin{tabular}{|c|c|}
-\hline
-$0$ & $0+0\delta+0\delta^{2}$\tabularnewline
-\hline
-$1+\omega$ & $0+1\delta+0\delta^{2}$\tabularnewline
-\hline
-$1+\omega^{2}$ & $0+0\delta+1\delta^{2}$\tabularnewline
-\hline
-$1+\omega^{3}$ & $0+1\delta+1\delta^{2}$\tabularnewline
-\hline
-$1$ & $1+0\delta+0\delta^{2}$\tabularnewline
-\hline
-$\omega$ & $1+1\delta+0\delta^{2}$\tabularnewline
-\hline
-$\omega^{2}$ & $1+0\delta+1\delta^{2}$\tabularnewline
-\hline
-$\omega^{3}$ & $1+1\delta+1\delta^{2}$\tabularnewline
-\hline
-\end{tabular}
-\]}
-\end{remark7}
-
-
-\subsection{Statement of the base case and main lemma}
-
-\newtheorem{basecase}[lemma1]{Lemma}
-\begin{basecase}
-Let $n\le 4$, and let $U$ be an $n\times n$ unitary matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k=0$. Then there exists a sequence $S_{1},\ldots, S_{m}$ of elementary operators such that $S_{1}\ldots S_{m}U=I$. Moreover, there exists a fixed bound $M$, depending only on $n$, such that $m\le M$.
-\end{basecase}
-
-\begin{proof}
-The entries of $U$ satisfy $tt^{\dagger}\le1$ and $(tt^{\dagger})^{\bullet}\le1$. From this it follows that each entry is $0$ or $\omega^{l}$, and there is exactly one entry of $\omega^{l}$ in each row and each column. It is then trivial to reduce $U$ to $I$ using elementary operators of types $X$ and $\omega$.
-\end{proof}
-
-\newtheorem{maintheorem}[lemma1]{Lemma}
-\begin{maintheorem}
-Let $n\le4$, and let $U$ be an $n\times n$ unitary matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k>1$. Then there exists two sequences $S_{1},\dots,S_{m}$ and $T_{1},\dots,T_{j}$ of elementary matrices such that $S_{1},\dots,S_{m}UT_{1},\dots,T_{j}$ has least $\delta$-exponent $k'<k$. Moreover, there exists a fixed bound $N$ dependent only on $n$ such that $m+j\le N$.
-\end{maintheorem}
-
-\subsection{Proof for \texorpdfstring{$2\times2$}{2 × 2} matrices}
-
-
-We begin with the $2\times2$ case because the $1\times1$ case is trivial.
-Let $U$ be a $2\times2$ unitary matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k>1$. As a consequence of Lemma 1, we must have
-\[\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1\\
-1 & 1
-\end{bmatrix}.
-\]
-This means that
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}\omega^{a} & \omega^{b}\\
-\omega^{c} & \omega^{d}
-\end{bmatrix}
-\]
-for some $a$, $b$, $c$, $d\in\mathbb{Z}$.
-
-\newtheorem{lemma2x2}[lemma1]{Lemma}
-\begin{lemma2x2}
-There exists an $x\pmod{4}$ such that $a+x\equiv c\pmod{4}$ and such
-that $b+x\equiv d\pmod{4}$.
-\end{lemma2x2}
-
-\begin{proof}
-Taking the inner product of the first and second rows, we get that $\omega^{c-a}+\omega^{d-b}\equiv0\pmod{4}$. By Lemma 6, this occurs only when $c-a\equiv d-b\pmod{4}$. Taking $x\equiv c-a\pmod{4}$, we are done.
-\end{proof}
-
-We now have
-\[
-\rho^k_3(\omega_{[1]}^{x}U)=\begin{bmatrix}\omega^{c} & \omega^{d}\\
-\omega^{c} & \omega^{d}
-\end{bmatrix}
-\]
-and by Corollary 3, applying the row operation $H_{[1,2]}$ reduces the least $\delta$-exponent, so we are done.
-
-\subsection{Proof for \texorpdfstring{$3\times3$}{3 × 3} matrices}
-
-Let $U$ be a $3\times3$ unitary matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k>1$. As a consequence of Lemma 1, we have two cases up to permutations of rows and columns:
-\[
-(i)\:\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1 & 0\\
-1 & 1 & 0\\
-0 & 0 & 0
-\end{bmatrix}
-\quad (ii)\:\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1 & 0\\
-1 & 0 & 1\\
-0 & 1 & 1
-\end{bmatrix}
-\]
-
-We note that case (ii) cannot occur by Lemma 2.
-Thus, without loss of generality and up to permutations of rows and columns, we must have:
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}\omega^{a} & \omega^{b} & \delta x_{13}\\
-\omega^{c} & \omega^{d} & \delta x_{23}\\
-\delta x_{31} & \delta x_{32} & \delta x_{33}
-\end{bmatrix}
-\]
-where $x_{jm}\in\mathbb{Z}[\omega]/(\delta^{2})$.
-We begin by looking for potential values of $\delta x_{13}$. Because $U$ is unitary, we know that $\omega^{-a}\omega^{a}+\omega^{-b}\omega^{b}+\delta^{\dagger}\delta x_{13}^{\dagger}x_{13}\equiv 0\pmod{\delta^{3}}$, which implies that $\delta^{\dagger}\delta x_{13}^{\dagger}x_{13}\equiv 0\pmod{\delta^{3}}$. This implies that we must have $x^{\dagger}_{13}x_{13}\equiv0\pmod{\delta}$, hence $\delta|x_{13}$. Similarly, we have that $\delta$ divides $x_{23}$, $x_{31}$, and $x_{32}$.
-
-\newtheorem{lemma4}[lemma1]{Lemma}
-\begin{lemma4}
-There exists an $x\pmod{4}$ such that $a+x\equiv c\pmod{4}$ and such
-that $b+x\equiv d\pmod{4}$.
-\end{lemma4}
-
-\begin{proof}
-Because $U$ is unitary, we know that $\omega^{-a}\omega^{c}+\omega^{-b}\omega^{d}+\delta^{\dagger}\delta x_{13}x_{23}\equiv0\pmod{\delta^{3}}$. But then $\omega^{-a}\omega^{c}+\omega^{-b}\omega^{d}\equiv0\pmod{\delta^{3}}$ because we know $\delta$ divides both $x_{13}$ and $x_{23}$. By Lemma 6, we have $c-a \equiv d-b\pmod{4}$, and setting
-$x\equiv c-a\pmod{4}$ we are done.
-\end{proof}
-
-We now have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}U)=\begin{bmatrix}\omega^{c} & \omega^{d} & \delta y_{13}\\
-\omega^{c} & \omega^{d} & \delta x_{23}\\
-\delta x_{31} & \delta x_{32} & \delta x_{33}
-\end{bmatrix}
-\]
-where $y_{13}\equiv\omega^{x} x_{13}\pmod{\delta^{3}}$. Note that $\delta|y_{13}$.
-
-\newtheorem{lemma3x3equal}[lemma1]{Lemma}
-\begin{lemma3x3equal}
-We always have $\delta y_{13}\equiv\delta x_{23}\pmod{\delta^3}$.
-\end{lemma3x3equal}
-
-\begin{proof}
-By taking the inner product of the first column and the third column, we have $\omega^{-c}\delta y_{13} + \omega^{-c}\delta x_{23} +
-\delta^{\dagger}\delta x_{31}^{\dagger} x_{33} \equiv
-\omega^{-c}\delta(y_{13}+x_{23})\equiv 0\pmod{\delta^3}$. Hence,
-since $\omega$ is invertible, $\delta(y_{13}+x_{23})\equiv 0\pmod{\delta^{3}}$, or equivalently, $\delta y_{13}\equiv \delta x_{23}\pmod{\delta^{3}}$.
-\end{proof}
-
-We now have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}U)=\begin{bmatrix}\omega^{c} & \omega^{d} & \delta y_{13}\\
-\omega^{c} & \omega^{d} & \delta y_{13}\\
-\delta x_{31} & \delta x_{32} & \delta x_{33}
-\end{bmatrix}
-\]
-and by Corollary 3, we
-can apply the row operation $H_{[1,2]}$ and we are done.
-\subsection{Proof for \texorpdfstring{$4\times4$}{4 × 4} matrices}
-
-Let $U$ be a unitary $4\times4$ matrix with entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k>1$. As a consequence of Lemmas 1 and 2, we have the following cases for $U$ up to permutations of rows and columns as well as taking transposes:
-
-\[
-(i)\:\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1 & 0 & 0\\
-1 & 1 & 0 & 0\\
-0 & 0 & 0 & 0\\
-0 & 0 & 0 & 0
-\end{bmatrix}\quad(ii)\:\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1 & 1 & 1\\
-1 & 1 & 1 & 1\\
-0 & 0 & 0 & 0\\
-0 & 0 & 0 & 0
-\end{bmatrix}\quad(iii)\:\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1 & 0 & 0\\
-1 & 1 & 0 & 0\\
-0 & 0 & 1 & 1\\
-0 & 0 & 1 & 1
-\end{bmatrix}
-\]
-\[
-(iv)\:\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1 & 0 & 0\\
-1 & 1 & 0 & 0\\
-1 & 1 & 1 & 1\\
-1 & 1 & 1 & 1
-\end{bmatrix}\quad
-(v)\:\rho_{1}^{k}(U)=\begin{bmatrix}1 & 1 & 1 & 1\\
-1 & 1 & 1 & 1\\
-1 & 1 & 1 & 1\\
-1 & 1 & 1 & 1
-\end{bmatrix}
-\]
-\noindent
-We will now prove each of the above cases satisfies Theorem 1.
-\subsubsection{Case (i)}
-In case (i), we have
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}\omega^{a} & \omega^{b} & \delta x_{13} & \delta x_{14}\\
-\omega^{c} & \omega^{d} & \delta x_{23} & \delta x_{24}\\
-\delta x_{31} & \delta x_{32} & \delta x_{33} & \delta x_{34}\\
-\delta x_{41} & \delta x_{42} & \delta x_{43} & \delta x_{44}
-\end{bmatrix}.
-\]
-\newtheorem{lemmacasei}[lemma1]{Lemma}
-\begin{lemmacasei}
-If $U$ is of case (i), there exists an $x\pmod{4}$ such that $a+x\equiv c\pmod{4}$ and such
-that $b+x\equiv d\pmod{4}$.
-\end{lemmacasei}
-\begin{proof}
-Taking the inner product of the first column with itself, we have $\omega^{-a}\omega^{a}+\omega^{-c}\omega^{c}+\delta^{\dagger}\delta x_{31}^{\dagger}x_{31}+\delta^{\dagger}\delta x_{41}^{\dagger}x_{41}\equiv0\pmod{\delta^{3}}$.
-We then have that $x_{31}^{\dagger}x_{31}+x_{41}^{\dagger}x_{41}\equiv0\pmod{\delta}$,
-which can only occur if $x_{31}\equiv x_{41}\pmod{\delta}$. Using
-a similar argument on the second column, we get that $x_{32}\equiv x_{42}\pmod{\delta}$.
-Then, taking the inner products of the first and second columns, we get
-$\omega^{-a}\omega^{b}+\omega^{-c}\omega^{d}+\delta^{\dagger}\delta x_{31}^{\dagger}x_{32}+\delta^{\dagger}\delta x_{41}^{\dagger}x_{42}\equiv0\pmod{\delta^{3}}$.
-Because $x_{31}^{\dagger}x_{32}\equiv x_{41}^{\dagger}x_{42}\pmod{\delta}$,
-this implies that $\delta^{\dagger}\delta x_{31}^{\dagger}x_{32}+\delta^{\dagger}\delta x_{41}^{\dagger}x_{42}\equiv0\pmod{\delta^{3}}$.
-We then have $\omega^{-a}\omega^{b}+\omega^{-c}\omega^{d}\equiv0\pmod{\delta^{3}}$, so by Lemma 6 we have $b-a\equiv d-c\pmod{4}$, and we may take $x\equiv c-a\pmod{4}$.\\
-\end{proof}
-Now that we know such an $x$ exists, without loss of generality we have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}U\omega^{-c}_{[1]}\omega^{-d}_{[2]})=\begin{bmatrix}1 & 1 & 0 & 0\\
-1 & 1 & 0 & 0\\
-0 & 0 & 0 & 0\\
-0 & 0 & 0 & 0
-\end{bmatrix}+\delta\begin{bmatrix}0 & 0 & y_{13} & y_{14}\\
-0 & 0 & y_{23} & y_{24}\\
-y_{31} & y_{32} & y_{33} & y_{34}\\
-y_{41} & y_{42} & y_{43} & y_{44}
-\end{bmatrix}+\delta^{2}\begin{bmatrix}0 & 0 & z_{13} & z_{14}\\
-0 & 0 & z_{23} & z_{24}\\
-z_{31} & z_{32} & z_{33} & z_{34}\\
-z_{41} & z_{42} & z_{43} & z_{44}
-\end{bmatrix}
-\]
-using the notation presented in Remark 6.
-
-\newtheorem{remarkwlog}{Remark}
-\begin{remarkwlog}
-\rm{We note that the proof for Lemma 13 only used the first two columns, and did not make any assumptions about columns three or four.}
-\end{remarkwlog}
-
-\newtheorem{lemma4x4equal}[lemma1]{Lemma}
-\begin{lemma4x4equal}
-We always have $y_{13}=y_{23}$, $y_{14}=y_{24}$, $z_{13}=z_{23}$, and $z_{14}=z_{24}$.
-\end{lemma4x4equal}
-\begin{proof}
-Taking the inner products of columns two and three, we get $\delta(y_{13}+y_{23})+\delta^{\dagger}\delta(y_{32}^{\dagger}y_{33}+y_{42}^{\dagger}y_{43})+\delta^{2}(z_{13}+z_{23})\equiv0\pmod{\delta^{3}}$.
-This implies that $y_{13}=y_{23}$.$ $ Taking
-the inner product of the second column with itself, we get that $\delta^{\dagger}\delta(y_{32}^{\dagger}y_{32}+y_{42}^{\dagger}y_{42})\equiv0\pmod{\delta^{3}}$,
-so $y_{32}=y_{42}$. Taking the inner product
-of the third column and itself, we get that $\delta^{\dagger}\delta(y_{13}^{\dagger}y_{13}+y_{23}^{\dagger}y_{23}+y_{33}^{\dagger}y_{33}+y_{43}^{\dagger}y_{43})\equiv0\pmod{\delta^{3}}$.
-Because $y_{13}=y_{23}$, this implies that $y_{33}= y_{43}$.
-Using this fact, the inner product of columns two and three now gives
-us that $\delta^{2}(z_{13}+z_{23})\equiv0\pmod{\delta^{3}}$, so
-we must have $z_{13}=z_{23}$. A similar argument
-gives that $y_{14}=y_{24}$ and $z_{14}=z_{24}$.
-\end{proof}
-
-We now have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}U\omega^{-c}_{[1]}\omega^{-d}_{[2]})=\begin{bmatrix}1 & 1 & 0 & 0\\
-1 & 1 & 0 & 0\\
-0 & 0 & 0 & 0\\
-0 & 0 & 0 & 0
-\end{bmatrix}+\delta\begin{bmatrix}0 & 0 & y_{13} & y_{14}\\
-0 & 0 & y_{13} & y_{14}\\
-y_{31} & y_{32} & y_{33} & y_{34}\\
-y_{41} & y_{42} & y_{43} & y_{44}
-\end{bmatrix}+\delta^{2}\begin{bmatrix}0 & 0 & z_{13} & z_{14}\\
-0 & 0 & z_{13} & z_{14}\\
-z_{31} & z_{32} & z_{33} & z_{34}\\
-z_{41} & z_{42} & z_{43} & z_{44}
-\end{bmatrix},
-\]
-\noindent
-by Corollary 3, we can apply the row operation $H_{[1,2]}$ and we are done.
-
-\subsubsection{Case (ii)}
-For case (ii), we have
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}\omega^{a} & \omega^{b} & \omega^{c} & \omega^{d}\\
-\omega^{e} & \omega^{f} & \omega^{g} & \omega^{h}\\
-\delta x_{31} & \delta x_{32} & \delta x_{33} & \delta x_{34}\\
-\delta x_{41} & \delta x_{42} & \delta x_{43} & \delta x_{44}
-\end{bmatrix}.
-\]
-\newtheorem{lemmacaseii}[lemma1]{Lemma}
-\begin{lemmacaseii}
-If $U$ is of case (ii), there always exists an $x\pmod{4}$ such that $a+x\equiv e\pmod{4}$,
-$b+x\equiv f\pmod{4}$, $c+x\equiv g\pmod{4}$, and $d+x\equiv h\pmod{4}$.
-\end{lemmacaseii}
-
-\begin{proof}
-By Remark 7, we can proceed as in the proof of Lemma 13, applied to the first and second columns, to show that $e-a\equiv f-b\pmod{4}$. Using a similar argument on the other columns of the matrix, it can be shown that $e-a\equiv f-b\equiv g-e\equiv h-d\pmod{4}$. Setting $x\equiv e-a\pmod{4}$, we are done.
-\end{proof}
-
-Now that we know such an $x$ exists, we have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}U)=\begin{bmatrix}\omega^{e} & \omega^{f} & \omega^{g} & \omega^{h}\\
-\omega^{e} & \omega^{f} & \omega^{g} & \omega^{h}\\
-\delta x_{31} & \delta x_{32} & \delta x_{33} & \delta x_{34}\\
-\delta x_{41} & \delta x_{42} & \delta x_{43} & \delta x_{44}
-\end{bmatrix},
-\]
-\noindent
-and by Corollary 3, we can apply the row operation $H_{[1,2]}$ and we are done.
-\subsubsection{Case (iii)}
-In case (iii), we have
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}\omega^{a} & \omega^{b} & \delta x_{13} & \delta x_{14}\\
-\omega^{c} & \omega^{d} & \delta x_{23} & \delta x_{24}\\
-\delta x_{31} & \delta x_{32} & \omega^{e} & \omega^{f}\\
-\delta x_{41} & \delta x_{42} & \omega^{g} & \omega^{h}
-\end{bmatrix}.
-\]
-
-\newtheorem{lemmacaseiv}[lemma1]{Lemma}
-\begin{lemmacaseiv}
-If $U$ is of case (iii), there exists an $x\pmod{4}$ such that $a+x\equiv c\pmod{4}$ and such that $b+x\equiv d\pmod{4}$.
-\end{lemmacaseiv}
-
-\begin{proof}
-By Remark 7, we can proceed as in the proof of Lemma 13.
-\end{proof}
-
-Now that we know such an $x$ exists, we have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}U)=\begin{bmatrix}\omega^{c} & \omega^{d} & \delta y_{13} & \delta y_{14}\\
-\omega^{c} & \omega^{d} & \delta x_{23} & \delta x_{24}\\
-\delta x_{31} & \delta x_{32} & \omega^{e} & \omega^{f}\\
-\delta x_{41} & \delta x_{42} & \omega^{g} & \omega^{h}
-\end{bmatrix},
-\]
-where $y_{13}=\omega^{x}x_{13}$ and $y_{14}=\omega^{x}x_{14}$.
-
-\newtheorem{lemmaivequal}[lemma1]{Lemma}
-\begin{lemmaivequal}
-We always have $\delta y_{13}\equiv\delta x_{23}\pmod{\delta^{2}}$ and $\delta y_{14}\equiv\delta x_{24}\pmod{\delta^{2}}$.
-\end{lemmaivequal}
-
-\begin{proof}
-Taking the inner product of the third column and itself, we have $\delta^{\dagger}\delta y^{\dagger}_{13}y_{13}+\delta^{\dagger}\delta x^{\dagger}_{23}x_{23}+\omega^{-e}\omega^{e}+\omega^{-g}\omega^{g}\equiv0\pmod{\delta^{3}}$. This implies that $y^{\dagger}_{13}y_{13}\equiv x^{\dagger}_{23}x_{23}\pmod{\delta}$, so $y_{13}\equiv x_{23}\pmod{\delta}$, thus $\delta y_{13}\equiv\delta x_{23}\pmod{\delta^{2}}$. Similarly, $\delta y_{14}\equiv\delta x_{24}\pmod{\delta^{2}}$.
-\end{proof}
-
-By Corollary 2, applying an elementary Hadamard operation to the first two rows will not increase its $\delta$-exponent, thus applying the operation will reduce the matrix to case (i) or case (ii). Because both of these cases have been shown to satisfy Lemma 9 above, case (iii) also satisfies Lemma 9.
-\subsubsection{Case (iv)}
-In case (iv), we have
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}\omega^{a} & \omega^{b} & \delta x_{13} & \delta x_{14}\\
-\omega^{c} & \omega^{d} & \delta x_{23} & \delta x_{24}\\
-\omega^{e} & \omega^{f} & \omega^{g} & \omega^{h}\\
-\omega^{j} & \omega^{l} & \omega^{m} & \omega^{p}
-\end{bmatrix}.
-\]
-\newtheorem{lemmacaseiii}[lemma1]{Lemma}
-\begin{lemmacaseiii}
-If $U$ is of case (iv), there exists an $x\pmod{4}$ such that $a+x\equiv c\pmod{4}$ and such that $b+x\equiv d\pmod{4}$.
-\end{lemmacaseiii}
-
-\begin{proof}
-Using an analogous proof to Lemma 13, applied to the first and second rows, we get $b-a \equiv d-c\pmod{4}$. We can then take $x\equiv c-a\pmod{4}$.
-\end{proof}
-\noindent
-Now that we know such an $x$ exists, we have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}U)=\begin{bmatrix}\omega^{c} & \omega^{d} & \delta y_{13} & \delta y_{14}\\
-\omega^{c} & \omega^{d} & \delta x_{23} & \delta x_{24}\\
-\omega^{e}& \omega^{f}& \omega^{g} & \omega^{h}\\
-\omega^{j} & \omega^{l} & \omega^{m} & \omega^{p}
-\end{bmatrix},
-\]
-\noindent
-where $y_{13}=\omega^{x}x_{13}$ and $y_{14}=\omega^{x}x_{14}$.
-
-\newtheorem{lemmaiiiequal}[lemma1]{Lemma}
-\begin{lemmaiiiequal}
-We always have $\delta y_{13}\equiv\delta x_{23}\pmod{\delta^{2}}$ and $\delta y_{14}\equiv\delta x_{24}\pmod{\delta^{2}}$.
-\end{lemmaiiiequal}
-
-\begin{proof}
-Taking the inner product of the third column and itself, we have $\delta^{\dagger}\delta y^{\dagger}_{13}y_{13}+\delta^{\dagger}\delta x^{\dagger}_{23}x_{23}+\omega^{-g}\omega^{g}+\omega^{-m}\omega^{m}\equiv0\pmod{\delta^{3}}$. This implies that $y^{\dagger}_{13}y_{13}\equiv x^{\dagger}_{23}x_{23}\pmod{\delta}$, so $y_{13}\equiv x_{23}\pmod{\delta}$, thus $\delta y_{13}\equiv\delta x_{23}\pmod{\delta^{2}}$. Similarly, $\delta y_{14}\equiv\delta x_{24}\pmod{\delta^{2}}$.
-\end{proof}
-
-If $\delta y_{13}\equiv\delta x_{23}\pmod{\delta^{3}}$ and $\delta y_{14}\equiv\delta x_{24}\pmod{\delta^{3}}$ then we are done, as applying an elementary Hadamard operation to the first two rows of $\omega^{x}_{[1]}U$ will reduce their $\delta$-exponent by Corollary 3 and will reduce $\omega^{x}_{[1]}U$ to case (i). Assume therefore, without loss of generality, that $\delta y_{13}\not\equiv\delta x_{23}\pmod{\delta^{3}}$. Since $\delta y_{13}+\delta x_{23}
-\equiv 0\pmod{\delta^2}$ and $\delta y_{13}+ \delta x_{23} \not\equiv
-0 \pmod{\delta^3}$, we therefore have $\delta y_{13}+ \delta x_{23}
-\equiv \delta^2 \pmod{\delta^3}$.
-
-\newtheorem{lemmaiii34}[lemma1]{Lemma}
-\begin{lemmaiii34}
-For $\omega^{x}_{[1]}U$, there exists some $y\pmod{4}$ such that $e+y\equiv j\pmod{4}$ and such that $f+y\equiv l\pmod{4}$.
-\end{lemmaiii34}
-
-\begin{proof}
-Taking the inner product of the first and second columns, a we get $\omega^{-c}\omega^{d}+\omega^{-c}\omega^{d}+\omega^{-e}\omega^{f}+\omega^{-j}\omega^{l}\equiv0\pmod{\delta^{3}}$. This implies that $\omega^{-e}\omega^{f}+\omega^{-j}\omega^{l}\equiv0\pmod{\delta^{3}}$, so by Lemma 6 we can take $y\equiv j-e\pmod{4}$.
-\end{proof}
-\noindent
-Now we have
-\[
-\rho_{3}^{k}(\omega^{x}_{[1]}\omega^{y}_{[3]}U)=\begin{bmatrix}\omega^{c} & \omega^{d} & \delta y_{13} & \delta y_{14}\\
-\omega^{c} & \omega^{d} & \delta x_{23} & \delta x_{24}\\
-\omega^{j}& \omega^{l}& \omega^{g+y} & \omega^{h+y}\\
-\omega^{j} & \omega^{l} & \omega^{m} & \omega^{p}
-\end{bmatrix}.
-\]
-
-\newtheorem{lemmaiii342}[lemma1]{Lemma}
-\begin{lemmaiii342}
-For $\omega^{x}_{[1]}\omega^{y}_{[3]}U$, we always have $g+y-m\equiv2\pmod{4}$ and $h+y-p\equiv2\pmod{4}$.
-\end{lemmaiii342}
-
-\begin{proof}
-Taking the inner product of the second and third columns, we have $\omega^{-d}(\delta y_{13} + \delta x_{23})+\omega^{g+y-l}+\omega^{m-l}\equiv0\pmod{\delta^{3}}$.  Since $\delta y_{13} + \delta x_{23} \equiv \delta^2\pmod{\delta^{3}}$, and noting that $\omega^{-d}\delta^2\equiv \delta^2\pmod{\delta^{3}}$, the inner product becomes $\delta^2 + \omega^{g+y-l} + \omega^{m-l} \equiv 0 \pmod{\delta^{3}}$. We then have that $\omega^{-l}(\omega^{g+y}+\omega^{m})\equiv\delta^{2}\equiv1+\omega^{2}\pmod{\delta^{3}}$. Multiplying both sides through by $\omega^{l-m}$, we get that $\omega^{g+y-m}\equiv\omega^{2}\pmod{\delta^{3}}$. Then, by Lemma 6, we must have $g+y-m\equiv 2\pmod{4}$. A similar proof shows $h+y-p\equiv2\pmod{4}$.
-\end{proof}
-
-Because $g+y-m\equiv2\pmod{4}$ and $h+y-p\equiv2\pmod{4}$, the third and fourth rows of $\omega^{x}_{[1]}\omega^{y}_{[3]}U$ are congruent modulo $\delta^{2}$. By Corollary 2, applying an elementary Hadamard operation to the third and fourth rows of $\omega^{x}_{[1]}\omega^{y}_{[3]}U$ will not increase their $\delta$-exponent, thus applying the operation will reduce the matrix to case (i) or case (iii). Because both of these cases have been shown to satisfy Lemma 9 above, case (iv) also satisfies Lemma 9.
-
-\subsubsection{Case (v)}
-\tab In case (v), we have
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}\omega^{a} & \omega^{b} & \omega^{c} & \omega^{d}\\
-\omega^{e} & \omega^{f} & \omega^{g} & \omega^{h}\\
-\omega^{j} & \omega^{l} & \omega^{m} & \omega^{p}\\
-\omega^{q} & \omega^{r} & \omega^{s} & \omega^{t}
-\end{bmatrix}.
-\]
-Taking the inner products of the first and second rows, we get $\omega^{e-a}+\omega^{f-b}+\omega^{g-c}+\omega^{h-d}\equiv0\pmod{\delta^{3}}$. Lemma 7 gives us three possibilities for the values of these exponents.\\
-\textbf{Case 1.} If $e-a\equiv f-b\equiv g-c\equiv h-d\pmod{4}$, we can set $x\equiv e-a\pmod{4}$. Then the first two rows of $\omega^{x}_{[1]}U$ are equivalent modulo $\delta^{3}$, so we are done by Corollary 3.\\
-\textbf{Case 2.} Assume that $e-a$, $f-b$, $g-c$, and $h-d$ are distinct modulo $4$. Then, without loss of generality, we have
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}1 & 1 & 1 & 1\\
-1 & \omega & \omega^{2} & \omega^{3}\\
-1 & \omega^{l} & \omega^{m} & \omega^{p}\\
-\omega^{q} & \omega^{r} & \omega^{s} & \omega^{t}
-\end{bmatrix}.
-\]
-
-Taking the inner product of the first and third rows, we get $1+\omega^{l}+\omega^{m}+\omega^{p}\equiv0\pmod{\delta^{3}}$. Taking the inner product of the second and third rows, we get $1+\omega^{l-1}+\omega^{m-2}+\omega^{p-3}\equiv0\pmod{\delta^{3}}$. By Lemma 7, there are 3 options for the values of $l$, $m$, and $p$.\\
-
-\textbf{Case 2.1.} Assume that $0$, $l$, $m$, and $p$ are distinct modulo $4$. Then, there are 6 possible permutations of $l$, $m$, and $p$. Note that this covers case (c) of Lemma 7.
-\begin{itemize}
-\item{If $(l,\:m,\:p)\equiv (1,\:2,\:3)\pmod{4}$, then the second and third rows of $U$ are congruent modulo $\delta^{3}$. By Corollary 3, applying an elementary Hadamard operation reduces the $\delta$-exponent of the rows and this case reduces to case (ii).}
-\item{If $(l,\:m,\:p)\equiv (1,\:3,\:2)\pmod{4}$, then the inner product of the second and third rows becomes $1+1+\omega+\omega^{-1}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{If $(l,\:m,\:p)\equiv (2,\:1,\:3)\pmod{4}$, then the inner product of the second and third rows becomes $1+\omega+\omega^{-1}+1\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{If $(l,\:m,\:p)\equiv (2,\:3,\:1)\pmod{4}$, then the inner product of the second and third rows becomes $1+\omega+\omega+\omega^{-2}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{If $(l,\:m,\:p)\equiv (3,\:1,\:2)\pmod{4}$, then the inner product of the second and third rows becomes $1+\omega^{2}+\omega^{-1}+\omega^{-1}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{If $(l,\:m,\:p)\equiv (3,\:2,\:1)\pmod{4}$, then the  second and third rows of $U$ are congruent modulo $\delta^{2}$ and by Corollary 2 we can apply an elementary Hadamard gate to these rows which will reduce this case to either case (ii) or case (iv) without increasing $k$.}
-\end{itemize}
-
-\textbf{Case 2.2.} Assume that at least one of $l$, $m$, and $p$ is congruent to $0$ modulo $4$, and the other two must be congruent modulo $4$. Note that this covers both cases (a) and (b) of Lemma 7.
-\newtheorem{casevequal}[lemma1]{Lemma}
-\begin{casevequal}
-Two rows of $U$ are congruent modulo $\delta^{2}$.
-\end{casevequal}
-\begin{proof}
-\begin{itemize}
-\item{Assume that $l\equiv0\pmod{4}$ and $m\equiv p$. Then, if $m\equiv p\equiv 0$ or $m\equiv p\equiv 2$ we are done, as the first and third rows will be equivalent modulo $\delta^{2}$. Assume that $m\equiv p\equiv 1$. Then the inner product of the second and third rows will be $1+\omega^{-1}+\omega^{-1}+\omega^{-2}\equiv1+\omega^{2}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur. Next, assume $m\equiv p\equiv 3$. Then the inner product of the second and third row will be $1+\omega^{-1}+\omega+1\equiv\omega+\omega^{3}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{Now, assume that $m\equiv0\pmod{4}$ and $l\equiv p$. If $l\equiv p$ is odd, the third row will be equivalent to the second row modulo $\delta^{2}$. If $l\equiv p$ is even, the first and third rows will be equivalent modulo $\delta^{2}$.}
-\item{Lastly, assume that $p\equiv0\pmod{4}$ and $l\equiv m$. If $l\equiv m\equiv 0$ or $l\equiv m\equiv 2$ we are done, as the first and third rows will be congruent modulo $\delta^{2}$. Assume that $l\equiv m\equiv 1$. Then the inner product of the second and third rows will be $1+1+\omega^{-1}+\omega^{-3}\equiv\omega+\omega^{3}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur. Next, assume that $l\equiv m\equiv 3$. Then the inner product of the second and third row will be $1+\omega^{2}+\omega+\omega^{-3}\equiv1+\omega^{2}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur, thus we must always have two rows of $U$ congruent modulo $\delta^{2}$.}
-\end{itemize}
-\end{proof}
-
-By the above lemma and Corollary 2, there always exist two rows of $U$ to which we can apply an elementary Hadamard operation without increasing $k$. This will reduce $U$ to an instance of case (ii) or (iv), which have already been shown to satisfy Lemma 9. By Lemma 7, we have satisfied all possibilites for case 2.\\
-\textbf{Case 3.} The last case given by Lemma 7 occurs without loss of generality when $e-a\equiv f-b\pmod{4}$, $g-c\equiv h-d\pmod{4}$, and $e-a\not\equiv g-c\pmod{4}$. We can let $a\equiv b\equiv c\equiv d\equiv e\equiv f\equiv j\equiv 0\pmod{4}$ because we know such row and column operations exist. This gives us:
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}1 & 1 & 1 & 1\\
-1 & 1 & \omega^{g} & \omega^{g}\\
-1 & \omega^{l} & \omega^{m} & \omega^{p}\\
-\omega^{q} & \omega^{r} & \omega^{s} & \omega^{t}
-\end{bmatrix}
-\]
-\textbf{Case 3.1.} If $g$ is even modulo $4$, we are done, as the first two rows of U will be congruent modulo $\delta^{2}$. By Corollary 2, applying an elementary Hadamard operation will not increase the least $\delta$-exponent $k$ of $U$ and this case will reduce to an instance of case (ii) or (iv).\\
-\textbf{Case 3.2.} Assume $g\equiv 1\pmod{4}$. Then, we have
-\[
-\rho_{3}^{k}(U)=\begin{bmatrix}1 & 1 & 1 & 1\\
-1 & 1 & \omega & \omega\\
-1 & \omega^{l} & \omega^{m} & \omega^{p}\\
-\omega^{q} & \omega^{r} & \omega^{s} & \omega^{t}
-\end{bmatrix}.
-\]
-\newtheorem{lemmavlast1}[lemma1]{Lemma}
-\begin{lemmavlast1}
-Two rows of $U$ are congruent modulo $\delta^{2}$.
-\end{lemmavlast1}
-\begin{proof}
-Taking the inner product of the first and third rows, we get $1+\omega^{l}+\omega^{m}+\omega^{p}\equiv0\pmod{\delta^{3}}$. Taking the inner product of the second and third rows, we get $1+\omega^{l}+\omega^{m-1}+\omega^{p-1}\equiv0\pmod{\delta^{3}}$. By Lemma 7, either $0$, $l$, $m$, and $p$ are distinct modulo $4$, or at least one of $l$, $m$, and $p$ is congruent to $0$ and the other two are congruent to each other modulo $4$.\\
-\textbf{Case 3.2.1.} Assume $0$, $l$, $m$, and $p$ are distinct modulo $4$.
-
-\begin{itemize}
-\item{If $(l,\:m,\:p)\equiv (1,\:2,\:3)\pmod{4}$, then the inner product of the second and third rows becomes $1+\omega+\omega+\omega^{2}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{If $(l,\:m,\:p)\equiv (1,\:3,\:2)\pmod{4}$, then the inner product of the second and third rows becomes $1+\omega+\omega^{2}+\omega\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{If $(l,\:m,\:p)\equiv (2,\:1,\:3)\pmod{4}$, then the second and third rows of $U$ are congruent modulo $\delta^{2}$, and applying an elementary Hadamard operation to them will reduce this case to either case (ii) or case (iv) without increasing $k$ by Corollary 2.}
-\item{If $(l,\:m,\:p)\equiv (2,\:3,\:1)\pmod{4}$, then the second and third rows of $U$ are congruent modulo $\delta^{2}$, and applying an elementary Hadamard operation to them will reduce this case to either case (ii) or case (iv) without increasing $k$ by Corollary 2.}
-\item{If $(l,\:m,\:p)\equiv (3,\:1,\:2)\pmod{4}$, then the inner product of the second and third rows becomes $1+\omega^{3}+1+\omega\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\item{If $(l,\:m,\:p)\equiv (3,\:2,\:1)\pmod{4}$, then the inner product of the second and third rows becomes $1+\omega^{3}+\omega+1\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur.}
-\end{itemize}
-
-\textbf{Case 3.2.2.} The other case occurs when at least one of $l$, $m$, and $p$ is congruent to $0$ and the other two are congruent to each other modulo $4$.
-\begin{itemize}
-\item{Assume $l\equiv0\pmod{4}$ and $m\equiv p\pmod{4}$. Then, if $m\equiv p\pmod{4}$ is even, the first and third rows of $U$ are congruent modulo $\delta^{2}$, and if $m\equiv p\pmod{4}$ is odd, the second and third rows of $U$ are congruent modulo $\delta^{2}$.}
-\item{Assume that $m\equiv0\pmod{4}$ and $l\equiv p\pmod{4}$. Then, if $l\equiv p \pmod{4}$ is even, we are done, because the first and third rows are congruent modulo $\delta^{2}$. If $l\equiv p\equiv1\pmod{4}$, then the inner product of the second and third rows will be $1+\omega+\omega^{-1}+1\equiv\omega+\omega^{3}\not\equiv0\pmod{\delta^{3}}$, thus this cannot occur. If $l\equiv p\equiv3\pmod{4}$, then the inner product of the second and third rows will be $1+\omega^{3}+\omega^{-1}+\omega^{2}\equiv1+\omega^{2}\not\equiv0\pmod{\delta^{3}}$, thus this case cannot occur.}
-\item{Lastly, assume $p\equiv0\pmod{4}$ and $l\equiv m\pmod{4}$. This case is analogous to the previous case where $m\equiv0\pmod{4}$.}
-\end{itemize}
-\end{proof}
-
-Because two rows of $U$ are always congruent modulo $\delta^{2}$, by Corollary 2 we can apply an elementary Hadamard gate to these rows without increasing $k$. Applying this operation to $U$ will reduce this case to case (ii) or case (iv), which have been shown to satisfy Lemma 9.\\
-\textbf{Case 3.3.} The last instance of this case occurs when $g\equiv 3\pmod{4}$. Then, we have
-\[
-\rho_{3}^{k}(U\omega_{[3]}\omega_{[4]})=\begin{bmatrix}1 & 1 & \omega & \omega\\
-1 & 1 & 1 & 1\\
-1 & \omega^{l} & \omega^{m+1} & \omega^{p+1}\\
-\omega^{q} & \omega^{r} & \omega^{s+1} & \omega^{t+1}
-\end{bmatrix},
-\]
-and the proof becomes analogous to the proof for case 3.2.
-
-
-\subsection{Statement of the main theorem}
-\newtheorem{main}{Theorem}
-\begin{main}
-Given a unitary $n\times n$ matrix $U$ with $n\le 4$ and entries in $\mathbb{D}[\omega]$ and least $\delta$-exponent $k$, then $U$ can be written as a product of at most $Nk+M$ elementary operators, where $M$ and $N$ are the bounds described in Lemmas 8 and 9 respectively.
-\end{main}
-\begin{proof}
-By induction on $k$. If $k=0$, by Lemma 8 there exists a sequence $S_{1},\ldots,S_{m}$ of elementary operators, of length at most $M$, such that $S_{1}\ldots S_{m}U=I$. We can then write $U=S^{-1}_{m}\ldots S^{-1}_{1}$. By Corollary 1, $k=1$ does not occur. For $k>1$, by Lemma 9, there exist two sequences $S_{1},\ldots,S_{m}$ and $T_{1},\ldots,T_{j}$ of elementary operators, of total length at most $N$, such that $U'=S_{1}\ldots S_{m}UT_{1}\ldots T_{j}$ has least $\delta$-exponent $k'<k$. Applying the induction hypothesis, we can then write $U'$ as a product $R_{1}\ldots R_{l}$ of elementary operators of length at most $Nk'+M$. The claim then follows by writing
-\[
-U=S^{-1}_{m}\ldots S^{-1}_{1}R_{1}\ldots R_{l}T^{-1}_{j}\ldots T^{-1}_{1}.
-\]
-\end{proof}
-
-\section{Synthesis of $1$- and $2$-qubit Clifford+$T$ circuits}
-
-\subsection{Main synthesis result}
-Let $U$ be a $2^{n} \times 2^{n}$ unitary matrix with $n \le 2$ and entries in $\mathbb{D}[\omega]$. By Theorem 1, $U$ can be decomposed into elementary matrices of types $H_{[j,m]}$, $X_{[j,m]}$, and $\omega_{[j]}$. It is known that these matrices can be further decomposed into controlled-not gates and multiply-controlled $X$, $H$, $T$, and $\omega$-gates, for example using Gray codes [1, Sec 4.5.2], and all of these gates have well known representations in Clifford+$T$ circuits.
-
-\subsection{One ancilla is sufficient}
-It remains to show that $U$ can be represented as a circuit with at most one ancilla. It is known that for $n>1$, one ancilla is sometimes necessary \cite{Kliuchnikov-et-al}.\\
-\tab Giles and Selinger \cite{GilesSelinger2013} showed that one could
-implement a multiply-controlled $X$-gate, $H$-gate, and $T$-gate using
-one ancilla in the following way:
-\[
-  \m{\begin{qcircuit}[scale=0.47]
-    \grid{2}{0.5,2,3};
-    \draw(0.4,2.7) node[anchor=center]{$\vdots$};
-    \controlled{\gate{$X$}}{1,0.5}{2,3};
-    \draw(1.6,2.7) node[anchor=center]{$\vdots$};
-  \end{qcircuit}}
-  =\!\!
-  \m{\begin{qcircuit}[scale=0.47]
-    \grid{8.5}{0,2,3};
-    \gridx{1}{7.5}{1};
-    \draw(1,2.7) node[anchor=center]{$\vdots$};
-    \init{$0$}{1,1};
-    \controlled{\widegate{$iX$}{.75}}{2.5,1}{2,3};
-    \controlled{\gate{$X$}}{4.25,0}{1};
-    \controlled{\widegate{$-iX$}{.75}}{6,1}{2,3};
-    \term{$0$}{7.5,1};
-    \draw(7.5,2.7) node[anchor=center]{$\vdots$};
-  \end{qcircuit}}
-\]\[
-  \m{\begin{qcircuit}[scale=0.47]
-    \grid{2}{0.5,2,3};
-    \draw(0.4,2.7) node[anchor=center]{$\vdots$};
-    \controlled{\gate{$H$}}{1,0.5}{2,3};
-    \draw(1.6,2.7) node[anchor=center]{$\vdots$};
-  \end{qcircuit}}
-  =\!\!
-  \m{\begin{qcircuit}[scale=0.47]
-    \grid{8.5}{0,2,3};
-    \gridx{1}{7.5}{1};
-    \draw(1,2.7) node[anchor=center]{$\vdots$};
-    \init{$0$}{1,1};
-    \controlled{\widegate{$iX$}{.75}}{2.5,1}{2,3};
-    \controlled{\gate{$H$}}{4.25,0}{1};
-    \controlled{\widegate{$-iX$}{.75}}{6,1}{2,3};
-    \term{$0$}{7.5,1};
-    \draw(7.5,2.7) node[anchor=center]{$\vdots$};
-  \end{qcircuit}}
-\]\[
-  \m{\begin{qcircuit}[scale=0.47]
-    \grid{2}{0.5,2,3};
-    \draw(0.4,2.7) node[anchor=center]{$\vdots$};
-    \controlled{\gate{$T$}}{1,0.5}{2,3};
-    \draw(1.6,2.7) node[anchor=center]{$\vdots$};
-  \end{qcircuit}}
-  =\!\!\!
-  \m{\begin{qcircuit}[scale=0.47]
-    \grid{8.5}{1,2,3};
-    \gridx{1}{7.5}{0};
-    \draw(1,2.7) node[anchor=center]{$\vdots$};
-    \init{$0$}{1,0};
-    \controlled{\widegate{$iX$}{.75}}{2.5,0}{1,2,3};
-    \gate{$T$}{4.25,0}{1};
-    \controlled{\widegate{$-iX$}{.75}}{6,0}{1,2,3};
-    \term{$0$.}{7.5,0};
-    \draw(7.5,2.7) node[anchor=center]{$\vdots$};
-  \end{qcircuit}}
-\]
-
-Combining this result with Theorem 1 clearly shows that $U$ can be implemented as a circuit using at most one ancilla.
-
-\subsection{Complexity}
-
-The proof of Theorem 1 for the $2^{n} \times 2^{n}$ case with $0\le n \le 2$ above gives an algorithm for synthesizing a Clifford+$T$ circuit with ancillas from a given operator $U$. The algorithm yields a circuit of $O(k)$ gates, where $k$ is the least $\delta$-exponent of $U$.\\
-\tab Because we only prove this algorithm for $0\le n \le 2$, it does not make sense to express the complexity of the algorithm in terms of $n$.
-
-\section{Conclusion and future work}
-In conclusion, we have presented an efficient algorithm for the exact synthesis of Clifford+$T$ circuits from given $1$- and $2$-qubit operators using decomposition into elementary operators.\\
-\tab This paper only gives a proof for the algorithm in the $1$ and $2$ qubit cases. Future work will involve extending this to the $n$ qubit case. If our methods can be extended to $n>2$, one may hope to prove that the complexity scales as $O(b^{n}nk)$, similarly to the algorithm presented in \cite{kliuchnikov2013}. It is an open question whether this is the case, and whether $b<4$.\\
-\tab It would also be interesting to carry out a practical comparison between our algorithm and that of \cite{kliuchnikov2013}, to determine the constants hidden in the big-O notation of each algorithm's complexity. Such a comparison could be meaningful even for fixed $n$.
-
-\fi
-
 \section{Acknowledgements}
 The authors acknowledge support from the National Natural Science
-Foundation of China under Grant 92465202.
-
-We have used Claude Opus 4.6 for
+Foundation of China under Grant 92465202. We have used Claude Opus 4.6
+for
 \begin{itemize}
 \item creating four references
   \cite{Forest2015,KliuchnikovYard2015,KliuchnikovSchonnenbeck2024,GlaudellJarret2026}
@@ -2445,9 +1375,8 @@ We have used Claude Opus 4.6 for
 \item generating Haskell code: the ParseData.hs (for parsing data and
   drawing distribution diagrams) and CliffordCS.hs (the implementation
   of Glaudell et al.'s algorithm \cite{Glaudell2021}).
-\item drafting Section \ref{sec:code}, except for the first two
-  paragraphs, with proper guide from the authors and later major
-  editing by the authors.
+\item drafting Section \ref{sec:code}, with proper guide from the
+  authors (later revisions are made).
 \end{itemize}
 
 %------------------------------------------------
