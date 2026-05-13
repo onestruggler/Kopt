@@ -1,5 +1,8 @@
-# Data format
+# Data
 
+## Data file is [experiment_data.dat](code/experiment_data.dat).
+
+## Data Format
 Each line in the data file is one record. Each record is 5-tuple
 
 (matrix, our CS-count, Glaudell et al's CS-count, our K-count, Glaudell et al's K-count)
@@ -19,9 +22,8 @@ formated as a pair
 ((6,[[(1,-4),(-4,-2),(1,0),(-5,-1)],[(3,0),(0,-2),(3,4),(1,5)],[(2,-3),(-2,0),(-6,1),(3,1)],[(0,-5),(6,0),(0,-1),(-1,1)]]),6,6,11,11)
 
 
-# Data file is [experiment_data.dat](code/experiment_data.dat).
 
-# Code usage
+# Code
 
 ## Compiling
 
@@ -52,7 +54,7 @@ earlier). Similarly,
 runs Glaudell et al.'s algorithm on matrix.
 
 
-# Webpage app
+## Webpage app
 
 You can run the same commands described earlier at
 [here](https://www.mathstat.dal.ca/~xbian/synthCS2/index.php).
