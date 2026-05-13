@@ -3,6 +3,10 @@
 
 
 \input{thesis.sty}
+\usepackage{svg}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
 \usepackage{breakurl}             % Not needed if you use pdflatex only.
 % \usepackage{agda}
@@ -65,14 +69,15 @@
   $U$, upto a global phase, into a circuit of length at most $20k+9$,
   using at most $2k$ K (i.e. a scaled H) gates and at most $2k+1$
   Controlled-S gates, without using any ancilla. Moreover, the number
-  of K gate is at most 2 times worse than optimal, the number
-  of $\CS$ gate is at most 4 times worse than optimal. In practice,
-  this method always acheives the optimal CS-count, and the K-count is
-  always smaller than the best known. This method is similar to the
-  work of Russell \cite{russell2014} for the Clifford$+T$ gate set but
-  with a more concrete bound analysis (e.g. bound 20k+9 v.s. $O(k)$),
-  where the ring in use is $\Z[\frac{1}{\sqrt 2}, i]$ which is more
-  complicated than and contains the ring here $\Z[\tfrac{1}{2}, i]$.
+  of K gate is at most 2 times worse than optimal, the number of $\CS$
+  gate is at most 4 times worse than optimal. In practice, this method
+  always acheives the optimal CS-count, and roughly the K-count is
+  $k/2$ smaller than the best known, acheiving roughly a 25\% K-count
+  reduction. This method is similar to the work of Russell
+  \cite{russell2014} for the Clifford$+T$ gate set but with a more
+  concrete bound analysis (e.g. bound 20k+9 v.s. $O(k)$), where the
+  ring in use is $\Z[\frac{1}{\sqrt 2}, i]$ which is more complicated
+  than and contains the ring here $\Z[\tfrac{1}{2}, i]$.
 \end{abstract}
 
 \maketitle
@@ -1378,23 +1383,95 @@ The transitions is summarized in Figure \ref{fig:trans}.
 
 \section{Experiment} \label{sec:exp}
 
-We implemented our algorithm in Haskell and did an comparison with the
-CS-optimal synthesis algorithm in \cite{Glaudell2021}. A unitary of
-given lde range is randomly genrated and feeded to both algorithm, and
-output circuits are compared on metrics $\rcs,\rkc,\rlen$.
+We implemented our algorithm in Haskell and did an comparison with
+Glaudell et al.'s CS-optimal synthesis algorithm
+\cite{Glaudell2021}. A unitary of given lde range is randomly genrated
+and feeded to both algorithms, and the output circuits are compared on
+metrics $\rcs,\rkc$.
 
+The output of their algorithm is of the form Equation \ref{eq:ccs}
+with the CS-count being optimal. We added one step to their algorithm
+to keep the K-count as small as possible: for each $C_i$, we find an
+equivalent ciruit with minimum K-count (could be 0,1,2).
 
+We generated randomly 1{,}351 two-qubit Clifford+$CS$ operators with
+lde ranging from 2 to 58, available in \ref{sec:code}.
+Figure~\ref{fig:lde-dist} is the distribution of lde, which has mean
+27 and median 28. Figure~\ref{fig:k-reduction-dist} is the
+distribution of the relative K-count reduction, which has mean 19.4\%,
+median of 19.8\%, and maximum of 47.7\%.
 
-Statistics show our algorithm alway acheives the optimal CS-count,
-which suggests that part of our bound analysis is not tight, and could
-be improved. This is left to futurn work. Also our method always
-acheives the better K-count than best-known.
+\input{figures}
 
-We also observe from our data that
-\[\lde{D} \le \cs(D)\]
-for any two-qubit CS operator D, which we couldn't prove.
+From the data, we also observe the following facts.
+
+\subsection{$CS$-count agreement}
+Across all 1{,}351 operators, our $CS$-count and Glaudell et al.'s
+$CS$-count are identical. Both algorithms are $CS$-optimal.
+
+\subsection{$K$-count improvement}
+Our algorithm produces a $K$-count less than or equal to that of
+Glaudell et al.\ in every case. It strictly improves the $K$-count in
+95.4\% of cases (1{,}289 out of 1{,}351), with a mean reduction of
+19.4\%, a median reduction of 19.8\%, and a maximum reduction of
+47.7\%. Only 62 operators (4.6\%) have identical $K$-counts under both
+methods; see Figure~\ref{fig:k-reduction-dist}.
+
+\subsection{Empirical relations between CS-count and K-count, lde}
+The inequalities
+\[
+  \mathit{CS}\text{-count} \leq K_{\mathrm{ours}} \text{ and }
+  \mathrm{lde} -6 \le \mathit{CS}\text{-count}
+\]
+hold for every operator in the dataset. In particular, most of case,
+the $CS$-count is greater than or equal to the lde, but not
+always. Out of 1{,}351 operators:
+\begin{itemize}
+\item $\mathit{CS}\text{-count} > \mathrm{lde}$: 1{,}283 cases (95.0\%),
+\item $\mathit{CS}\text{-count} = \mathrm{lde}$: 45 cases (3.3\%),
+\item $\mathit{CS}\text{-count} < \mathrm{lde}$: 23 cases (1.7\%).
+\end{itemize}
+In the 23 cases where $\mathit{CS}\text{-count} < \mathrm{lde}$, the
+deficit is usually 1 (i.e.\ $\mathit{CS}\text{-count} = \mathrm{lde}
+- 1$), with the largest gaps being $\mathrm{lde} = 38$,
+$\mathit{CS}\text{-count} = 32$ and $\mathrm{lde} = 20$,
+$\mathit{CS}\text{-count} = 18$.
+
+\subsection{Source of improvement}
+
+Two tight linear relationships emerge from the data. First, the
+$K$-count of Glaudell et al.\ is well approximated by twice the
+$CS$-count:
+\[
+  K_{\mathrm{Glaudell}} \approx 2 \cdot \mathit{CS}\text{-count}.
+\]
+The residual $K_{\mathrm{Glaudell}} - 2 \cdot
+\mathit{CS}\text{-count}$ lies in $\{-4, -3, -2, -1, 0, 1, 2\}$ for
+all 1{,}351 operators, with 99.3\% of values in $\{-4, \ldots, 0\}$.
+Second, our $K$-count is well approximated by twice the lde:
+\[
+  K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}.
+\]
+The residual $K_{\mathrm{ours}} - 2 \cdot \mathrm{lde}$ equals $-1$
+or $0$ for 80.2\% of operators, and satisfies $|K_{\mathrm{ours}} - 2
+\cdot \mathrm{lde}| \leq 2$ for 99.6\% of operators. These two
+relationships are also reflected in the Pearson correlations: the
+correlation between $\mathrm{lde}$ and $K_{\mathrm{ours}}$ is $r =
+0.9987$, while the correlation between $\mathit{CS}\text{-count}$ and
+$K_{\mathrm{Glaudell}}$ is $r = 0.9991$.
+
+Since $K_{\mathrm{Glaudell}} \approx 2 \cdot
+\mathit{CS}\text{-count}$ and $K_{\mathrm{ours}} \approx 2 \cdot
+\mathrm{lde}$, the absolute $K$-count saving is approximately $2
+\cdot (\mathit{CS}\text{-count} - \mathrm{lde})$. In other words, the
+improvement is governed by the gap between the $CS$-count and the lde.
+The relative reduction percentage is roughly stable across lde values,
+hovering around 19--21\% for lde between 5 and 40, and tapering off
+for very small or very large lde.
+
 
 \section{Code and data availability}
+\label{sec:code}
 
 \section{Conclusion and future work}
 In conclusion, we proposed an efficient and near-optimal algorithm for
@@ -2357,18 +2434,27 @@ In conclusion, we have presented an efficient algorithm for the exact synthesis 
 
 \section{Acknowledgements}
 The authors acknowledge support from the National Natural Science
-Foundation of China under Grant 92465202. Four citations
-\cite{Forest2015,KliuchnikovYard2015,KliuchnikovSchonnenbeck2024,GlaudellJarret2026}
-and their one-line summary in the related work section are created by
-Claude Opus 4.6. We also used Opus 4.6 for improving the wording of
-the paper.
+Foundation of China under Grant 92465202.
+
+We have used Claude Opus 4.6 for
+\begin{itemize}
+\item creating four references
+  \cite{Forest2015,KliuchnikovYard2015,KliuchnikovSchonnenbeck2024,GlaudellJarret2026}
+  and their one-line summary in the related work section.
+\item improving the wording of the paper.
+\item generating Haskell code: the ParseData.hs (for parsing data and
+  drawing distribution diagrams) and CliffordCS.hs (the implementation
+  of Glaudell et al.'s algorithm \cite{Glaudell2021}).
+\item drafting Section \ref{sec:code}, except for the first two
+  paragraphs, with proper guide from the authors and later major
+  editing by the authors.
+\end{itemize}
 
 %------------------------------------------------
 
 
 
-
-\bibliographystyle{plain}
+\bibliographystyle{abbrv}
 \bibliography{thesis}
 
   
