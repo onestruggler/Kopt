@@ -30,7 +30,7 @@ formated as a pair
 Install Haskell and newsynth library and possible other libraries. Run
 following command in the project directory to compile:
 
-ghc +RTS -K1g -RTS -O2 Main;
+ghc +RTS -K1g -RTS -O2 Main
 
 ## runing
 
@@ -57,4 +57,5 @@ runs Glaudell et al.'s algorithm on matrix.
 ## Webpage app
 
 You can run the same commands described earlier at
-[here](https://www.mathstat.dal.ca/~xbian/synthCS2/index.php).
+[here](https://www.mathstat.dal.ca/~xbian/synthCS2/index.php), without
+installing Haskell and compiling.
