@@ -19,7 +19,6 @@
 \newcommand{\tab}{\hspace*{2em}}
 \providecommand{\tabularnewline}{\\}
 
-
 \usepackage{newunicodechar}
 \newunicodechar{λ}{\ensuremath{\mathnormal\lambda}}
 \newunicodechar{←}{\ensuremath{\mathnormal\from}}
@@ -32,7 +31,6 @@
 \newunicodechar{⊤}{\ensuremath{\mathnormal \top}}
 \newunicodechar{⊥}{\ensuremath{\mathnormal \bot}}
 
-%\usepackage{authblk}
 \usepackage[normalem]{ulem}
 
 \newcommand{\lb}{\bar{\lambda}}
@@ -66,16 +64,15 @@
   natural number such that all entries of $(1+i)^k U$ are Gaussian
   integers. Our method decomposes $U$, up to a global phase, into a
   circuit of length at most $20k+9$, using at most $2k$ $K$ gates
-  (i.e., scaled $H$ gates) and at most $2k+1$ Controlled-S gates.
-  The $K$-count is at most $2$ times the optimal, and the
-  $\CS$-count is at most $4$ times the optimal. In experiments, our
-  method always achieves the optimal CS-count and yields a mean
-  $K$-count reduction of 19\% compared to the best known result.  Our
-  approach is similar to that of Russell \cite{russell2014} for the
-  Clifford$+T$ gate set, but provides explicit bounds (e.g., $20k+9$
-  vs.\ $O(k)$) and operates over the simpler ring
-  $\Z[\tfrac{1}{2}, i]$, a subring of the ring
-  $\Z[\frac{1}{\sqrt 2}, i]$ used by Russell.
+  (i.e., scaled $H$ gates) and at most $2k+1$ Controlled-S gates.  The
+  $K$-count is at most $2$ times the optimal, and the $\CS$-count is
+  at most $4$ times the optimal. In experiments, our method always
+  achieves the optimal CS-count and yields a mean $K$-count reduction
+  of 19\% compared to the best known result.  Our approach is similar
+  to that of Russell \cite{russell2014} for the Clifford$+T$ gate set,
+  but provides explicit bounds (e.g., $20k+9$ vs.\ $O(k)$) and
+  operates over the simpler ring $\Z[\tfrac{1}{2}, i]$, a subring of
+  the ring $\Z[\frac{1}{\sqrt 2}, i]$ used by Russell.
 \end{abstract}
 
 \maketitle
@@ -84,14 +81,13 @@
 
 In quantum computation, decomposing unitary operators into gates from
 a fixed universal set is a fundamental problem
-\cite{Nielsen-Chuang}. The Clifford+Controlled-S gate set
-(abbreviated Clifford+CS) is universal, just like the well-known
-Clifford+T gate set. We study the exact synthesis of two-qubit
-Clifford+CS operators. Previous work on two-qubit synthesis of
-Clifford+CS or Clifford+T operators has mainly focused on minimizing
-the CS- or T-count, since these gates are more expensive than
-Clifford operators in certain scenarios. However, work on T-gate
-optimization
+\cite{Nielsen-Chuang}. The Clifford+Controlled-S gate set (abbreviated
+Clifford+CS) is universal, just like the well-known Clifford+T gate
+set. We study the exact synthesis of two-qubit Clifford+CS
+operators. Previous work on two-qubit synthesis of Clifford+CS or
+Clifford+T operators has mainly focused on minimizing the CS- or
+T-count, since these gates are more expensive than Clifford operators
+in certain scenarios. However, work on T-gate optimization
 {\cite{Soken2014,AmyTOpt2014,Heyfron_2019,Kissinger2020,debeaudrap2020fast,de_Beaudrap_2020}}
 has suggested that the H gate is an ``obstruction'' to T-optimization
 methods. Quoting from \cite{Soken2014}: ``It has been shown that
@@ -100,13 +96,13 @@ consisting only of T and CNOT gates and that H gates impede the
 optimization significantly''.
 
 We propose a method that produces circuits with a near-minimal number
-of both $K$ (i.e., scaled $H$) gates and CS gates, thereby
-alleviating this obstruction. The problem of simultaneously minimizing
-two different gate counts is also of mathematical interest: previous
-work on single-qubit Clifford+T synthesis achieved the minimum use of
-both the Hadamard and $T$ gates
-\cite{matsumoto2008,kliuchnikov2013fast, giles2013remarks}, and
-extending this to the multi-qubit case has been an open problem.
+of both $K$ (i.e., scaled $H$) gates and CS gates, thereby alleviating
+this obstruction. The problem of simultaneously minimizing two
+different gate counts is also of mathematical interest: previous work
+on single-qubit Clifford+T synthesis achieved the minimum use of both
+the Hadamard and $T$ gates \cite{matsumoto2008,kliuchnikov2013fast,
+  giles2013remarks}, and extending this to the multi-qubit case has
+been an open problem.
 
 \subsection{Background}
 Consider the following unitary operators:
@@ -124,8 +120,8 @@ primitive 8th root of unity; $H$ is the Hadamard gate and $K$ is a
 scaled version of $H$; $S$ is sometimes called the \emph{phase gate};
 and $\CZ$ is the controlled-$Z$ gate. Under multiplication,
 identities, and tensor products, these operators generate the
-\emph{Clifford group}. (The precise group depends on which scalars
-are included; we include only the scalars $\pm 1$ and $\pm i$, so the
+\emph{Clifford group}. (The precise group depends on which scalars are
+included; we include only the scalars $\pm 1$ and $\pm i$, so the
 above gates generate the Clifford group exactly.)
 
 Every operator $U$ obtained in this way has size $2^n\times 2^n$ for
@@ -137,13 +133,13 @@ the controlled phase gate
 \begin{equation*}
 \CS = \smatrix{1&0&0&0\\0&1&0&0\\0&0&1&0\\0&0&0&i}.
 \end{equation*}
-The resulting operators are called Clifford+$\CS$ operators. Note
-that $\CZ = \CS^2$. We write $\CliffordCS$ for the group of two-qubit
+The resulting operators are called Clifford+$\CS$ operators. Note that
+$\CZ = \CS^2$. We write $\CliffordCS$ for the group of two-qubit
 Clifford+$\CS$ operators and $\cCIR$ for the set of two-qubit
 Clifford+$\CS$ circuits (a circuit being a finite sequence of
 gates). Each circuit $D \in \cCIR$ implements a unique operator in
-$\CliffordCS$, denoted $[D]$. That is, $[\_]$ is the matrix
-semantics function from $\cCIR$ to $\CliffordCS$.
+$\CliffordCS$, denoted $[D]$. That is, $[\_]$ is the matrix semantics
+function from $\cCIR$ to $\CliffordCS$.
 
 We use the following notation: $K_0 = K \otimes I$,
 $K_1 = I \otimes K$, and similarly for $S_0$ and $S_1$, where $I$ is
@@ -177,29 +173,29 @@ related works.
 For single-qubit Clifford+$T$ synthesis, the works
 \cite{matsumoto2008,kliuchnikov2013fast,giles2013remarks} achieved the
 minimum use of both the Hadamard and $T$ gates. The works
-\cite{Glaudell_2019,Prakash2018} achieved the minimum $T$-count
-for single-qutrit Clifford+$T$ synthesis. The work
-\cite{Amolak2020} considered single-qudit Clifford+$T$
-synthesis. Forest et al.~\cite{Forest2015} generalized exact synthesis
-from Clifford+$T$ to single-qubit Clifford-cyclotomic gate sets.
-Kliuchnikov and Yard~\cite{KliuchnikovYard2015} developed a general
-algebraic framework for exact synthesis over number rings, unifying
-several gate sets under one theory.
+\cite{Glaudell_2019,Prakash2018} achieved the minimum $T$-count for
+single-qutrit Clifford+$T$ synthesis. The work \cite{Amolak2020}
+considered single-qudit Clifford+$T$ synthesis. Forest et
+al.~\cite{Forest2015} generalized exact synthesis from Clifford+$T$ to
+single-qubit Clifford-cyclotomic gate sets.  Kliuchnikov and
+Yard~\cite{KliuchnikovYard2015} developed a general algebraic
+framework for exact synthesis over number rings, unifying several gate
+sets under one theory.
  
 \subsubsection{Two-qubit}
 
 Two works on two-qubit synthesis guarantee optimality of a
-non-Clifford gate: Li et al.~\cite{Li_2023_CT2} for Clifford+$T$
-(near $T$-optimal, with worst-case $T$-count at most 10 times the
-minimum) and Glaudell et al.~\cite{Glaudell2021} for Clifford+$\CS$
+non-Clifford gate: Li et al.~\cite{Li_2023_CT2} for Clifford+$T$ (near
+$T$-optimal, with worst-case $T$-count at most 10 times the minimum)
+and Glaudell et al.~\cite{Glaudell2021} for Clifford+$\CS$
 ($\CS$-optimal). Neither considered $H$-count optimization, but for
-the latter, we can deduce that its $K$-count is at most 2 times
-the optimal (the same bound as ours).
-Glaudell et al.~\cite{GlaudellJarret2026} later gave a
-high-performance exact synthesis framework for two-qubit Clifford+$T$
-circuits that optimizes the $T$-count exactly, using a
-meet-in-the-middle strategy with algebraic canonicalization and lookup
-tables. All three of these works rely on the exceptional isomorphism
+the latter, we can deduce that its $K$-count is at most 2 times the
+optimal (the same bound as ours).  Glaudell et
+al.~\cite{GlaudellJarret2026} later gave a high-performance exact
+synthesis framework for two-qubit Clifford+$T$ circuits that optimizes
+the $T$-count exactly, using a meet-in-the-middle strategy with
+algebraic canonicalization and lookup tables. All three of these works
+rely on the exceptional isomorphism
 $SU(4) \cong \operatorname{Spin}(6)$. By contrast, our work does not
 use this isomorphism. Instead, we employ a residue analysis similar to
 that of Russell \cite{russell2014}, but over the simpler ring
@@ -210,11 +206,11 @@ $(1+\omega)^k U$ lie in $\Z[\omega]$.
 
 \subsubsection{Multi-qubit and multi-qutrit}
 
-Multi-qubit Clifford+$T$ synthesis was introduced by Giles
-and Selinger \cite{GilesSelinger2013}, whose algorithm has worst-case
-gate count $O\left(3^{2^n} n k\right)$. This was later improved
-\cite{kliuchnikov2013} to $O\left(4^n n k\right)$. Glaudell et
-al.\ gave exact multi-qubit synthesis for several subclasses of
+Multi-qubit Clifford+$T$ synthesis was introduced by Giles and
+Selinger \cite{GilesSelinger2013}, whose algorithm has worst-case gate
+count $O\left(3^{2^n} n k\right)$. This was later improved
+\cite{kliuchnikov2013} to $O\left(4^n n k\right)$. Glaudell et al.\
+gave exact multi-qubit synthesis for several subclasses of
 Clifford+$T$ operators \cite{Amy-Glaudell-Ross}, such as the
 Toffoli+Hadamard operators. Amy et al.\ adapted the method of
 \cite{kliuchnikov2013} to Toffoli+Hadamard operators, achieving a
@@ -301,9 +297,8 @@ The following characterization of the quotient rings is well-known:
 
 We give an elementary proof by induction on $n$; a similar argument
 for the case $\Z[\sqrt 2]/(\sqrt 2 ^ n)$ appears in
-Clement~\cite{Clement_pri}. The base case $n=1$ is immediate.
-Suppose the claim holds for $n$, i.e., every $x \in \zi$ is
-congruent to some
+Clement~\cite{Clement_pri}. The base case $n=1$ is immediate.  Suppose
+the claim holds for $n$, i.e., every $x \in \zi$ is congruent to some
 $\sum_{i=0}^{n-1} b_i \gamma^i \text{ mod } (\gamma^n)$, meaning
 \[
   x = \sum_{i=0}^{n-1} b_i \gamma^i + k \gamma ^ n \text{ for some } k.
@@ -333,8 +328,8 @@ $b_0$ and $b_0'$ and dividing by $\gamma$ yields
   \gamma^{i-1} = k\gamma^{n-1}
 \]
 
-Reducing modulo $(\gamma)$ again gives $b_1 =
-b'_1$. Repeating this argument shows $b_i= b'_i$ for all $i$.
+Reducing modulo $(\gamma)$ again gives $b_1 = b'_1$. Repeating this
+argument shows $b_i= b'_i$ for all $i$.
 
 We write $\rho_n(x)$ for the canonical projection from $\Z[i]$ to
 $n$-digit residues. The proof above shows that $\rho_n(x)$ is
@@ -352,27 +347,25 @@ $x \equiv y \text{ mod } {\gamma^n}$.  Modulo $\gamma^3$, we have
 \end{array}
 \]
 
-The $\Mod{\gamma ^ n}$ residue classes form a
-commutative ring. Modulo $\gamma^2$, the ring addition coincides with
-bitwise exclusive or (denoted $\oplus$); $(10)_2$ is the
-multiplicative identity; $(00)_2$ is the zero element; and
-multiplication by $(01)_2$ is the right shift operation. By
-distributivity,
+The $\Mod{\gamma ^ n}$ residue classes form a commutative ring. Modulo
+$\gamma^2$, the ring addition coincides with bitwise exclusive or
+(denoted $\oplus$); $(10)_2$ is the multiplicative identity; $(00)_2$
+is the zero element; and multiplication by $(01)_2$ is the right shift
+operation. By distributivity,
 $11 \cdot b_0b_1 = 10 \cdot b_0b_1 + 01 \cdot b_0b_1 = b_0(b_1\oplus
 b_0)$. Since $\rho_{2}(i) = 11$, whenever $\rho_1(x)=1$, either
-$\rho_2(x) = 10$ or $\rho_2(ix) = 10$. Similarly, modulo
-$\gamma^3$, the addition rule is
+$\rho_2(x) = 10$ or $\rho_2(ix) = 10$. Similarly, modulo $\gamma^3$,
+the addition rule is
 \[
   b_0b_1b_2 + b'_0b'_1b'_2 = (b_0\oplus b'_0)(b_1\oplus
   b'_1)(b_2\oplus b'_2 \oplus (b_0 \cdot b'_0)),
 \]
-where $\cdot$ denotes multiplication in
-$\Z[i]/({\gamma})$, equivalently the logical ``and'' of two bits. The
-multiplicative identity is $100$ and the zero element is $000$.
-Multiplication by $010$ is a right shift by $1$ digit and
-multiplication by $001$ is a right shift by $2$ digits. The rest of
-the multiplication table follows by distributivity. The additive
-inverse is
+where $\cdot$ denotes multiplication in $\Z[i]/({\gamma})$,
+equivalently the logical ``and'' of two bits. The multiplicative
+identity is $100$ and the zero element is $000$.  Multiplication by
+$010$ is a right shift by $1$ digit and multiplication by $001$ is a
+right shift by $2$ digits. The rest of the multiplication table
+follows by distributivity. The additive inverse is
 \[
   -(b_0b_1b_2)  = b_0b_1(b_2\oplus b_0).
 \]
@@ -390,9 +383,9 @@ $\rho_3(i^kx) = 100$.
 For example, $2+3i$ and $5+2i$ are odd, while $2+4i$ and $1+3i$ are
 even. In our convention, an even Gaussian integer is one divisible by
 $\gamma$, not necessarily by $2$. However, for $x\in \Z$, $x$ is even
-(resp.\ odd) as an integer if and only if it is even (resp.\ odd) as
-a Gaussian integer, so our definition extends the usual notion of
-parity on the integers. The following lemmas are straightforward.
+(resp.\ odd) as an integer if and only if it is even (resp.\ odd) as a
+Gaussian integer, so our definition extends the usual notion of parity
+on the integers. The following lemmas are straightforward.
 
 \begin{lemma}
   \label{lem:parity-dagger-norm}
@@ -420,9 +413,9 @@ $\rho_n^k(x) = \rho_n(\gamma^kx)$. We call $\rho_n^k(x)$ the $(n,k)$
 residue of $x$.  If $k$ is a denominator exponent for a vector or
 matrix $A$, $\rho_n^k(A)$ is defined entry-wise.
 
-\begin{lemma} \label{lem:k-odd}
-  For $t\in \di$, if $k = \ldeg{t}>0$, then $\gamma^kt$ is
-  odd.
+\begin{lemma}
+  \label{lem:k-odd}
+  For $t\in \di$, if $k = \ldeg{t}>0$, then $\gamma^kt$ is odd.
 \end{lemma}
 
 \begin{lemma}
@@ -468,11 +461,11 @@ b'$. Similarly,
 $\rho_1^{k-1}({x - y}) = \LS(\rho_2^k(x - y)) = \LS(1b - 1b') =
 \LS((1-1)(b - b')) = b\oplus b'$, since subtraction in $\Z/(2)$
 coincides with $\oplus$ (every element is its own additive inverse).
-If $b\oplus b' = 1$, then $\lde{x \pm y}$ decreases
-by $1$; if $b\oplus b' = 0$ and $k \ge 2$, then $\lde{x \pm y}$ decreases by at least
-$2$. Since dividing $t$ by $\gamma$ increases the
-lde by $1$, for $x,y \in \D[i]$ with lde $k>0$ and
-$\rho_3^k(x) = 10b$ and $\rho_3^k(y) = 10b'$, we obtain
+If $b\oplus b' = 1$, then $\lde{x \pm y}$ decreases by $1$; if
+$b\oplus b' = 0$ and $k \ge 2$, then $\lde{x \pm y}$ decreases by at
+least $2$. Since dividing $t$ by $\gamma$ increases the lde by $1$,
+for $x,y \in \D[i]$ with lde $k>0$ and $\rho_3^k(x) = 10b$ and
+$\rho_3^k(y) = 10b'$, we obtain
 
 \begin{align*}
   \rho_2^k(K \begin{bmatrix}
@@ -617,11 +610,11 @@ matrix, but whose nonzero entries may be arbitrary powers of $i$
 (i.e., unit-length elements of $\Z[i]$). Every $4 \times 4$
 generalized permutation is a product of a permutation matrix and a
 diagonal unitary matrix, and hence can be implemented by a circuit of
-length at most~$9$ containing at most~$1$ CS gate and no $K$
-gate. The group of generalized permutations is a semidirect product of
-the permutation group and the diagonal unitary group.  In particular,
-for any permutation matrix $P$ and diagonal matrix $D$, there exists
-$D'$ such that
+length at most~$9$ containing at most~$1$ CS gate and no $K$ gate. The
+group of generalized permutations is a semidirect product of the
+permutation group and the diagonal unitary group.  In particular, for
+any permutation matrix $P$ and diagonal matrix $D$, there exists $D'$
+such that
 \[
   PD = D'P
 \]
@@ -636,8 +629,8 @@ Our method follows a residue analysis similar to Russell's
 operates over the simpler subring $\Z[\tfrac{1}{2}, i]$. Such residue
 analysis methods are widely used in exact synthesis; see, e.g.,
 {\cite{giles2013remarks,GilesSelinger2013,Glaudell2021,Li_2023_CT2,amy2023improved}}.
-Compared to the ad hoc use of residues in prior work, we have
-given in Section~\ref{sec:algebra} a uniform treatment based on binary
+Compared to the ad hoc use of residues in prior work, we have given in
+Section~\ref{sec:algebra} a uniform treatment based on binary
 residues, which we conjecture generalizes to any $\xi$-ring as defined
 in \cite{KliuchnikovSchonnenbeck2024}.
 
@@ -652,14 +645,15 @@ We begin with the main theorem.
 \end{theorem}
 
 
-The proof is constructive and yields an algorithm for
-computing such a circuit.
+The proof is constructive and yields an algorithm for computing such a
+circuit.
 
 \subsection{Optimality}
 
-\begin{definition} \label{def:count} Let $D$ be a Clifford+CS
-  circuit. Recall that $\sem{D}$ is the unitary operator it
-  implements. Define
+\begin{definition}
+  \label{def:count}
+  Let $D$ be a Clifford+CS circuit. Recall that $\sem{D}$ is the
+  unitary operator it implements. Define
   \begin{itemize}
   \item $\rkc(D)=$ the number of $K$ gates that $D$ contains.
   \item
@@ -684,11 +678,10 @@ computing such a circuit.
 \end{definition}
 
 \begin{remark}
-  This convention differs from that of, e.g.,
-  \cite{GKMR}, where $\cs(D)$ would be called the CS-count of
-  $D$. In their convention, there is no separate notion of the
-  ``raw'' $K$-count or CS-count; the ``count'' always refers to the
-  optimal value.
+  This convention differs from that of, e.g., \cite{GKMR}, where
+  $\cs(D)$ would be called the CS-count of $D$. In their convention,
+  there is no separate notion of the ``raw'' $K$-count or CS-count;
+  the ``count'' always refers to the optimal value.
 \end{remark}
 
 Any Clifford+CS circuit $D$ is an alternating sequence of Clifford
@@ -697,10 +690,10 @@ parts $C_i$ and a $\CS$ gate
   D = C_0 \cdot \CS \cdot C_1 \cdot \CS \cdot \ldots \cdot C_n.
 \end{equation}
 By enumerating all two-qubit Clifford circuits, each $C_i$ is
-implementable by at most 2 $K$ gates and satisfies $\lde{C_i} \le 2$. By
-the subadditivity of lde,
-$\lde{D} \le \lde{C_0} + \lde{\CS} + \lde{C_1} + \ldots + \lde{C_n} \le
-2(n+1)$, i.e., $\lde{D} \le 2(\rcs(D) + 1)$, which implies
+implementable by at most 2 $K$ gates and satisfies $\lde{C_i} \le
+2$. By the subadditivity of lde,
+$\lde{D} \le \lde{C_0} + \lde{\CS} + \lde{C_1} + \ldots + \lde{C_n}
+\le 2(n+1)$, i.e., $\lde{D} \le 2(\rcs(D) + 1)$, which implies
 \[
   \lde{D} \le 2(\cs(D) + 1).
 \]
@@ -726,9 +719,9 @@ which implies
 \[
   \lde{D} \le \kc(D).
 \]
-Theorem~\ref{thm:main} produces $D'$ with $\rkc(D') \le 2\lde{D}$
-and $\rcs(D') \le 2\lde{D} + 1$. Combined with the preceding
-inequalities, this gives
+Theorem~\ref{thm:main} produces $D'$ with $\rkc(D') \le 2\lde{D}$ and
+$\rcs(D') \le 2\lde{D} + 1$. Combined with the preceding inequalities,
+this gives
 \begin{equation}
   \lde{D} \le \kc(D) \le 2\lde{D}
 \end{equation}
@@ -738,8 +731,8 @@ inequalities, this gives
   2\lde{D} + 1
 \end{equation}
 Thus our synthesis algorithm achieves at worst 2 times the optimal
-$K$-count and at worst 4 times the optimal CS-count. (Experiments
-show it always achieves the optimal CS-count and a strictly better
+$K$-count and at worst 4 times the optimal CS-count. (Experiments show
+it always achieves the optimal CS-count and a strictly better
 $K$-count than the best known method; see Section~\ref{sec:exp}.)
 Inequality~\eqref{eq:csi} is similar to Proposition~6 of
 \cite{Glaudell2021}, but slightly tighter.
@@ -752,19 +745,20 @@ $A$,
 \[
   \cs(A) \le \kc(A) \le 2 \cs(A) + 2.
 \]
-This follows because their output has the form of Equation~\eqref{eq:ccs}
-with optimal CS-count, and each Clifford part between two CS gates has
-$K$-count 1 or 2. Let $E$ be such a Clifford part lying between two
-CS gates. First, $\kc(E) \neq 0$: if $E$ were a generalized
-permutation (which contains no CS gate since $E$ is Clifford), then
-the two flanking CS gates in $\CS\cdot E\cdot\CS$ could be cancelled,
-contradicting CS-optimality. The cancellation follows by direct
-calculation over the finitely many generalized permutations, or by
-the semidirect product structure of permutations and diagonals. That
-$\kc(E) \le 2$ follows from enumerating all two-qubit Cliffords.
+This follows because their output has the form of
+Equation~\eqref{eq:ccs} with optimal CS-count, and each Clifford part
+between two CS gates has $K$-count 1 or 2. Let $E$ be such a Clifford
+part lying between two CS gates. First, $\kc(E) \neq 0$: if $E$ were a
+generalized permutation (which contains no CS gate since $E$ is
+Clifford), then the two flanking CS gates in $\CS\cdot E\cdot\CS$
+could be cancelled, contradicting CS-optimality. The cancellation
+follows by direct calculation over the finitely many generalized
+permutations, or by the semidirect product structure of permutations
+and diagonals. That $\kc(E) \le 2$ follows from enumerating all
+two-qubit Cliffords.
 
-Thus Glaudell et al.'s algorithm enjoys the same property as ours:
-the $K$-count is at most 2 times the optimal.
+Thus Glaudell et al.'s algorithm enjoys the same property as ours: the
+$K$-count is at most 2 times the optimal.
 
 \begin{remark}
   Note that experiments show that in most cases $\lde{A} < \cs(A)$ for
@@ -784,12 +778,11 @@ the complex numbers, the standard notions of complex conjugation
 (denoted $\_\da$), inner product, norm, transposition (denoted
 $\_^T$), and conjugate transposition (also denoted $\_\da$) carry
 over.  For a vector $v \in \di^n$, the \emph{norm} is
-$\|v\|= \sqrt {v^{\dagger}v}$, and
-$\|v\|^2 = v^{\dagger}v \in \D$ since
-$v^{\dagger}v \in \D[i] \cap \R$. Similarly, if $v\in \zi^n$, then
-$v^{\dagger}v \in \Z$.  A {\em unit vector} is a vector of norm~1.
-For a vector $v$, the notation $v_j$ refers to its $j$th entry;
-entries are numbered starting from $j=0$.
+$\|v\|= \sqrt {v^{\dagger}v}$, and $\|v\|^2 = v^{\dagger}v \in \D$
+since $v^{\dagger}v \in \D[i] \cap \R$. Similarly, if $v\in \zi^n$,
+then $v^{\dagger}v \in \Z$.  A {\em unit vector} is a vector of
+norm~1.  For a vector $v$, the notation $v_j$ refers to its $j$th
+entry; entries are numbered starting from $j=0$.
 
 \begin{lemma}\label{lem:main}
   For any $A \in \CliffordCS$ with lde $k$, there exist permutation
@@ -835,10 +828,10 @@ entries are numbered starting from $j=0$.
   1 & 1 & 1 & 1
 \end{bmatrix}.
 \]
-We say $A$ has such a \emph{pattern} and write $\pat(A)$ for the pattern
-of $A$. Moreover, $A$ has pattern~(i) if and only if $\lde{A}=0$,
-i.e., when $A$ is a generalized permutation. Patterns~(iv), (v),
-and (vi) occur only when $\lde{A}>1$.
+We say $A$ has such a \emph{pattern} and write $\pat(A)$ for the
+pattern of $A$. Moreover, $A$ has pattern~(i) if and only if
+$\lde{A}=0$, i.e., when $A$ is a generalized
+permutation. Patterns~(iv), (v), and (vi) occur only when $\lde{A}>1$.
 \end{lemma}
 
 Before proving this lemma, we prove several useful lemmas.
@@ -846,8 +839,8 @@ Before proving this lemma, we prove several useful lemmas.
 \begin{lemma} \label{lem:uvec} Let $v$ be a unit vector in $\D[i]^4$
   with lde $k>0$. There exists a generalized permutation matrix $P$
   such that $\rho_1^k(Pv)= (1,1,0,0)^T$ or $(1,1,1,1)^T$,
-  $\rho_2^k(Pv) =(10,10,01,00)^T$ or $(10,10,10,10)^T$ when $k>1$,
-  and $\rho_2^1(Pv) = (10,10,00,00)^T$ when $k=1$.
+  $\rho_2^k(Pv) =(10,10,01,00)^T$ or $(10,10,10,10)^T$ when $k>1$, and
+  $\rho_2^1(Pv) = (10,10,00,00)^T$ when $k=1$.
 \end{lemma}
 
 \begin{proof}
@@ -864,19 +857,19 @@ Before proving this lemma, we prove several useful lemmas.
   are odd.
 
   We can then find a permutation matrix $P$ such that
-  $\rho_2^k(Pv)= (1a,1b,0c,0d)^T$ or $(1a,1b,1c,1d)^T$. In the
-  latter case, multiplying by a suitable diagonal matrix (i.e.,
-  multiplying individual entries by appropriate powers of $i$) makes
-  all second digits zero, yielding $(10,10,10,10)^T$.
+  $\rho_2^k(Pv)= (1a,1b,0c,0d)^T$ or $(1a,1b,1c,1d)^T$. In the latter
+  case, multiplying by a suitable diagonal matrix (i.e., multiplying
+  individual entries by appropriate powers of $i$) makes all second
+  digits zero, yielding $(10,10,10,10)^T$.
 
   In the former case, multiplying by a diagonal matrix makes the
   second digits of the odd entries zero, yielding
-  $(10,10,0c,0d)^T$. Applying $\CK$ (equivalently, applying $K$ to
-  the pair of odd entries) produces $(00,01,0c,0d)^T$ or
+  $(10,10,0c,0d)^T$. Applying $\CK$ (equivalently, applying $K$ to the
+  pair of odd entries) produces $(00,01,0c,0d)^T$ or
   $(01,00,0c,0d)^T$. Since multiplication by $\CK$ preserves unit
-  vectors, this is the residue of a unit vector with lde $k-1$.
-  When $k>1$, its $(1, k{-}1)$ residue must have the
-  form $(1,1,0,0)^T$ up to a permutation, so $c=1$ and $d=0$.
+  vectors, this is the residue of a unit vector with lde $k-1$.  When
+  $k>1$, its $(1, k{-}1)$ residue must have the form $(1,1,0,0)^T$ up
+  to a permutation, so $c=1$ and $d=0$.
 
   When $k=1$, the only unit vectors are
   $\frac{1}{\gamma}(i^l,i^m,0,0)^T$ for $l,m \in \s{0,1,2,3}$, up to a
@@ -944,14 +937,13 @@ $(1,k)$-residue equal to~$1$ must be even.
 
 \begin{proof}[Proof of Lemma \ref{lem:main}]
   The rows and columns of a unitary matrix are unit vectors, and all
-  row (column) vectors are pairwise orthogonal.
-  Lemmas~\ref{lem:uvec} and~\ref{lem:v2} force the pattern to be
-  (ii)--(vi) when $k>0$. When $k=0$, the only unitaries with lde~0
-  are the generalized permutations, which have pattern~(i). When
-  $k=1$, the only unit vectors are
-  $\frac{1}{\gamma}(i^l,i^m,0,0)^T$ up to a permutation, so the
-  residue cannot have four 1s in a column. Hence
-  patterns~(iv), (v), and~(vi) occur only when $\lde{A}>1$.
+  row (column) vectors are pairwise orthogonal.  Lemmas~\ref{lem:uvec}
+  and~\ref{lem:v2} force the pattern to be (ii)--(vi) when $k>0$. When
+  $k=0$, the only unitaries with lde~0 are the generalized
+  permutations, which have pattern~(i). When $k=1$, the only unit
+  vectors are $\frac{1}{\gamma}(i^l,i^m,0,0)^T$ up to a permutation,
+  so the residue cannot have four 1s in a column. Hence patterns~(iv),
+  (v), and~(vi) occur only when $\lde{A}>1$.
 \end{proof}
 
 \begin{lemma}\label{lem:main2}
@@ -965,13 +957,13 @@ $(1,k)$-residue equal to~$1$ must be even.
   \item $\lde{L'\CK LAR}\le k-1$ (only when $\lde{A} = 1$).
   \end{itemize}
 \end{lemma}
-Each inequality is in fact an equality, but we do not need this.
-The proof proceeds by case analysis on $\rho_1^k(A)$. Since $k>0$,
+Each inequality is in fact an equality, but we do not need this.  The
+proof proceeds by case analysis on $\rho_1^k(A)$. Since $k>0$,
 Case~(i) is excluded, so we begin with Case~(ii).
 
 \subsubsection{Case ii}
-If $k>1$, by Lemma~\ref{lem:uvec}, up to left and right
-multiplication by generalized permutations, $\pat(A)$ refines to
+If $k>1$, by Lemma~\ref{lem:uvec}, up to left and right multiplication
+by generalized permutations, $\pat(A)$ refines to
 \[
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
@@ -1032,8 +1024,8 @@ decreases the lde.
 \end{remark}
 
 \subsubsection{Case iii}
-If $k>1$, by Lemma~\ref{lem:uvec}, up to left and right
-multiplication by generalized permutations, $\pat(A)$ refines to
+If $k>1$, by Lemma~\ref{lem:uvec}, up to left and right multiplication
+by generalized permutations, $\pat(A)$ refines to
 \[
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
@@ -1055,8 +1047,8 @@ $b = 0$. Now $\pat(A)$ refines to
 \]
 Applying $K_1S_1$ on the left reduces this to Case~(vi).
 
-If $k=1$, by Lemma~\ref{lem:uvec}, up to left and right
-multiplication by generalized permutations, $\pat(A)$ refines to
+If $k=1$, by Lemma~\ref{lem:uvec}, up to left and right multiplication
+by generalized permutations, $\pat(A)$ refines to
 \[
   \begin{bmatrix}
     10 & 10 & 00 & 00\\
@@ -1081,10 +1073,10 @@ refines to
   \end{bmatrix}.
 \]
 The inner product of the first two columns gives $a = 0$; similarly,
-$b=c=0$. Since the third row has lde $k-1>0$, either $d=e=f=1$
-or exactly one of $d,e,f$ is~$1$ and the rest are~$0$. In the latter
-case, up to a column permutation, we may assume $d=1$ and $e=f=0$.
-In both cases, right multiplication by $K_1$ decreases the lde.
+$b=c=0$. Since the third row has lde $k-1>0$, either $d=e=f=1$ or
+exactly one of $d,e,f$ is~$1$ and the rest are~$0$. In the latter
+case, up to a column permutation, we may assume $d=1$ and $e=f=0$.  In
+both cases, right multiplication by $K_1$ decreases the lde.
 
 \begin{remark}
   As in Remark~\ref{rmk:dummy}, the left generalized permutation can
@@ -1142,8 +1134,8 @@ If $b=c=1$ and $d=g=1$, then $\pat(A)$ is
     10 & 11 & 1f & 1j
   \end{bmatrix},
 \]
-The inner product of the first and third columns gives
-$f = \bar{e}$; similarly, $h=\bar{e}$ and $j=\bar{f}$. Now $\pat(A)$ is
+The inner product of the first and third columns gives $f = \bar{e}$;
+similarly, $h=\bar{e}$ and $j=\bar{f}$. Now $\pat(A)$ is
 \[
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
@@ -1175,8 +1167,8 @@ The inner product of the second and third columns gives
   &= 000 \implies x\oplus y \oplus z \oplus u\oplus v \oplus w = 1, \text{ a contradiction.}
 \end{align*}
 
-If $b=c=0$, the inner product of the first and third rows gives
-$e=h$; similarly, $f=j$. So $\pat(A)$ refines to
+If $b=c=0$, the inner product of the first and third rows gives $e=h$;
+similarly, $f=j$. So $\pat(A)$ refines to
 \[
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
@@ -1217,8 +1209,8 @@ Figure~\ref{fig:trans}.
 \end{figure}
 
 \begin{proof}[Proof of Theorem \ref{thm:main}]
-  Let $k=\lde{A}$. By Lemma~\ref{lem:main2}, and merging
-  adjacent generalized permutations as needed, there exist generalized
+  Let $k=\lde{A}$. By Lemma~\ref{lem:main2}, and merging adjacent
+  generalized permutations as needed, there exist generalized
   permutations $L_1,L_2,\ldots,L_p,R_1,R_2,\ldots,R_q$ such that
   \[
     \lde{L_pK_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_q} = 0, \text{ i.e.,}
@@ -1231,13 +1223,13 @@ Figure~\ref{fig:trans}.
   \begin{equation*}
     A = L_1^{-1}iK_1L_2^{-1}iK_1\cdots L_p^{-1}PR_q^{-1}iK_1\cdots R_2^{-1}iK_1R_1^{-1}.
   \end{equation*}
-  The rkc of the right-hand side is at most $2k$. After
-  merging adjacent generalized permutations, the number of generalized
+  The rkc of the right-hand side is at most $2k$. After merging
+  adjacent generalized permutations, the number of generalized
   permutations is at most $2k+1$. Each generalized permutation is
   implementable by at most 9 gates and at most 1 CS gate, up to a
-  global phase. This yields a circuit implementing $A$ with
-  at most $2k$ $K$ gates, at most $2k+1$ CS gates, and at most
-  $9(2k+1)+2k$ gates up to a global phase.
+  global phase. This yields a circuit implementing $A$ with at most
+  $2k$ $K$ gates, at most $2k+1$ CS gates, and at most $9(2k+1)+2k$
+  gates up to a global phase.
 \end{proof}
 
 \section{Experiment}
@@ -1252,11 +1244,11 @@ algorithm has the form of Equation~\eqref{eq:ccs} with optimal
 CS-count. We augmented their algorithm with one additional step to
 minimize the $K$-count: for each $C_i$, we replace it with an
 equivalent circuit of minimum $K$-count (which may be 0, 1, or 2). We
-randomly generated 1{,}346 two-qubit Clifford+$\CS$ operators with
-lde ranging from 2 to 58; data are available in
-Section~\ref{sec:code}.  Figure~\ref{fig:lde-dist} shows the
-distribution of lde values, and Figure~\ref{fig:k-reduction-dist}
-shows the distribution of the relative $K$-count reduction.
+randomly generated 1{,}346 two-qubit Clifford+$\CS$ operators with lde
+ranging from 2 to 58; data are available in Section~\ref{sec:code}.
+Figure~\ref{fig:lde-dist} shows the distribution of lde values, and
+Figure~\ref{fig:k-reduction-dist} shows the distribution of the
+relative $K$-count reduction.
 
 % Requires: \usepackage{pgfplots}
 %           \pgfplotsset{compat=1.18}
@@ -1293,9 +1285,9 @@ shows the distribution of the relative $K$-count reduction.
 };
 \end{axis}
 \end{tikzpicture}
-\caption{Distribution of the least denominator exponent (lde) across the
-  1{,}346 test operators. The lde ranges from 2 to 58, with a mean of 27
-  and a median of 28.}
+\caption{Distribution of the least denominator exponent (lde) across
+  the 1{,}346 test operators. The lde ranges from 2 to 58, with a mean
+  of 27 and a median of 28.}
 \label{fig:lde-dist}
 \end{figure}
 
@@ -1365,10 +1357,10 @@ approximated by twice the lde:
 \[
   K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}.
 \]
-The difference lies in $\{-2, -1, 0\}$, with $\s{-1,0}$ accounting
-for 80.5\% of cases. These relationships are also reflected in the
-Pearson correlations: $\mathrm{lde}$ vs.\ $K_{\mathrm{ours}}$ has
-correlation $0.9996$, while $\mathit{CS}\text{-count}$ vs.\
+The difference lies in $\{-2, -1, 0\}$, with $\s{-1,0}$ accounting for
+80.5\% of cases. These relationships are also reflected in the Pearson
+correlations: $\mathrm{lde}$ vs.\ $K_{\mathrm{ours}}$ has correlation
+$0.9996$, while $\mathit{CS}\text{-count}$ vs.\
 $K_{\mathrm{Glaudell}}$ has correlation $0.9991$.  Since
 $K_{\mathrm{Glaudell}} \approx 2 \cdot \mathit{CS}\text{-count}$ and
 $K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}$, the absolute
@@ -1392,8 +1384,8 @@ practice our method consistently achieves a better $K$-count than the
 best previously known algorithm.
 
 The algorithm of Li et al.\ \cite{Li_2023_CT2} produces circuits whose
-$T$-count is at worst 10 times the optimal. We believe our
-method can be adapted to improve this bound.
+$T$-count is at worst 10 times the optimal. We believe our method can
+be adapted to improve this bound.
 
 \section{Acknowledgements}
 The authors acknowledge support from the National Natural Science
