@@ -2,7 +2,7 @@
 
 ## Data
 
-The data file is [experiment_data.dat](code/experiment_data.dat).
+The data file is [experiment_data.dat](src/experiment_data.dat).
 
 ### Data Format
 

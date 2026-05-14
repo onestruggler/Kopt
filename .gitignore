@@ -3,6 +3,7 @@ MAlonzo/**
 dist
 dist-*
 cabal-dev
+Main
 *.o
 *.hi
 *.hie
