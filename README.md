@@ -80,5 +80,5 @@ runs Glaudell et al.'s algorithm on the given matrix.
 ### Web App
 
 The same commands can be run online at
-[https://www.mathstat.dal.ca/~xbian/synthCS2/index.php](https://www.mathstat.dal.ca/~xbian/synthCS2/index.php),
+[https://www.mathstat.dal.ca/~xbian/kopt/index.php](https://www.mathstat.dal.ca/~xbian/kopt/index.php),
 without installing GHC or compiling.
