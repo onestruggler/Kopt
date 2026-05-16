@@ -144,7 +144,7 @@ main_check_data = do
   content <- readFile "experiment_data.dat"
   let linesOfFiles = lines content
   print $ length linesOfFiles
-  let pts0 = take 1000 $ drop 3400 $ (map read linesOfFiles) :: [((Integer, [[(Integer, Integer)]]) , Int, Int, Int, Int)]
+  let pts0 = take 1000 $ drop 4400 $ (map read linesOfFiles) :: [((Integer, [[(Integer, Integer)]]) , Int, Int, Int, Int)]
   let pts1 = map (\((k,es), mycs , jcs, mykc, jkc) ->
                     (matrix_of_rows (map (map (parse_Di k)) es) :: U4Di, mycs, jcs, mykc, jkc)) pts0
 
@@ -235,13 +235,6 @@ g100 gf = do
   hClose h
 
 
-g100' gf = do
-  ms1 <- generate $ vectorOf 100000 (arbitrary :: Gen U4Di)
-  let ms = take 100 $ map product $ grouping gf ms1
-  let lrs = map to_data' ms
-  h <- openFile "experiment_data_nomat.dat" AppendMode
-  hPutStrLn h $ concat $ intersperse "\n" (map show lrs)
-  hClose h
 
 
 write_file = do
@@ -300,13 +293,23 @@ to_data m = (data_of_mat m, mycs, optcs, mykc, bestknownkc)
     bestknownkc = kc m''
 
 
-to_data' :: U4Di -> (Int, Int, Int, Int)
-to_data' m = (mycs, optcs, mykc, bestknownkc)
-  where
-    m' = synth m
-    -- Note the matrix semantic of (map t2_of_t2' m') is m.
-    m'' = synthcs (map t2_of_t2' m')
-    mycs = csc m'
-    mykc = kc m'
-    optcs = csc m''
-    bestknownkc = kc m''
+
+mod3res :: [ZComplex]
+mod3res = [1,-1,i,-i,0,1+i, 1-i,2]
+
+mod3adj :: [Z2] -> [Z2]
+mod3adj [a,b,c] = [a, b, (c + b)]
+
+check_mod3adj = [res 3 (adj x) == mod3adj (res 3 x) | x <- mod3res]
+
+
+main_read_write = do
+  content <- readFile "experiment_data.dat"
+  let linesOfFiles = lines content
+  print $ length linesOfFiles
+  let pts0 = (map read linesOfFiles) :: [((Integer, [[(Integer, Integer)]]) , Int, Int, Int, Int)]
+  let pts = map (\((k,e), a, b, c, d) -> (k, a,b,c,d)) pts0
+  print $ and [a == b | (k, a,b,c,d) <- pts]
+  -- h <- openFile "experiment_data_nomat.dat" AppendMode
+  -- hPutStrLn h $ concat $ intersperse "\n" (map show pts)
+  -- hClose h

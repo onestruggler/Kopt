@@ -160,9 +160,8 @@ $ Z = S^2, \, X = KZKi, \, \CX = K_1\CZ K_1\cdot i, \,\Ex = \CX \, \XC
   \label{eqn:ck}
   \CK = \CZ \cdot Z_0S_0Z_1S_1K_1\CS K_1S_1\cdot i.
 \end{equation}
-As with $\CX$, we shorten $\CK_{01}$ to $\CK$ and
-$\CK_{10}$ to $\KC$. By Equation~\ref{eqn:ck},
-$\CK \in \CliffordCS$.
+By Equation~\ref{eqn:ck} $\CK \in \CliffordCS$. As with $\CX$, we
+shorten $\CK_{01}$ to $\CK$ and $\CK_{10}$ to $\KC$.
 
 \subsection{Related work}
 
@@ -225,7 +224,7 @@ proportional to the $T$-count. The works
 multi-qubit Clifford+Cyclotomic operators, while
 \cite{Glaudell2024b,Amolak2024} treated the multi-qutrit case. The
 work \cite{glaudell-metaplectic} proved that qutrit metaplectic gates
-are a subset of Clifford+T. The work \cite{Mukhopadhyay2024} proposed
+are a subset of Clifford+T. The work \cite{Mukhopadhyay2024b} proposed
 a heuristic algorithm achieving $V$-gate optimality.
 
 % ----------------------------------------------------------------------
@@ -371,9 +370,9 @@ follows by distributivity. The additive inverse is
   -(b_0b_1b_2)  = b_0b_1(b_2\oplus b_0).
 \]
 Inspecting the $\rho_3$ table, we see that $\rho_3$ is not stable
-under complex conjugation; instead,
-$\rho_3(x{\da}) = \rho_3(x) + 001$. Since $\rho_{3}(i) = 111$,
-whenever $\rho_1(x)=1$, there exists $k \in \s{0,1,2,3}$ such that
+under complex conjugation; instead, if $\rho_3(x) = abc$, then
+$\rho_3(x{\da}) = ab(c\oplus b)$. Since $\rho_{3}(i) = 111$, whenever
+$\rho_1(x)=1$, there exists $k \in \s{0,1,2,3}$ such that
 $\rho_3(i^kx) = 100$.
 
 \begin{definition}
@@ -417,12 +416,6 @@ matrix $A$, $\rho_n^k(A)$ is defined entry-wise.
 \begin{lemma}
   \label{lem:k-odd}
   For $t\in \di$, if $k = \ldeg{t}>0$, then $\gamma^kt$ is odd.
-\end{lemma}
-
-\begin{lemma}
-  For any $x \in \D[i]$ with denominator exponent $k$,
-  $\rho_2^k(x^\dagger) = \rho_2^k(x)$ and
-  $\rho_3^k(x^\dagger) = \rho_2^k(x) + 001$.
 \end{lemma}
 
 \subsection{Action on residues}
@@ -919,7 +912,7 @@ Before proving this lemma, we prove several useful lemmas.
 
 \begin{proof}
   By Lemma~\ref{lem:uvec}, each column can have only an even number of
-  1s. The only missing case is
+  1s. Upto a permutation of rows, the only missing case is
   \[
   \begin{bmatrix}
     1 & 0 \\
@@ -1202,10 +1195,11 @@ Figure~\ref{fig:trans}.
   \scalebox{0.8}{\tikzfig{transition}}    
   \caption{Transitions between cases. The annotation $K_1\times$
     ($\times K_1$) on an arrow means that if $A$ has the pattern at
-    the tail, then $K_1LAR$ ($LARK_1$) has the pattern at the head
-    for suitably chosen generalized permutations $L$ and $R$.
-    Similarly for other annotations. Note that $\CK$ decomposes into
-    a circuit with two $K$ gates as in Equation~\eqref{eqn:ck}.}
+    the tail, then $K_1LAR$ ($LARK_1$) has the pattern at the head for
+    suitably chosen generalized permutations $L$ and $R$.  Similarly
+    for other annotations. All zero pattern stands for lde $<k$.  Note
+    that $\CK$ decomposes into a circuit with two $K$ gates as in
+    Equation~\eqref{eqn:ck}.}
   \label{fig:trans}
 \end{figure}
 
@@ -1245,11 +1239,11 @@ algorithm has the form of Equation~\eqref{eq:ccs} with optimal
 CS-count. We augmented their algorithm with one additional step to
 minimize the $K$-count: for each $C_i$, we replace it with an
 equivalent circuit of minimum $K$-count (which may be 0, 1, or 2). We
-randomly generated 1{,}346 two-qubit Clifford+$\CS$ operators with lde
-ranging from 2 to 58; data are available in Section~\ref{sec:code}.
-Figure~\ref{fig:lde-dist} shows the distribution of lde values, and
-Figure~\ref{fig:k-reduction-dist} shows the distribution of the
-relative $K$-count reduction.
+randomly generated 12{,}000 two-qubit Clifford+$\CS$ operators with
+lde ranging from 0 to 152; data are available in
+Section~\ref{sec:code}.  Figure~\ref{fig:lde-dist} shows the
+distribution of lde values, and Figure~\ref{fig:k-reduction-dist}
+shows the distribution of the relative $K$-count reduction.
 
 % Requires: \usepackage{pgfplots}
 %           \pgfplotsset{compat=1.18}
@@ -1260,35 +1254,32 @@ relative $K$-count reduction.
 \begin{tikzpicture}
 \begin{axis}[
     ybar=0pt,
-    bar width=2pt,
+    bar width=5pt,
     width=\linewidth,
     height=6cm,
     xlabel={lde},
     ylabel={count},
     ymin=0,
-    xmin=0, xmax=60,
-    xtick={0,5,10,15,20,25,30,35,40,45,50,55,60},
-    ytick={0,10,20,30,40,50},
+    xmin=-5, xmax=157,
+    xtick={0,20,40,60,80,100,120,140},
+    ytick={0,100,200,300,400,500,600},
     tick label style={font=\small},
     label style={font=\small},
     axis lines=left,
     enlarge x limits=0.02,
 ]
 \addplot[fill=black!30, draw=black] coordinates {
-    (2,1) (4,5) (5,5) (6,13) (7,14) (8,24) (9,26) (10,34)
-    (11,41) (12,28) (13,29) (14,39) (15,25) (16,30) (17,38)
-    (18,33) (19,30) (20,28) (21,34) (22,32) (23,29) (24,31)
-    (25,41) (26,32) (27,23) (28,29) (29,40) (30,32) (31,32)
-    (32,44) (33,42) (34,47) (35,32) (36,44) (37,39) (38,36)
-    (39,28) (40,34) (41,27) (42,24) (43,19) (44,20) (45,25)
-    (46,14) (47,18) (48,14) (49,10) (50,6) (51,7) (52,5)
-    (53,4) (54,2) (55,1) (56,2) (57,2) (58,2)
+    (0,399) (5,606) (10,628) (15,608) (20,617) (25,616) (30,607)
+    (35,624) (40,634) (45,605) (50,596) (55,653) (60,615) (65,608)
+    (70,628) (75,599) (80,530) (85,483) (90,468) (95,364) (100,226)
+    (105,155) (110,63) (115,40) (120,14) (125,9) (130,2) (135,1)
+    (140,1) (150,1)
 };
 \end{axis}
 \end{tikzpicture}
-\caption{Distribution of the least denominator exponent (lde) across
-  the 1{,}346 test operators. The lde ranges from 2 to 58, with a mean
-  of 27 and a median of 28.}
+\caption{Distribution of the least denominator exponent (lde) across the
+  12{,}000 test operators, binned in groups of 5. The lde ranges from 0
+  to 152, with a mean of 51 and a median of 50.}
 \label{fig:lde-dist}
 \end{figure}
 
@@ -1305,45 +1296,46 @@ relative $K$-count reduction.
     xlabel={$(K_{\mathrm{Glaudell}} - K_{\mathrm{ours}}) / K_{\mathrm{Glaudell}}$},
     ylabel={count},
     ymin=0,
-    xmin=-1, xmax=49,
-    xtick={1,5,9,13,17,21,25,29,33,37,41,45},
-    xticklabels={0--2\%,4--6\%,8--10\%,12--14\%,16--18\%,20--22\%,24--26\%,28--30\%,32--34\%,36--38\%,40--42\%,44--46\%},
+    xmin=-1, xmax=53,
+    xtick={1,5,9,13,17,21,25,29,33,37,41,45,49},
+    xticklabels={0--2\%,4--6\%,8--10\%,12--14\%,16--18\%,20--22\%,24--26\%,28--30\%,32--34\%,36--38\%,40--42\%,44--46\%,48--50\%},
     x tick label style={font=\small, rotate=45, anchor=east},
-    ytick={0,20,40,60,80,100,120},
+    ytick={0,200,400,600,800,1000,1200},
     tick label style={font=\small},
     label style={font=\small},
     axis lines=left,
     enlarge x limits=0.02,
 ]
-\addplot[fill=black!30, draw=black] coordinates { (1,62) (3,34) (5,42)
-  (7,51) (9,59) (11,75) (13,76) (15,93) (17,96) (19,86) (21,118)
-  (23,105) (25,95) (27,84) (29,69) (31,67) (33,43) (35,33) (37,20)
-  (39,11) (41,12) (43,5) (45,8) (47,2) };
+\addplot[fill=black!30, draw=black] coordinates {
+    (1,611) (3,111) (5,214) (7,302) (9,407) (11,527) (13,710)
+    (15,840) (17,970) (19,1058) (21,1264) (23,1148) (25,1005)
+    (27,819) (29,667) (31,451) (33,344) (35,191) (37,135) (39,71)
+    (41,75) (43,35) (45,19) (47,5) (49,1) (51,1)
+};
 \end{axis}
 \end{tikzpicture}
 \caption{Distribution of the relative $K$-count reduction
   $(K_{\mathrm{Glaudell}} - K_{\mathrm{ours}}) /
   K_{\mathrm{Glaudell}}$, binned in 2\,\% increments. Our method
-  improves on Glaudell et al.'s $K$-count in 95.5\,\% of cases, with a
-  mean reduction of 19.4\,\%, a median of 19.8\,\%, and a maximum of
-  47.7\,\%.}
+  improves on Glaudell et al.'s $K$-count in 95.1\,\% of cases, with a
+  mean reduction of 19.7\,\%, a median of 20.3\,\%, and a maximum of
+  50.0\,\%.}
 \label{fig:k-reduction-dist}
 \end{figure}
 
 For every operator, our $\CS$-count and that of Glaudell et al.\ are
 identical, so our algorithm is also $\CS$-optimal in practice. The
-$K$-count is strictly reduced in 95.5\% of cases; see
+$K$-count is strictly reduced in 95.1\,\% of cases; see
 Figure~\ref{fig:k-reduction-dist}.
 
 The inequalities
 $ \mathrm{lde} -2 \le \mathit{CS}\text{-count} \leq K_{\mathrm{ours}}$
 hold for every operator. In particular,
 \begin{itemize}
-\item $\mathrm{lde} \le \mathit{CS}\text{-count}$: 1{,}324 cases
+\item $\mathrm{lde} \le \mathit{CS}\text{-count}$: 11{,}811 cases
   (98.4\%),
-\item $\mathrm{lde} > \mathit{CS}\text{-count}$: 22 cases (1.6\%).
+\item $\mathrm{lde} > \mathit{CS}\text{-count}$: 189 cases (1.6\%).
 \end{itemize}
-In the 22 cases, the deficit is usually 1, not 2.
 
 \subsection{Source of improvement}
 Two tight linear relationships emerge from the data. First, the
@@ -1352,24 +1344,34 @@ $\CS$-count:
 \[
   K_{\mathrm{Glaudell}} \approx 2 \cdot \mathit{CS}\text{-count}.
 \]
-The difference lies in $\s{-4, -3, -2, -1, 0, 1, 2}$, with 93.5\% of
+The difference lies in $\s{-4, -3, -2, -1, 0, 1, 2}$, with 94.3\% of
 values in $\s{-4, \ldots, 0}$. Second, our $K$-count is well
 approximated by twice the lde:
 \[
   K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}.
 \]
 The difference lies in $\{-2, -1, 0\}$, with $\s{-1,0}$ accounting for
-80.5\% of cases. These relationships are also reflected in the Pearson
+80.2\% of cases. These relationships are also reflected in the Pearson
 correlations: $\mathrm{lde}$ vs.\ $K_{\mathrm{ours}}$ has correlation
-$0.9996$, while $\mathit{CS}\text{-count}$ vs.\
-$K_{\mathrm{Glaudell}}$ has correlation $0.9991$.  Since
+$0.9999$, while $\mathit{CS}\text{-count}$ vs.\
+$K_{\mathrm{Glaudell}}$ has correlation $0.9999$.  Since
 $K_{\mathrm{Glaudell}} \approx 2 \cdot \mathit{CS}\text{-count}$ and
 $K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}$, the absolute
 $K$-count saving is approximately
 $2 \cdot (\mathit{CS}\text{-count} - \mathrm{lde})$. The relative
 reduction is roughly stable across lde values, hovering around
-19--21\% for lde between 5 and 40, and tapering off at the extremes
+19--21\% for lde between 5 and 80, and tapering off at the extremes
 (possibly due to small sample sizes).
+
+\subsection{Worst cases}
+From Figure~\ref{fig:k-reduction-dist}, for a non-negligible number of
+operators, namely around 588 out of 12{,}000 (4.9\%), our method
+achieves no $K$-count reduction. In particular, the following family
+of circuits:
+\[W = \CK \cdot \KC \cdot \CK \cdot \KC \cdots\] is one of the worst
+cases. One can verify that $\lde{W} = \cs(W)$. For this family of
+circuits, our algorithm and Glaudell et al.'s produce the same
+$K$-count $2 \cdot \mathrm{lde}$.
 
 \section{Code and data availability}
 \label{sec:code}
@@ -1388,20 +1390,27 @@ The algorithm of Li et al.\ \cite{Li_2023_CT2} produces circuits whose
 $T$-count is at worst 10 times the optimal. We believe our method can
 be adapted to improve this bound.
 
+One can also try to extend our method to three qubit case, though the
+number of residue patterns is far more than 6 as in Lemma
+\ref{lem:main}, which might cause some difficulty and affect the
+tightness of the bound. Extending to four qubit case is clearly more
+diffcult.
+
+Extension to two-qubit Clifford+V and Clifford+Cyclotomic gate sets
+are promising and should be investigated.
+
 \section{Acknowledgements}
 The authors acknowledge support from the National Natural Science
 Foundation of China under Grant 92465202. We have used Claude Opus 4.6
 for
 \begin{itemize}
-\item creating four references
-  \cite{Forest2015,KliuchnikovYard2015,KliuchnikovSchonnenbeck2024,GlaudellJarret2026}
-  and their one-line summary in the related work section.
 \item improving the wording of the paper.
 \item generating Haskell code: the ParseData.hs (for parsing data and
   drawing distribution diagrams) and CliffordCS.hs (the implementation
   of Glaudell et al.'s algorithm \cite{Glaudell2021}).
 \item drafting Section \ref{sec:code}, with proper guide from the
-  authors (later revisions are made).
+  authors (later, major revision are made and correctness are checked
+  by the authors).
 \end{itemize}
 
 %------------------------------------------------
