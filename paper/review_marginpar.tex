@@ -1,0 +1,296 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{Noto Serif CJK SC}
+\setsansfont{Noto Sans CJK SC}
+
+\usepackage[colorinlistoftodos]{todonotes}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[left=0.75in, right=2.5in, top=0.75in, bottom=0.75in, marginparwidth=2in, marginparsep=0.15in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+% -------------------------------------------------------
+% Margin annotation commands (no extra packages needed)
+% -------------------------------------------------------
+% \reviewnote{text}       — generic margin note
+% \reviewernote{text}     — reviewer concern (prefixed [R])
+% \authorresponse{text}   — author's planned fix (prefixed [A])
+% \question{text}         — open question (prefixed [?])
+% \inlinenote{text}       — inline banner note
+%
+% To disable all notes for final submission, uncomment:
+%   \renewcommand{\reviewnote}[1]{}
+%   \renewcommand{\reviewernote}[1]{}
+%   \renewcommand{\authorresponse}[1]{}
+%   \renewcommand{\question}[1]{}
+%   \renewcommand{\inlinenote}[1]{}
+% -------------------------------------------------------
+
+\newcommand{\reviewnote}[1]{%
+  \marginpar{\raggedright\footnotesize\textsf{#1}}%
+}
+\newcommand{\reviewernote}[1]{%
+  \marginpar{\raggedright\footnotesize\textsf{[R] #1}}%
+}
+\newcommand{\authorresponse}[1]{%
+  \marginpar{\raggedright\footnotesize\textsf{[A] #1}}%
+}
+\newcommand{\question}[1]{%
+  \marginpar{\raggedright\footnotesize\textsf{[?] #1}}%
+}
+\newcommand{\inlinenote}[1]{%
+  \noindent\fbox{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{%
+    \footnotesize\textsf{#1}%
+  }}\par\medskip
+}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black,
+  pdfencoding=unicode
+}
+\pdfstringdefDisableCommands{%
+  \def\rho{rho}%
+  \def\dagger{dagger}%
+  \def\oplus{oplus}%
+  \def\mathrm#1{#1}%
+  \def\tfrac#1#2{#1/#2}%
+}
+
+% Enable CJK line breaking
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt
+\tolerance=400
+\emergencystretch=1em
+
+\title{Review: Exact Synthesis of Two-Qubit Clifford+CS Operators}
+\date{}
+
+\begin{document}
+\maketitle
+
+% -------------------------------------------------------
+% ANNOTATION USAGE EXAMPLES
+% -------------------------------------------------------
+% 1. Generic margin note:
+%    \reviewnote{Fix this.}
+%
+% 2. Reviewer concern (shown as [R] in margin):
+%    \reviewernote{This claim needs a citation.}
+%
+% 3. Author response (shown as [A] in margin):
+%    \authorresponse{TODO: add reference to Smith 2023.}
+%
+% 4. Open question (shown as [?] in margin):
+%    \question{Is this assumption justified?}
+%
+% 5. Inline note (full-width boxed banner):
+%    \inlinenote{This whole section needs rewriting.}
+%
+% 6. To hide all notes for final submission, uncomment the
+%    \renewcommand block in the preamble above.
+% -------------------------------------------------------
+
+\section{综合评价}
+ 
+本文研究两比特 Clifford+CS 算子的精确综合问题，提出一种基于剩余分析（residue analysis）的算法，对 lde 为 $k$ 的输入给出明确上界 $20k+9$ 的电路长度、$2k$ 个 K 门、$2k+1$ 个 CS 门。理论上 K-计数至多为最优的 2 倍，CS-计数至多为最优的 4 倍（渐近意义下）；实验中相对 Glaudell 等人 [17] 的方法平均 K-计数减少 19\%，且总是达到最优 CS-计数。
+ 
+论文的核心贡献是新颖的：之前的工作大多聚焦于单一门的优化（如仅 T-计数
+或 CS-计数），而本文同时考虑两类门的优化，并通过更简单的
+环 $\mathbb{Z}[\tfrac{1}{2}, i]$（而
+非 Russell 用的
+$\mathbb{Z}[\tfrac{1}{\sqrt{2}}, i]$）给出显式的界。然而，本文存在数个
+明确的数学错误，论证细节多处仓促或缺失，实验设计也有待加强。
+
+
+
+\section{重要性与动机}
+ 
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{为何聚焦两比特？} 论文未明确论证两比特的特殊重要性。多比特 Clifford+CS 综合也是一个未解决的问题，但本文未讨论方法是否能推广。摘要中明言"extending this to the multi-qubit case has been an open problem"，但文章本身既未解决也未明确指出本方法的可推广性方向。
+ 
+\item \textbf{CS 门 vs T 门的代价对比缺失。} 文章默认 CS 门"昂贵"，但在容错实现中，CS 通常通过若干 T 门实现（典型分解为 $\mathrm{CS} = T_0 T_1 \cdot \mathrm{CNOT} \cdot T_1^\dagger \cdot \mathrm{CNOT}$ 等价形式）。因此优化 CS-计数与 T-计数之间的转换关系应有更详细的讨论。
+ 
+\item \textbf{与 Russell [35] 的比较不对等。} 文章宣称"我们给出显式界 $20k+9$ 对比 Russell 的 $O(k)$"。然而：
+\begin{itemize}
+\item Russell 处理的是 Clifford+T（涉及 $\mathbb{Z}[\omega]$），而本文是 Clifford+CS（涉及 $\mathbb{Z}[i]$）。这是完全不同的门集合，因此 $k$ 的语义并不相同。
+\item 把二者的 $k$ 字面对比有误导性。建议明确指出"不同门集合下的 $k$ 不可直接比较"。
+\end{itemize}
+\end{enumerate}
+ 
+\section{学术贡献的局限性}
+ 
+\begin{itemize}
+\item \textbf{改进幅度有限：}相对最佳已知方法的 K-计数减少仅 ${\sim}19\%$。对一篇顶刊投稿，这个改进偏小，除非数学上有原创性突破。
+ 
+\item \textbf{本文未在 K-最优性上严格胜过 Glaudell 等 [17]：}作者在 Section IV.B.1 自己承认 Glaudell 等的方法也满足 $\mathrm{kc}(A) \leq 2\mathrm{cs}(A) + 2$，即 K-计数也是 2-近似的。所以两种方法理论上是同阶的近似算法，只是常数不同。
+ 
+\item \textbf{CS 最优性是实验观察而非证明：}理论保证只有"4 倍最优"。如果作者能证明实际算法在所有情形下达到最优 CS-计数，将是更强的贡献。
+\end{itemize}
+ 
+\section{数学严谨性——关键问题}
+ 
+\subsection{错误一：Lemma II.8 的第一式不成立}
+ 
+论文声明：
+ 
+"对任意 $x \in \mathbb{D}[i]$ 带有分母指数 $k$，$\rho_2^k(x^\dagger) = \rho_2^k(x)$"
+ 
+\textbf{反例：}设 $x = \tfrac{1+i}{2}$。
+\begin{itemize}
+\item $\gamma x = (1+i) \cdot \tfrac{1+i}{2} = \tfrac{(1+i)^2}{2} = \tfrac{2i}{2} = i \in \mathbb{Z}[i]$，因此 $\mathrm{lde}(x) = 1$。
+\item $\rho_2^1(x) = \rho_2(i) = 11$（按论文表中所给）。
+\item $x^\dagger = \tfrac{1-i}{2}$，$\gamma x^\dagger = (1+i)(1-i)/2 = 1$，故 $\rho_2^1(x^\dagger) = \rho_2(1) = 10$。
+\item $11 \neq 10$。
+\end{itemize}
+ 
+\textbf{根源：}$\gamma^\dagger = 1-i = -i\gamma$，所以 $(\gamma^k x)^\dagger = (-i)^k \gamma^k x^\dagger$，从而 $\gamma^k x^\dagger = i^k (\gamma^k x)^\dagger$。在 $\rho_2$ 下取剩余：
+\[
+\rho_2^k(x^\dagger) = \rho_2(i^k) \cdot \rho_2^k(x).
+\]
+对 $k$ 偶时 $\rho_2(i^k) = 10$（乘法单位元），此时引理成立；对 $k$ 奇时 $\rho_2(i^k) = 11$，引理一般不成立。
+ 
+\subsection{错误二：$\rho_3(x^\dagger) = \rho_3(x) + 001$ 的命题不正确}
+ 
+文中（Section II.B）写道：
+ 
+"$\rho_3$ 在共轭下不稳定；事实上，$\rho_3(x^\dagger) = \rho_3(x) + 001$。"
+ 
+\textbf{反例：}$x = 1$。则 $x^\dagger = 1$，$\rho_3(x^\dagger) = 100$。但 $\rho_3(x) + 001 = 100 + 001 = 101$（按论文的加法规则 $b_0b_1b_2 + b'_0b'_1b'_2$）。$101 \neq 100$。
+ 
+\textbf{正确公式：}观察论文给出的表，正确的关系是
+\[
+\rho_3(x^\dagger) = (b_0)(b_1)(b_2 \oplus b_1),
+\]
+即只当 $b_1 = 1$（即 $x$ 在某种意义下有"虚部贡献"）时才有 $+001$ 偏移；当 $b_1 = 0$ 时 $\rho_3$ 保持不变。
+ 
+\subsection{错误三：Lemma II.8 第二式有维度错误}
+ 
+论文写：
+ 
+"$\rho_3^k(x^\dagger) = \rho_2^k(x) + 001$"
+ 
+左侧是 3 位串而右侧是 2 位串 $+$ 3 位串 $001$，维数不一致。这应是排印错误，预期应为 $\rho_3^k(x^\dagger) = \rho_3^k(x) + 001$，但即便修正后，按上节所述仍然不正确。
+ 
+\subsection{这些错误是否影响主结果？}
+ 
+经仔细审查 Section IV 中所有用到剩余的地方（特别是 Case (ii)--(vi) 的内积论证），结论是：
+ 
+这些案例分析实际上并不依赖 Lemma II.8，而是直接在 $\mathbb{Z}[i]$ 上计算 $\rho_2$ 和 $\rho_3$ 的乘积之和。在 $\mathbb{Z}[i]$ 中，$\rho_2(z^\dagger) = \rho_2(z)$ 是正确的（这是 Section II.B 早段的真命题，因为 $\mathbb{Z}[i]/(\gamma^2)$ 由 $(a \bmod 2, b \bmod 2)$ 决定，共轭保持 $b \bmod 2$ 不变）。
+ 
+以 Case (ii) 的第一个论证为例验证：
+\begin{itemize}
+\item 第一列与第二列正交，要求 $\sum_j (\gamma^k v_1)_j^\dagger (\gamma^k v_2)_j \equiv 0 \pmod{\gamma^2}$。
+\item 由 $\mathbb{Z}[i]$ 共轭不变性（而不是 Lemma II.8），可写 $\rho_2\!\left(\sum_j (\gamma^k v_1)_j^\dagger (\gamma^k v_2)_j\right) = \sum_j \rho_2^k(v_1)_j \cdot \rho_2^k(v_2)_j$。
+\item 直接计算得 $10 + 1a + 00 + 00 = 0a = 00 \Rightarrow a = 0$，与文章一致。
+\end{itemize}
+ 
+所以错误是局限于 Section II 中的若干引理陈述，不影响主结果的正确性。然而对于一篇投顶刊的工作，这种错误是不可接受的，必须修正。
+ 
+\subsection{论证细节缺失}
+ 
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{同步精化（simultaneous refinement）未严格证明。} 在 Lemma IV.8 各 case 中，作者反复声称"在左乘和右乘广义置换的意义下，$\mathrm{pat}(A)$ refines to ..."；这种同步精化（要求同时对若干行/列细化到 $\rho_2$ 或 $\rho_3$ 层）涉及在不破坏其它行列已细化结构的前提下进行。例如，左乘对角阵 $\mathrm{diag}(i^{e_0}, i^{e_1}, i^{e_2}, i^{e_3})$ 能独立调整每行的相位，但当面对多列同时需要精化时，自由度可能不够。论文未给出严格证明或论证。
+ 
+\item \textbf{案例分析省略 $k$ 的奇偶性讨论。} 验证了 Case (ii) 在 $k$ 奇时仍能得到 $a = 0$，但论文的呈现方式（直接使用 $10 + 1a + 00 + 00 = 00$）暗含 $\rho_2(i^k) = 10$，即假设 $k$ 偶。建议在论文中显式说明 $k$ 奇情形下结论同样成立，或给出统一的论证。
+ 
+\item \textbf{Case (vi) 的 (3, k)-剩余论证较长，应附计算细节验证。} 例如 "$x \oplus y \oplus z = 1$ 与 $u \oplus v \oplus w = 1$ 及第三个式子推出 $x \oplus y \oplus z \oplus u \oplus v \oplus w = 1$ 而引出矛盾"——这一步的代数化简手动验证可行，但论文应当明确给出至少 1 处中间过程，否则读者难以核实。
+\end{enumerate}
+ 
+\subsection{"至多 4 倍最优"的表述不严谨}
+ 
+摘要与 Theorem IV.1 后续段落写"CS-count 至多为最优的 4 倍"。然而从论文给出的不等式 $\mathrm{lde}(D) \leq 2(\mathrm{cs}(D) + 1)$ 与 $\mathrm{rcs}(D') \leq 2\mathrm{lde}(D) + 1$ 可得：
+\[
+\mathrm{rcs}(D') \leq 2(2\mathrm{cs}(D) + 2) + 1 = 4\mathrm{cs}(D) + 5.
+\]
+所以严格说应是 $4 \mathrm{cs}(D) + 5$，即"4 倍最优 + 5"。这个加性常数对小操作不可忽略（例如 $\mathrm{cs} = 1$ 时算法可能给出 9 个 CS 门，比值为 9 而非 4）。请明确：
+\begin{itemize}
+\item "渐近 4 倍最优"或
+\item 给出明确常数。
+\end{itemize}
+ 
+\section{实验评估}
+ 
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{测试集偏小且仅随机。} 1346 个样本对宣称的"实验上总是 CS 最优"是一个相当强的经验声明。建议：
+\begin{itemize}
+\item 扩充样本至 $\geq 10^4$ 量级。
+\item 包含结构化用例（如典型量子电路中出现的 Toffoli、Fredkin 等的两比特子电路）。
+\item 报告极端情况（如 $\mathrm{lde}$ 接近 1 或非常大时）的行为。
+\end{itemize}
+ 
+\item \textbf{比较对象只有 Glaudell 等 [17]。} Li 等 [30] 的 Clifford+T 方法虽是不同门集，但可通过转换比较；Glaudell 等 [15] 的 2026 年新工作（参考 [15]）也值得对比，至少需要说明为何不比较（特别是 [15] 是同年/同主题最新文献）。
+ 
+\item \textbf{"总是达到 CS 最优"的实证强度。} 既然没有理论证明，至少应：
+\begin{itemize}
+\item 描述如何获取每个用例的真实 CS 最优值（是借助 Glaudell 等的 CS-最优算法吗？若是，则属同义反复）。
+\item 若使用穷举验证最优性，应给出穷举范围与运行时间。
+\end{itemize}
+ 
+\item \textbf{22 个 $\mathrm{lde} > \text{CS-count}$ 案例值得深入讨论。}这些案例为何特殊？是否能识别其结构以提示算法改进？
+\end{enumerate}
+ 
+\section{写作与表达}
+ 
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{符号不一致：}Lemma II.7 中出现 $\mathrm{lde}_\gamma$，而之前与之后均用 $\mathrm{lde}$。
+ 
+\item \textbf{Equation (1) 未验证：}$\mathrm{CK} = \mathrm{CZ} \cdot Z_0 S_0 Z_1 S_1 K_1 \mathrm{CS}\, K_1 S_1 \cdot i$ 是一个关键身份，但论文未给出验证或推导（即使是直接矩阵计算）。请补充推导或至少在附录中给出验证。
+ 
+\item \textbf{Lemma IV.7 证明过于简略：}仅一句"The only missing case is ..."并通过对该 case 的矛盾排除。建议明确列出所有可能 case 并逐一论证。
+ 
+\item \textbf{图 1 的标记含义未充分解释：}例如 "$K_1\times$ or $\times K_1$" 的标记，初读较难理解。建议用文字说明每个箭头的意义。
+ 
+\item \textbf{Bibliographic format errors：}
+\begin{itemize}
+\item {[4]} "M. Amy, A. N. Glaudell, and N. J. Ross. Quantum, 2020." — 缺少文章题目。
+\item {[7]} F. Yuan 应为 Y. Feng。
+\item {[25]} 缺少文章题目（"M. Kissinger and J. van de Wetering. Phys.\ Rev.\ A, 2020."）。
+\end{itemize}
+\end{enumerate}
+ 
+\section{AI 辅助使用的诚信问题}
+ 
+致谢部分说明使用 Claude Opus 4.6 用于：
+ 
+"creating four references [12, 15, 28, 29] and their one-line summary in the related work section."
+ 
+这是严重需要核查的问题。大型语言模型在生成参考文献时经常\textbf{虚构（hallucinate）}不存在的论文。建议：
+\begin{itemize}
+\item 审稿编辑必须独立验证这四篇文献是否真实存在。
+\item 特别是 [15] (arXiv:2601.19166) 与 [28] (arXiv:2405.19302) 的实际 arXiv 编号、作者、内容。
+\item 即便文献真实，其 "one-line summary" 也可能存在事实错误。
+\end{itemize}
+ 
+AI 辅助生成的参考文献是一个不可忽视的诚信风险。作者宣称"later revisions are made"，但仍需明确每条参考是否由作者亲自核对原文。
+ 
+\section{进一步建议}
+ 
+\subsection{强化主结果}
+ 
+建议尝试证明：在 2 比特情形下，本算法的 CS-计数实际上总是最优。这将把当前的"经验最优"提升为"理论最优"，使本文的贡献力远超 Glaudell 等 [17]。
+ 
+\subsection{与 Glaudell 等 [17] 的更深入比较}
+ 
+既然两种方法都是 K-计数 2-近似的，理论上两者的输出 K-计数差异源自何处？是否存在"困难输入"使本方法失效？
+ 
+\subsection{推广讨论}
+ 
+即使本文聚焦两比特，也建议讨论：
+\begin{itemize}
+\item 本方法的剩余分析框架推广到 $n$-比特的可行性与障碍。
+\item 是否能用同一框架处理 Clifford-cyclotomic 门集（Forest 等 [12] 的方向）。
+\end{itemize}
+ 
+\subsection{修正引理 II.7、II.8 与 $\rho_3$ 共轭公式}
+ 
+建议重写 Lemma II.8 为：
+\[
+\rho_2^k(x^\dagger) = \rho_2(i^k) \cdot \rho_2^k(x), \quad \rho_3^k(x^\dagger) = \rho_3(i^k) \cdot \rho_3^k(x).
+\]
+或者引入"twisted residue" $\tilde{\rho}_2^k(x) = \rho_2(i^{-k/2}) \cdot \rho_2^k(x)$（适当定义），使其在共轭下不变。
+ 
+\end{document}

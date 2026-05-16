@@ -11563,6 +11563,18 @@ precomputed_mat_cliQ2k :: () -> Q Exp
 precomputed_mat_cliQ2k = lift . precomputed_mat_cli2k
 
 
+precomputed_mat_gperms :: () -> [( (Integer, [(Integer,Integer)]), [CliffordT2])]
+precomputed_mat_gperms _ = map (\x -> (
+                                  (lamdenomexp (u4of x),
+                                   (map (\(Cplx x y) -> (x, y)) (concat (rows_of_matrix (fst (lamdenomexp_decompose (u4of x)))))))
+                                  , x)
+                                  ) gperms
+
+
+precomputed_mat_gpermsQ :: () -> Q Exp
+precomputed_mat_gpermsQ = lift . precomputed_mat_gperms
+
+
 all_shortest_cli' = map (map f) all_shortest_cli
   where
     f H0 = K0
@@ -11602,6 +11614,10 @@ perm_cirs' = [
   ]
 
 diag_cirs = [f b0 Z0 ++ f b1 Z1 ++ f b2 S0 ++ f b3 S1 ++ f b4 CZ ++ f b5 CS ++ f k II  | b0 <- [0,1], b1 <- [0,1], b2 <- [0,1], b3 <- [0,1], b4 <- [0,1], b5 <- [0,1], k <- [0,1,2,3], let f = replicate ]
+
+dcir_impl :: U4Di -> [CliffordT2]
+dcir_impl m = unJust $ find (\x -> u4of x == m) diag_cirs
+
 
 cdiag_cirs_mod_phase = [f b0 Z0 ++ f b1 Z1 ++ f b2 S0 ++ f b3 S1 ++ f b4 CZ | b0 <- [0,1], b1 <- [0,1], b2 <- [0,1], b3 <- [0,1], b4 <- [0,1], let f = replicate ]
 
