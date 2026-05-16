@@ -17,6 +17,7 @@ import Clifford
 import Test.QuickCheck
 import CliffordCS hiding (main' , lde , H1, H0)
 import Translations
+import LookupTable
 
 -- | Six cases and the corresponding pattern matrices.
 
@@ -118,7 +119,13 @@ ims v = product $ map (\(oo, ix) -> im oo ix) xs'
     xs' = zip xs [0..]
 
 dcir :: U4Di -> DCir
-dcir m = unJust $ find (\x -> u4of x == m) diag_cirs
+dcir = gperm_of -- unJust $ find (\x -> u4of x == m) diag_cirs
+
+
+
+dcir_fast :: U4Di -> [CliffordT2]
+dcir_fast = gperm_of
+
 
 
 case_iv_2bl :: U2 [Z2]
@@ -520,7 +527,7 @@ synth' :: Int -> U4Di -> ([CliffordT2], [CliffordT2])
 synth' j m
   | j < 0 = ([],[])
 synth' ss m
-  | lde m == 0 = (inv_cir (unJust $ find (\x -> u4of x == m) gperms), [])
+  | lde m == 0 = (inv_cir (gperm_of m), [])
   | otherwise = (li ++ l1, r1 ++ ri)
   where
     (l1,r1) = decrease1_lde m
@@ -548,7 +555,7 @@ optimize_gp' xs@(h : t) = gp' ++ optimize_gp' rem
   where
     gp = takeWhile (\x -> x /= K0 && x /= K1) xs
     rem = dropWhile (\x -> x /= K0 && x /= K1) xs
-    gp' = unJust $ find (\x -> u4of x == u4of gp) gperms
+    gp' = gperm_of (u4of gp)
 
 optimize_gp :: [CliffordT2] -> [CliffordT2]
 optimize_gp = optimize_gp' . desugar_ck
@@ -581,9 +588,10 @@ optimize_cli'_fast xs@(h : t) = cli' ++ optimize_cli'_fast rem
 
 
 pc_cli_2k = $(precomputed_mat_cliQ2k ())
+pc_gperms = $(precomputed_mat_gpermsQ ())
 
 cli_of2k :: U4Di -> [CliffordT2]
-cli_of2k x = if lde x <= 2 then ret else error "lde>2, not a Clifford"
+cli_of2k x = if lde x <= 2 then ret else error $ "lde>2, not a Clifford" ++ show x
   where
     f = (\x -> (
                                   (lamdenomexp x,
@@ -593,6 +601,19 @@ cli_of2k x = if lde x <= 2 then ret else error "lde>2, not a Clifford"
     mzzs = map (\k -> fst (f (x * u4of (replicate k UD.II)))) [0..3]
     rets = filter (/= Nothing) $ map (\x -> lookup x pc_cli_2k) mzzs
     ret = unJust $ head rets
+
+gperm_of :: U4Di -> [CliffordT2]
+gperm_of x = if lde x <= 2 then ret else error "lde>2, not a Clifford"
+  where
+    f = (\x -> (
+                                  (lamdenomexp x,
+                                   (map (\(Cplx x y) -> (x, y)) (concat (rows_of_matrix (fst (lamdenomexp_decompose x))))))
+                                  , x)
+                                  )
+    mzzs = map (\k -> fst (f (x * u4of (replicate k UD.II)))) [0..3]
+    rets = filter (/= Nothing) $ map (\x -> lookup x pc_gperms) mzzs
+    ret = unJust $ head rets
+
 
 optimize_cli :: [CliffordT2] -> [CliffordT2]
 optimize_cli = optimize_cli'_fast . desugar_ck

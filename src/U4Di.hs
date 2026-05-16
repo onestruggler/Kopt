@@ -356,7 +356,10 @@ instance U4of CliffordT2 where
 
 instance U4of a => U4of [a] where
   u4of [] = 1
-  u4of (h:t) = u4of h * u4of t
+  u4of xs@(h:t) = u4of h * u4of t --((*) (u4of (take hf xs))) (u4of (drop hf xs))
+    where
+      hf = length xs `div` 2
+
 
 class SO6of a where
   so6of :: a -> (SO6 DRootTwo)

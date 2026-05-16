@@ -64,9 +64,9 @@ cs2_of_t2 = concat . map cs2_of_t2_gate
 so6_of_mat6 :: Mat6 -> SO6 DRootTwo
 so6_of_mat6 (Mat6 k e) = matrix $ rows_of_mat6E $ map aux e
   where
-    auxe :: Int -> DRootTwo
+    auxe :: Integer -> DRootTwo
     auxe x = RootTwo (Dyadic (fromIntegral x) (fromIntegral (k `div` 2))) 0
-    auxo :: Int -> DRootTwo
+    auxo :: Integer -> DRootTwo
     auxo x = RootTwo (Dyadic (fromIntegral x) (fromIntegral ((k+1) `div` 2))) 0 * roottwo
     aux = if even k then auxe else auxo
 

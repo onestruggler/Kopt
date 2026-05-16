@@ -60,7 +60,7 @@ conjZO :: ZOmega -> ZOmega
 conjZO (ZO a b c d) = ZO a (-d) (-c) (-b)
 
 -- | Powers of omega
-omegaPow :: Int -> ZOmega
+omegaPow :: Integer -> ZOmega
 omegaPow n = case n `mod` 8 of
   0 -> ZO 1 0 0 0;     1 -> ZO 0 1 0 0
   2 -> ZO 0 0 1 0;     3 -> ZO 0 0 0 1
@@ -77,9 +77,9 @@ divSqrt2 (ZO a b c d)
   | otherwise = Nothing
 
 -- | Is this a real integer (b=c=d=0)?
-isRealInt :: ZOmega -> Bool
-isRealInt (ZO _ 0 0 0) = True
-isRealInt _             = False
+isRealInteger :: ZOmega -> Bool
+isRealInteger (ZO _ 0 0 0) = True
+isRealInteger _             = False
 
 -- | Is this a real number in Z[sqrt(2)]?
 -- A Z[omega] element a + b*omega + c*i + d*omega^3 is real iff
@@ -89,7 +89,7 @@ isReal :: ZOmega -> Bool
 isReal (ZO _ b 0 d) = b == negate d
 isReal _             = False
 
--- | Extract real integer part (assumes isRealInt).
+-- | Extract real integer part (assumes isRealInteger).
 realPart :: ZOmega -> Integer
 realPart (ZO a _ _ _) = a
 
@@ -98,7 +98,7 @@ realPart (ZO a _ _ _) = a
 ----------------------------------------------------------------------
 
 -- | 4x4 matrix: 16 ZOmega entries (row-major) / sqrt(2)^k
-data Mat4 = Mat4 { m4K :: !Int, m4E :: [ZOmega] }
+data Mat4 = Mat4 { m4K :: !Integer, m4E :: [ZOmega] }
   deriving (Show)
 
 -- | Simplify: divide all entries by sqrt(2) while possible.
@@ -108,7 +108,7 @@ simplify4 (Mat4 k e) =
     Just e' -> simplify4 (Mat4 (k-1) e')
     Nothing -> Mat4 k e
 
-mkMat4 :: Int -> [[ZOmega]] -> Mat4
+mkMat4 :: Integer -> [[ZOmega]] -> Mat4
 mkMat4 k rows = simplify4 $ Mat4 k (concat rows)
 
 -- | Access entry (i,j), 0-indexed.
@@ -128,7 +128,7 @@ mat4Mul (Mat4 k1 a) (Mat4 k2 b) = simplify4 $ Mat4 (k1+k2) entries
 
 -- | Kronecker (tensor) product of two 2x2 matrices stored as [a,b,c,d].
 -- Result is 4x4.
-kron2x2 :: Int -> [ZOmega] -> Int -> [ZOmega] -> Mat4
+kron2x2 :: Integer -> [ZOmega] -> Integer -> [ZOmega] -> Mat4
 kron2x2 k1 [a11,a12,a21,a22] k2 [b11,b12,b21,b22] =
   simplify4 $ Mat4 (k1+k2)
     [ a11*b11, a11*b12, a12*b11, a12*b12
@@ -146,11 +146,11 @@ id2 :: [ZOmega]
 id2 = [zo1, zo0, zo0, zo1]
 
 -- | H = (1/sqrt2) [[1,1],[1,-1]]
-hGate2x2 :: (Int, [ZOmega])
+hGate2x2 :: (Integer, [ZOmega])
 hGate2x2 = (1, [zo1, zo1, zo1, negate zo1])
 
 -- | S = [[1,0],[0,i]]
-sGate2x2 :: (Int, [ZOmega])
+sGate2x2 :: (Integer, [ZOmega])
 sGate2x2 = (0, [zo1, zo0, zo0, zoi])
 
 -- | 4x4 gates
@@ -197,17 +197,17 @@ evalCircuit4 = foldl' (\acc g -> mat4Mul acc (gateMat4 g)) mat4Id
 
 -- The 6 index pairs for the standard basis of /\^2 C^4:
 -- (0,1), (0,2), (0,3), (1,2), (1,3), (2,3)
-wedgePairs :: [(Int,Int)]
+wedgePairs :: [(Integer,Integer)]
 wedgePairs = [(0,1),(0,2),(0,3),(1,2),(1,3),(2,3)]
 
 -- | Compound (second exterior power) matrix: /\^2(U).
 -- Entry at (pair p, pair q) = U_{i1,j1}*U_{i2,j2} - U_{i1,j2}*U_{i2,j1}
 -- where pair p = (i1,i2) and pair q = (j1,j2).
 -- Result has denominator exponent 2*k.
-compoundMatrix :: Mat4 -> (Int, [ZOmega])  -- (k, 36 entries row-major)
+compoundMatrix :: Mat4 -> (Integer, [ZOmega])  -- (k, 36 entries row-major)
 compoundMatrix (Mat4 k e) = (2*k, entries)
   where
-    u i j = e !! (i*4+j)
+    u i j = e !! fromIntegral(i*4+j)
     entries = [ u i1 j1 * u i2 j2 - u i1 j2 * u i2 j1
               | (i1,i2) <- wedgePairs
               , (j1,j2) <- wedgePairs ]
@@ -302,7 +302,7 @@ su4ToSO6 m4 =
 
       -- Step 4: for each phase, check if entries become real and reducible
       go k es
-        | all isRealInt es =
+        | all isRealInteger es =
             let ints = map (fromIntegral . realPart) es
             in Right (simplify6 (Mat6 k ints))
         | all isReal es =
@@ -323,13 +323,13 @@ su4ToSO6 m4 =
 ----------------------------------------------------------------------
 
 -- | Mat6 represents M / sqrt(2)^k where M is a 6x6 integer matrix.
-data Mat6 = Mat6 { mat6K :: !Int, mat6E :: ![Int] }
+data Mat6 = Mat6 { mat6K :: !Integer, mat6E :: ![Integer] }
   deriving (Show)
 
 instance Eq Mat6 where
   (Mat6 k1 e1) == (Mat6 k2 e2) = k1 == k2 && e1 == e2
 
-(!) :: Mat6 -> (Int,Int) -> Int
+(!) :: Mat6 -> (Int,Int) -> Integer
 (Mat6 _ e) ! (i,j) = e !! (i*6+j)
 
 mat6Id :: Mat6
@@ -352,14 +352,14 @@ matMul6 (Mat6 k1 a) (Mat6 k2 b) = simplify6 $ Mat6 (k1+k2) entries
 matTr6 :: Mat6 -> Mat6
 matTr6 (Mat6 k e) = Mat6 k [e !! (j*6+i) | i<-[0..5], j<-[0..5]]
 
-lde :: Mat6 -> Int
+lde :: Mat6 -> Integer
 lde = mat6K
 
 ----------------------------------------------------------------------
 -- 6.  The 15 S-gates in SO(6) (from Figure 2 of the paper)
 ----------------------------------------------------------------------
 
-mkMat6 :: Int -> [[Int]] -> Mat6
+mkMat6 :: Integer -> [[Integer]] -> Mat6
 mkMat6 k rows = simplify6 $ Mat6 k (concat rows)
 
 s1, s2, s3, s4, s5, s6, s7, s8, s9 :: Mat6
@@ -473,20 +473,20 @@ evalCircuit6 = foldl' (\acc g -> matMul6 acc (gateMat6 g)) mat6Id
 -- 8.  Residue, pattern, and FFP table
 ----------------------------------------------------------------------
 
-residue :: Mat6 -> [[Int]]
+residue :: Mat6 -> [[Integer]]
 residue (Mat6 _ e) =
   [ [ abs (e !! (i*6+j)) `mod` 2 | j <- [0..5] ] | i <- [0..5] ]
 
-type Pattern = [[Int]]
+type Pattern = [[Integer]]
 
-rowPattern :: [[Int]] -> Pattern
+rowPattern :: [[Integer]] -> Pattern
 rowPattern rows =
   let indexed = zip [0..] rows
       groups  = groupBy (\a b -> snd a == snd b)
               $ sortBy (comparing snd) indexed
   in sort $ map (sort . map fst) groups
 
-ffpTable :: [(Int, [Pattern])]
+ffpTable :: [(Integer, [Pattern])]
 ffpTable =
   [ (0,  [[[0,3],[1,2],[4,5]], [[0,3],[1,2,4,5]], [[1,2],[0,3,4,5]], [[4,5],[0,1,2,3]]])
   , (1,  [[[0,2],[1,4],[3,5]], [[0,2],[1,3,4,5]], [[1,4],[0,2,3,5]], [[3,5],[0,1,2,4]]])
@@ -505,7 +505,7 @@ ffpTable =
   , (14, [[[0,5],[1,3],[2,4]]])
   ]
 
-lookupFFP :: Pattern -> Maybe Int
+lookupFFP :: Pattern -> Maybe Integer
 lookupFFP pat =
   let normPat p = sort (map sort p)
       matches (_, pats) = normPat pat `elem` map normPat pats
@@ -516,7 +516,7 @@ lookupFFP pat =
 ----------------------------------------------------------------------
 
 data SynthResult = SynthResult
-  { srGates    :: [Int]    -- S-gate indices (0..14), outermost first
+  { srGates    :: [Integer]    -- S-gate indices (0..14), outermost first
   , srClifford :: Mat6     -- final Clifford (LDE = 0)
   } deriving (Show)
 
@@ -532,9 +532,9 @@ synthesize v0 = go v0 []
           in case lookupFFP pat of
                Nothing ->
                  Left $ "No FFP match for pattern " ++ show pat
-                      ++ " (LDE=" ++ show (lde v) ++ ")"
+                      ++ " (LDE=" ++ show (lde v) ++ ")" ++ (show v)
                Just j ->
-                 let sj  = sGates !! j
+                 let sj  = sGates !! fromIntegral j
                      v'  = matMul6 (matTr6 sj) v
                  in go v' (j : acc)
 
@@ -559,7 +559,7 @@ prettyCircuit2 gs = intercalate "." (map prettyGate2 gs)
 
 prettySynth :: SynthResult -> String
 prettySynth (SynthResult gs _) =
-  let gnames = map (sGateNames !!) gs
+  let gnames = map ((sGateNames !!) . fromIntegral) gs
   in if null gnames then "Clifford"
      else intercalate " . " gnames ++ " . C"
 
@@ -679,7 +679,7 @@ main' = do
           Right so6 -> do
             let reconstructed = foldl' (\acc j -> matMul6 (sGates !! j) acc)
                                        (srClifford sr)
-                                       (reverse $ srGates sr)
+                                       (reverse $ map fromIntegral $ srGates sr)
                 match = reconstructed == so6
             putStrLn $ "  " ++ pad 32 label
                     ++ " CS=" ++ show csCount
@@ -698,18 +698,18 @@ main' = do
             Right so6 ->
               let recon = foldl' (\acc j -> matMul6 (sGates !! j) acc)
                                  (srClifford sr)
-                                 (reverse $ srGates sr)
+                                 (reverse $ map fromIntegral $ srGates sr)
               in recon == so6
         ) synthExamples
   putStrLn $ if allOk
     then "All " ++ show (length synthExamples) ++ " examples verified."
     else "Some examples FAILED!"
 
-pad :: Int -> String -> String
-pad n s = s ++ replicate (max 0 (n - length s)) ' '
+pad :: Integer -> String -> String
+pad n s = s ++ replicate (max 0 (fromIntegral n - length s)) ' '
 
 
-conjugator2 :: Int -> Circuit2
+conjugator2 :: Integer -> Circuit2
 conjugator2 0 = [H1,H2]
 conjugator2 1 = [S1g, H1,S2g, H2]
 conjugator2 2 = []
