@@ -18,6 +18,9 @@ import Test.QuickCheck
 import CliffordCS hiding (main' , lde , H1, H0)
 import Translations
 import LookupTable
+import qualified Data.Map.Strict as Map
+import qualified Data.HashMap.Strict as HM
+
 
 -- | Six cases and the corresponding pattern matrices.
 
@@ -589,6 +592,8 @@ optimize_cli'_fast xs@(h : t) = cli' ++ optimize_cli'_fast rem
 
 pc_cli_2k = $(precomputed_mat_cliQ2k ())
 pc_gperms = $(precomputed_mat_gpermsQ ())
+pc_gperms_map = $(precomputed_mat_gpermsQ_map ())
+pc_gperms_hash = $(precomputed_mat_gpermsQ_hash ())
 
 cli_of2k :: U4Di -> [CliffordT2]
 cli_of2k x = if lde x <= 2 then ret else error $ "lde>2, not a Clifford" ++ show x
@@ -611,7 +616,7 @@ gperm_of x = if lde x <= 2 then ret else error "lde>2, not a Clifford"
                                   , x)
                                   )
     mzzs = map (\k -> fst (f (x * u4of (replicate k UD.II)))) [0..3]
-    rets = filter (/= Nothing) $ map (\x -> lookup x pc_gperms) mzzs
+    rets = filter (/= Nothing) $ map (\x -> HM.lookup x pc_gperms_hash) mzzs
     ret = unJust $ head rets
 
 
@@ -720,6 +725,11 @@ test_compare_lde_cs = do
 
 instance Num [Z2] where
   (+) x y = zipWith (+) x y
+  
+  -- (*) [] y = []
+  -- (*) x [] = []
+  -- (*) (x:[]) (y:[]) = (x*y) :[]
+  
   (*) (Odd:Even:[]) y = y
   (*) (Odd:Odd:[]) y = y + rs y
     where
@@ -730,6 +740,8 @@ instance Num [Z2] where
   (*) (Even:Even:[]) y = [Even,Even]
     where
       rs [y1,y2] = [Even, y1]
+
+  (*) x y = error $ "*: not defined for " ++ show x ++ ", " ++ show y
 
   abs = id
   signum = id
@@ -823,6 +835,10 @@ eq_u4 x y = u4of x == u4of y
 
 ce = do
   cosetEnumAR' (eq_mod_cpd) (map (\x -> [x]) [UD.II,X0,X1,Z0,Z1,S0,S1,CX,XC,CZ,Ex,K0,K1] ++ []) ([[]],[[]])
+
+ce_skcz = do
+  cosetEnumAR' (eq_mod_cpd) (map (\x -> [x]) [S0,S1,CZ,Ex,K0,K1] ++ []) ([[]],[[]])
+
 
 ce1 = do
   cosetEnumAR' (eq_u4) (map (\x -> [x]) [UD.II,X0,X1,Z0,Z1,S0,S1,CX,XC,CZ,Ex,K0,K1] ++ []) ([[]],[[]])

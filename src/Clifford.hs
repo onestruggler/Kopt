@@ -12,6 +12,9 @@ import Quantum.Synthesis.Ring
 import Quantum.Synthesis.Matrix
 import Data.List
 
+import qualified Data.Map.Strict as Map
+import qualified Data.HashMap.Strict as HM
+
 all_shortest_cli :: [[CliffordT2]]
 all_shortest_cli = [
   [],
@@ -11573,6 +11576,31 @@ precomputed_mat_gperms _ = map (\x -> (
 
 precomputed_mat_gpermsQ :: () -> Q Exp
 precomputed_mat_gpermsQ = lift . precomputed_mat_gperms
+
+
+precomputed_mat_gperms_map :: () -> Map.Map (Integer, [(Integer,Integer)]) [CliffordT2]
+precomputed_mat_gperms_map _ = Map.fromList $ map (\x -> (
+                                  (lamdenomexp (u4of x),
+                                   (map (\(Cplx x y) -> (x, y)) (concat (rows_of_matrix (fst (lamdenomexp_decompose (u4of x)))))))
+                                  , x)
+                                  ) gperms
+
+
+precomputed_mat_gpermsQ_map :: () -> Q Exp
+precomputed_mat_gpermsQ_map = lift . precomputed_mat_gperms_map
+
+
+precomputed_mat_gperms_hash :: () -> HM.HashMap (Integer, [(Integer,Integer)]) [CliffordT2]
+precomputed_mat_gperms_hash _ = HM.fromList $ map (\x -> (
+                                  (lamdenomexp (u4of x),
+                                   (map (\(Cplx x y) -> (x, y)) (concat (rows_of_matrix (fst (lamdenomexp_decompose (u4of x)))))))
+                                  , x)
+                                  ) gperms
+
+
+precomputed_mat_gpermsQ_hash :: () -> Q Exp
+precomputed_mat_gpermsQ_hash = lift . precomputed_mat_gperms_hash
+
 
 
 all_shortest_cli' = map (map f) all_shortest_cli

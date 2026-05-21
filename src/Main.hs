@@ -38,7 +38,25 @@ main_data = do
   sequence_ $ map g100 $ [1..120]
 
 
-main = main_check_data
+c15_skcz = [[],[K0],[K1],[K0,S0],[K0,K1],[K1,S1],[K0,S0,K1],[K0,K1,S1],[K0,K1,CZ],[K0,S0,K1,S1],[K0,S0,K1,CZ],[K0,K1,S1,CZ],[K0,K1,CZ,K0],[K0,S0,K1,S1,CZ],[K0,S0,K1,CZ,K1]]
+
+c15_6 = [[K0],[K1],[K0,S0],[K0,CX],[K1,S1],[K0,S0,CX]]
+c15_6i' = [c ++ d | c <- c15_6, d <- [[],[CS]]]
+c15_6i = [c ++ d | c <- c15_6, d <- [[CS]]]
+
+main_consecutive_cs_in_P_8 = do
+  sequence_ $ map print  $ filter (\(x, (a,b,c)) -> b == 8) $ nubBy (\(x, (a,b,c)) (x', (a',b',c')) -> a == a' &&  b == b' && take 2 c == take 2 c') $ zip [1..] $ map (\x -> let x' = synth (u4of x) in (csc x', kc x', x)) $ [p0 ++ p1 ++ p2 ++ p3 ++ p4 ++ p5 ++ p6  ++ p7 |  p0 <- c15_6i, p1 <- c15_6i, p2 <- c15_6i, p3 <- c15_6i, p4 <- c15_6i, p5 <- c15_6i, p6 <- c15_6i, p7 <- c15_6i]
+
+  
+
+main_23 = do
+  sequence_ $ map print $ nubBy (\(x, (a,b,c)) (x', (a',b',c')) -> a == a' &&  b == b' &&take 2 c == take 2 c') $ zip [1..] $ map (\x -> (csc x, kc x, x)) $ map synth $ map u4of [[K1]++p1++[K1] ++ p2 ++ [K1] |  p1 <- gperms_mphase, p2 <- gperms_mphase]
+
+
+diag_cirs_mod_phase = [f b0 Z0 ++ f b1 Z1 ++ f b2 S0 ++ f b3 S1 ++ f b4 CZ  ++ f b5 CS | b0 <- [0,1], b1 <- [0,1], b2 <- [0,1], b3 <- [0,1], b4 <- [0,1], b5 <- [0,1], let f = replicate ]
+
+gperms_mphase = [p ++ d | p <- map snd perm_cirs', d <- diag_cirs_mod_phase]
+
 
 
 main_1 = do
@@ -309,7 +327,25 @@ main_read_write = do
   print $ length linesOfFiles
   let pts0 = (map read linesOfFiles) :: [((Integer, [[(Integer, Integer)]]) , Int, Int, Int, Int)]
   let pts = map (\((k,e), a, b, c, d) -> (k, a,b,c,d)) pts0
-  print $ and [a == b | (k, a,b,c,d) <- pts]
+  let lgc = filter (\(line, (k,a,b,c,d)) -> 2 * k - fromIntegral c >= 2) (zip [1..] pts)
+  let lgc' = map (\xx -> filter (\(line, (k,a,b,c,d)) -> 2 * k - fromIntegral c == xx) (zip [1..] pts)) [-2, -1, 0,1,2]
+--  let lgc' = map ( (\(line, (k,a,b,c,d)) -> (line, k - fromIntegral a))) lgc
+--  print $ maximum $ map (\(k,a,b,c,d) -> (fromIntegral a - fromIntegral k) / fromIntegral k) $ filter (\(k,a,b,c,d) -> k >=25) pts
+  sequence_ $ map print $ map length lgc'
+
   -- h <- openFile "experiment_data_nomat.dat" AppendMode
   -- hPutStrLn h $ concat $ intersperse "\n" (map show pts)
   -- hClose h
+
+main = do
+  sequence_ $ map print $ nub $ map cof $  map u4of cli_2k_mod_phase
+
+
+chec_dec1p px = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == px) m
+  let lrs = map (\x -> (decrease1_lde x, x)) ps
+  let h = head ps
+  print $ cof h
+  print $ cof (dagger h)
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> (cof x, cof (u4of ll * x * u4of rr), lde x, lde (u4of ll * x * u4of rr), lde (u4of ll * x * u4of rr) == lde x -1)) lrs

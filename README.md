@@ -1,4 +1,5 @@
-# Data and Code for "Exact Synthesis of Two-Qubit Clifford+CS Circuits with a Near-Minimal Number of K and CS Gates"
+# Data and Code for "K-optimal and CS-near-optimal Exact Synthesis of
+  Two-Qubit Clifford+CS Operators"
 
 ## Data
 

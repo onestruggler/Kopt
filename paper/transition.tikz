@@ -34,8 +34,8 @@
 		\node [style=none] (19) at (7.5, -2) {};
 		\node [style=none] (20) at (8.5, -3.25) {$K_1\times$};
 		\node [style=none] (22) at (7, -4) {};
-		\node [style=none] (24) at (2.5, -2) {};
-		\node [style=none] (26) at (4, -3.5) {$K_1 \times $};
+		\node [style=none] (24) at (3.25, -2.25) {};
+		\node [style=none] (26) at (4.25, -3.5) {$K_1 \times $};
 		\node [style=none] (28) at (-4.75, -6.25) {};
 		\node [style=none] (29) at (-2.5, -6.25) {};
 		\node [style=none] (30) at (-3.5, -6.75) {$K_1 \times$};
@@ -51,7 +51,7 @@
 		\node [style=none] (37) at (2.5, 0) {};
 		\node [style=none] (38) at (5, 0) {};
 		\node [style=none] (39) at (3.75, -0.5) {if lde =1,};
-		\node [style=none] (40) at (-2.5, -2) {};
+		\node [style=none] (40) at (-3, -2.25) {};
 		\node [style=none] (41) at (-7, -4) {};
 		\node [style=none] (42) at (-4, -0.5) {if lde =1, };
 		\node [style=none] (46) at (-2.5, 0) {};
@@ -59,6 +59,10 @@
 		\node [style=none] (48) at (3.75, -1) {$K_1 \times$};
 		\node [style=none] (49) at (8.5, -2.75) {else,};
 		\node [style=none] (50) at (-8.5, -2.75) {else,};
+		\node [style=none] (51) at (-2, -2) {ii or v};
+		\node [style=none] (52) at (2.25, -2) {iii or iv};
+		\node [style=none] (53) at (-2, 0) {i};
+		\node [style=none] (54) at (2, 0) {i};
 	\end{pgfonlayer}
 	\begin{pgfonlayer}{edgelayer}
 		\draw [style=diredge] (19.center) to (18.center);

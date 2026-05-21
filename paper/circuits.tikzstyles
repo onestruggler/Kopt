@@ -82,3 +82,4 @@
 \tikzstyle{X normal}=[-, tikzit fill={rgb,255: red,216; green,248; blue,216}, fill=normGreen]
 \tikzstyle{normal}=[-, tikzit fill={rgb,255: red,216; green,248; blue,216}, fill=normYellow]
 \tikzstyle{light-fill}=[-, fill={rgb,255: red,230; green,230; blue,230}, tikzit fill={rgb,255: red,191; green,191; blue,191}, draw=none, tikzit draw={rgb,255: red,191; green,191; blue,191}]
+\tikzstyle{dased-directed}=[->, dashed]
