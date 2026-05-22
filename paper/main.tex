@@ -67,17 +67,17 @@
   gates (i.e., scaled $H$ gates) needed to implement it. Our method
   decomposes $U$, up to a global phase, into a circuit of length at
   most $10k+9$, using exactly $k$ $K$ gates (i.e., K-optimal) and at
-  most $k+1$ CS gates. We prove that the number of the $\CS$ gate used
-  is at most $2$ times the optimal (i.e., CS-near-optimal). We also
+  most $k+1$ CS gates. We prove that the number of $\CS$ gates used
+  is at most $2$ times optimal (i.e., CS-near-optimal). We also
   improve the lower bound of the optimal CS-count in
   \cite{Glaudell2021} by a factor of $2$. Let $l$ be the least natural
   number such that the entries of $(1+i)^lU$ are all Gaussian
-  integers, we prove that $k=2l-\s{0,1,2}$. In experiments, our method
+  integers; we prove that $k=2l-\s{0,1,2}$. In experiments, our method
   always achieves the optimal CS-count and yields a mean $K$-count
   reduction of 19\% compared to the best known result. Part of our
   approach is similar to that of Russell \cite{russell2014} for the
   Clifford$+T$ gate set, but provides explicit bounds (e.g., $10k+9$
-  vs.\ $O(k)$. Note that two $k$'s are different but related) and
+  vs.\ $O(k)$; the two $k$'s are different but related) and
   operates over the simpler ring $\Z[\tfrac{1}{2}, i]$, a subring of
   the ring $\Z[\frac{1}{\sqrt 2}, i]$ used by Russell.
 \end{abstract}
@@ -103,7 +103,7 @@ consisting only of T and CNOT gates and that H gates impede the
 optimization significantly''.
 
 We propose a method that produces circuits with a minimal number of
-$K$ (i.e., scaled $H$) gates and near-minimal number of CS gates,
+$K$ (i.e., scaled $H$) gates and a near-minimal number of CS gates,
 thereby alleviating this obstruction. The problem of simultaneously
 minimizing two different gate counts is also of mathematical interest:
 previous work on single-qubit Clifford+T synthesis achieved the
@@ -167,7 +167,7 @@ $ Z = S^2, \, X = KZK \cdot i, \, \CX = K_1\CZ K_1\cdot i, \,\Ex = \CX
   \label{eqn:ck}
   \CK = \CZ \, Z_0S_0Z_1S_1K_1\CS K_1S_1\cdot i.
 \end{equation}
-By Equation~\ref{eqn:ck} $\CK \in \CliffordCS$. As with $\CX$, we
+By Equation~\ref{eqn:ck}, $\CK \in \CliffordCS$. As with $\CX$, we
 shorten $\CK_{01}$ to $\CK$ and $\CK_{10}$ to $\KC$.
 
 \subsection{Related work}
@@ -195,14 +195,15 @@ Two works on two-qubit synthesis guarantee optimality of a
 non-Clifford gate: Glaudell et al.'s CS-optimal synthesis of
 Clifford+CS operators~\cite{Glaudell2021} and Li et al.'s
 T-near-optimal synthesis of Clifford+T operators~\cite{Li_2023_CT2},
-the worst-case $T$-count of which is at most 10 times the
-optimal. Neither considered $H$-count optimization, but for the
-former, we can deduce that its $H$-count is at most 2 times the
-optimal. Glaudell et al.~\cite{GlaudellJarret2026} later gave a
-high-performance exact synthesis framework for two-qubit Clifford+$T$
-circuits that optimizes the $T$-count exactly, using a
-meet-in-the-middle strategy with algebraic canonicalization and lookup
-tables. All three of these works rely on the exceptional isomorphism
+whose worst-case $T$-count is at most 10 times optimal.
+Neither considered $H$-count optimization, but for the
+former, we can deduce that its $H$-count is at most 2 times
+optimal. Glaudell et
+al.~\cite{GlaudellJarret2026} later gave a high-performance exact
+synthesis framework for two-qubit Clifford+$T$ circuits that optimizes
+the $T$-count exactly, using a meet-in-the-middle strategy with
+algebraic canonicalization and lookup tables. All three of these works
+rely on the exceptional isomorphism
 $SU(4) \cong \operatorname{Spin}(6)$. By contrast, our work does not
 use this isomorphism. Instead, we employ a residue analysis similar to
 that of Russell \cite{russell2014}, but over the simpler ring
@@ -229,7 +230,7 @@ synthesis using $A^*$ search; for two-qubit circuits, its runtime is
 proportional to the $T$-count. The works
 \cite{Glaudell2024a,Dinh_2025} considered exact synthesis of
 multi-qubit Clifford+Cyclotomic operators, while
-\cite{Glaudell2024b,Amolak2024} treated the multi-qutrit case. The
+\cite{Glaudell2024b,AmolaAnthropic024} treated the multi-qutrit case. The
 work \cite{glaudell-metaplectic} proved that qutrit metaplectic gates
 are a subset of Clifford+T. The work \cite{Mukhopadhyay2024b} proposed
 a heuristic algorithm achieving $V$-gate optimality.
@@ -252,14 +253,14 @@ non-units) are all available in $\zi$.  Let $\gamma = 1+i$. It is
 well-known that $\gamma$ is a Gaussian prime \cite{ant-book}. Since
 $\gamma^2 = 2i$, the elements $\gamma^2$ and $2$ divide each other.
 Using Euclidean division, one can verify that
-\[
+$$
 \zi/(\gamma) = \{0,1\},\quad
 \zi /(2) = \zi/(\gamma^2) = \{0,1,i, 1+i\},\quad
-\]
-\[
+$$
+$$
 \text{and}\quad
 \zi /(\gamma^3) = \{\pm 1,\pm i, 0, 1+i, 1- i, 2\}.
-\]
+$$
 The above is a slight abuse of notation: strictly, $\zi/(\gamma)$
 denotes the quotient ring of $\zi$ modulo the ideal $(\gamma)$, whose
 elements are residue classes $x\, \text{mod}\, (\gamma)$ for
@@ -289,31 +290,31 @@ motivating the following definition.
 \end{definition}
 
 \begin{remark}
-  By enumerating all 2-qubit Clifford operators, we have that the lde
-  of a 2-qubit Clifford operator is at most 2.
+  By enumeration, the lde of any 2-qubit Clifford operator is at
+  most 2.
 \end{remark}
 
 \subsection{Residue rings}
 The following characterization of the quotient rings is well-known:
-\[
+$$
   \zi/(\gamma ^ n) = \left\{ \sum_{i=0}^{n-1} b_i \gamma^i \text{ mod
     } (\gamma^n) \,|\, b_i \in \s{0,1} \right \}.
-\]
+$$
 
 We give an elementary proof by induction on $n$; a similar argument
 for the case $\Z[\sqrt 2]/(\sqrt 2 ^ n)$ appears in
 Clement~\cite{Clement_pri}. The base case $n=1$ is immediate.  Suppose
 the claim holds for $n$, i.e., every $x \in \zi$ is congruent to some
 $\sum_{i=0}^{n-1} b_i \gamma^i \text{ mod } (\gamma^n)$, meaning
-\[
+$$
   x = \sum_{i=0}^{n-1} b_i \gamma^i + k \gamma ^ n \text{ for some } k.
-\]
+$$
 Since $k = b_n + k'\gamma$ for some $b_n \in \s{0,1}$, substituting
 and simplifying gives
-\[
+$$
   x = \sum_{i=0}^{n} b_i \gamma^i + k' \gamma ^ {n+1},\, \text{i.e., }
   x \equiv \sum_{i=0}^{n} b_i \gamma^i \text{ mod } (\gamma^{n+1}).
-\]
+$$
 For brevity, we will omit the $\mod (\gamma^n)$, and since
 $b_i \in \s{0,1}$, we write the binary string $(b_0b_1...)_2$ for the
 sum; the parentheses and subscript $_2$ may be omitted when the
@@ -326,10 +327,10 @@ k\gamma^n$ for some $k$, then $b_i= b'_i$ for all $i$. Indeed,
 reducing both sides modulo $(\gamma)$ gives $b_0 = b'_0$. Cancelling
 $b_0$ and $b_0'$ and dividing by $\gamma$ yields
 
-\[
+$$
   \sum_{i=1}^{n-1} b_i \gamma^{i-1} - \sum_{i=1}^{n-1} b'_i
   \gamma^{i-1} = k\gamma^{n-1}
-\]
+$$
 
 Reducing modulo $(\gamma)$ again gives $b_1 = b'_1$. Repeating this
 argument shows $b_i= b'_i$ for all $i$.
@@ -341,14 +342,14 @@ $\rho_{n+1}(x)$ coincide with $\rho_{n}(x)$. Moreover, $\rho_2$ is
 stable under complex conjugation: $\rho_2(x{\da}) = \rho_2(x)$. We
 sometimes write $x \equiv_{\gamma^n} y$ as shorthand for
 $x \equiv y \text{ mod } {\gamma^n}$.  Modulo $\gamma^3$, we have
-\[
+$$
 \begin{array}{c|c|c|c|c|c|c|c}
   x & \rho_3(x) & x & \rho_3(x) & x & \rho_3(x) & x & \rho_3(x) \\
   \hline
   1 & 100 & -1 & 101 & i & 111 & -i & 110\\
   0 & 000 & 1+i & 010 & 1-i & 011 & 2 & 001
 \end{array}
-\]
+$$
 
 The $\Mod{\gamma ^ n}$ residue classes form a commutative ring. Modulo
 $\gamma^2$, the ring addition coincides with bitwise exclusive or
@@ -359,19 +360,19 @@ $11 \cdot b_0b_1 = 10 \cdot b_0b_1 + 01 \cdot b_0b_1 = b_0(b_1\oplus
 b_0)$. The additive inverse of an element is itself. Since
 $\rho_{2}(i) = 11$, whenever $\rho_1(x)=1$, either $\rho_2(x) = 10$ or
 $\rho_2(ix) = 10$. Similarly, modulo $\gamma^3$, the addition rule is
-\[
+$$
   b_0b_1b_2 + b'_0b'_1b'_2 = (b_0\oplus b'_0)(b_1\oplus
   b'_1)(b_2\oplus b'_2 \oplus (b_0 \cdot b'_0)),
-\]
+$$
 where $\cdot$ denotes multiplication in $\Z[i]/({\gamma})$,
 equivalently the logical ``and'' of two bits. The multiplicative
 identity is $100$ and the zero element is $000$.  Multiplication by
 $010$ is a right shift by $1$ digit and multiplication by $001$ is a
 right shift by $2$ digits. The rest of the multiplication table
 follows by distributivity. The additive inverse is
-\[
+$$
   -(b_0b_1b_2)  = b_0b_1(b_2\oplus b_0).
-\]
+$$
 Inspecting the $\rho_3$ table, we see that $\rho_3$ is not stable
 under complex conjugation; instead, if $\rho_3(x) = abc$, then
 $\rho_3(x{\da}) = ab(c\oplus b)$. Since $\rho_{3}(i) = 111$, whenever
@@ -380,7 +381,7 @@ $\rho_3(i^kx) = 100$.
 
 \begin{definition}
   Let $l$ be a denominator exponent (not necessarily the least) for
-  $x \in \di$, we define the residue function
+  $x \in \di$. We define the residue function
   $\rho_n^l(x) = \rho_n(\gamma^lx)$. We call $\rho_n^l(x)$ the
   $(n,l)$-residue of $x$. If $l$ is a denominator exponent for a
   vector or matrix $A$, $\rho_n^l(A)$ is defined entry-wise.
@@ -433,8 +434,8 @@ following lemmas are straightforward.
   The lde function on $\di$ and matrices with $\di$ entries is
   subadditive, i.e., for $x,y\in \di$ and matrices $A,B$ with $\di$
   entries
-  \[\lde(xy) \le \lde(x) + \lde(y), \, \lde(AB) \le \lde(A) +
-    \lde(B). \] Moreover, if $x,y$ are both odd, then lde is additive,
+  $$\lde(xy) \le \lde(x) + \lde(y), \, \lde(AB) \le \lde(A) +
+    \lde(B). $$ Moreover, if $x,y$ are both odd, then lde is additive,
   i.e., the inequality becomes equality.
 \end{lemma}
 
@@ -456,15 +457,15 @@ $\RS$ for the right shift.
 \begin{lemma}
   \label{lem:right-shift}
   For $t\in \di$, $k$ a denominator exponent of $t$, we have
-  \[
+  $$
     \rho_{n+1}^{k+1}(t) = \rho_{n+1}^{k}(\gamma t) =
     \RS(\rho_n^{k}(t)) \text{ and }
-  \]
+  $$
   and if $\gamma ^ k t$ is even,
-  \[
+  $$
     \rho_{n}^{k-1}(t) = \rho_{n}^{k}(t/\gamma) =
     \LS(\rho_{n+1}^{k}(t)).
-  \]
+  $$
 \end{lemma}
 
 Given $x,y \in \D[i]$ with lde $k>0$, we have $\rho_2^k(x) = 1b$ and
@@ -473,7 +474,7 @@ $\rho_2^k(x + y) = 1b + 1b' = 0(b\oplus b')$, and so
 $\rho_1^{k-1}({x + y}) = \LS(\rho_2^k(x + y)) = b\oplus
 b'$. Similarly,
 $\rho_1^{k-1}({x - y}) = \LS(\rho_2^k(x - y)) = \LS(1b - 1b') =
-\LS((1-1)(b - b')) = b\oplus b'$, since subtraction in $\Z/(2)$
+\LS((1-1)(b - b')) = b\oplus b'$, sincesubtraction in $\Z/(2)$
 coincides with $\oplus$ (every element is its own additive inverse).
 If $b\oplus b' = 1$, then $\lde(x \pm y)$ decreases by $1$; if
 $b\oplus b' = 0$ and $k \ge 2$, then $\lde(x \pm y)$ decreases by at
@@ -512,9 +513,9 @@ at most $k-2$ (provided $k\ge 2$).
 
 \begin{remark}
   \label{rmk:dec1}
-  Note that K acting on a pair of entries with same lde $k>0$ and
-  proper residues can only decrease the lde of the pair by at most
-  1. Also K gate is the only gate in the Clifford+CS operator
+  Note that $K$ acting on a pair of entries with the same lde $k>0$
+  and proper residues can only decrease the lde of the pair by at most
+  1. Also, the $K$ gate is the only gate in the Clifford+CS operator
   generating set that affects the lde. These two facts are needed when
   proving the optimality of our method.
 \end{remark}
@@ -543,7 +544,7 @@ $\rho_3^k(x) = 1b_0b_1$ and $\rho_3^k(y) = 1b'_0b_1'$,
   \end{bmatrix}.
 \end{align*}
 If $\rho_3^k(x) = 0b_0b_1$ and $\rho_3^k(y) = 0b'_0b_1'$,
-  \[
+  $$
   \rho_2^k(K \begin{bmatrix}
     x \\
     y
@@ -553,9 +554,9 @@ If $\rho_3^k(x) = 0b_0b_1$ and $\rho_3^k(y) = 0b'_0b_1'$,
     (b_0\oplus b_0')(b_1 \oplus b_1') \\
     (b_0\oplus b_0')(b_1 \oplus b_1')
   \end{bmatrix}.
-  \]
+  $$
  If $\rho_3^k(x) = 1b_0b_1$ and $\rho_3^k(y) = 0b'_0b_1'$,
-  \[
+  $$
   \rho_3^{k+1}(K \begin{bmatrix}
     x \\
     y
@@ -565,9 +566,9 @@ If $\rho_3^k(x) = 0b_0b_1$ and $\rho_3^k(y) = 0b'_0b_1'$,
     1(b_0\oplus b_0')(b_1 \oplus b_1') \\
     1(b_0\oplus b_0')(b_1 \oplus b_1')
   \end{bmatrix}.
-  \]
+  $$
   If $\rho_3^k(x) = 0b_0b_1$ and $\rho_3^k(y) = 1b'_0b_1'$,
-  \[
+  $$
   \rho_3^{k+1}(K \begin{bmatrix}
     x \\
     y
@@ -577,7 +578,7 @@ If $\rho_3^k(x) = 0b_0b_1$ and $\rho_3^k(y) = 0b'_0b_1'$,
     1(b_0\oplus b_0')(b_1 \oplus b_1') \\
     1(b_0\oplus b_0')(b_1 \oplus b_1' \oplus 1)
   \end{bmatrix}.
-  \]
+  $$
 
 
 
@@ -588,11 +589,11 @@ Let $a_0a_1a_2a_3$ be a permutation of $\s{0,1,2,3}$. The permutation
 matrix $P_{a_0a_1a_2a_3}$ is the unitary matrix that maps $e_i$ to
 $e_{a_i}$, where $\s{e_i}$ is the standard basis. All 24 permutation
 matrices are Clifford operators and can be implemented by circuits of
-length at most $3$, see Table \ref{perm24}.
+length at most $3$; see Table~\ref{perm24}.
 
 \begin{table}
   \centering
-  \[
+  $$
 \begin{array}{c|c|c|c|c|c}
   P & \text{circuit} &  P & \text{circuit} & P & \text{circuit}\\
   \hline
@@ -605,7 +606,7 @@ length at most $3$, see Table \ref{perm24}.
 3021 & \Ex \cdot \XC \cdot X_1 & 0321 & \XC & 0231 & \Ex \cdot \CX\\
   3201 & \CX \cdot X_0 & 2301 & X_0 & 2031 & \Ex \cdot X_1
 \end{array}
-\]
+$$
 \caption{Circuit implementation of 24 permutation matrices.}
 \label{perm24}
 \end{table}
@@ -613,16 +614,16 @@ length at most $3$, see Table \ref{perm24}.
 \subsection{Diagonal unitary matrices}
 The only diagonal unitary matrices with entries in $\D[i]$ (and
 $\Z[i])$ are of the form
-\[
+$$
   \text{diag}(i^a,i^b,i^c,i^d), \text{ where } a,b,c,d \in \s{0,1,2,3}.
-\]
-They can all be implemented by Clifford+CS circuits with length of at
-most $6$ up to a global phase $i^k$, using at most $1$ $\CS$
+$$
+They can all be implemented by Clifford+CS circuits of length at
+most $6$, up to a global phase $i^k$, using at most $1$ $\CS$
 gate. This is because
-\[
+$$
   Z_0^{b_0}Z_1^{b_1}S_0^{b_2}S_1^{b_3}\CZ^{b_4}\CS^{b_5}\cdot i ^ k,
   b_i \in \s{0,1}, k \in \s{0,1,2,3},
-\]
+$$
 are all distinct and diagonal, and their number is $4^4$, which equals
 the cardinality of the set of diagonal unitary matrices.
 
@@ -640,10 +641,10 @@ group of generalized permutations is a semidirect product of the
 permutation group and the diagonal unitary group. In particular, for
 any permutation matrix $P$ and diagonal matrix $D$, there exists $D'$
 such that
-\[
+$$
   PD = D'P
-\]
-and the CS-count (see Definition \ref{def:count}) of $D$ and $D'$ are
+$$
+and the CS-count (see Definition~\ref{def:count}) of $D$ and $D'$ are
 the same.
 
 
@@ -658,7 +659,7 @@ e.g.,
 Compared to the ad hoc use of residues in prior work, we have given in
 Section~\ref{sec:algebra} a uniform treatment based on binary
 residues, which we conjecture generalizes to any $\xi$-ring as defined
-in \cite{KliuchnikovSchonnenbeck2024}.
+in \cite{KliuchnikovSchonnenbecAnthropic024}.
 
 
 \subsection{Residue pattern}
@@ -677,7 +678,7 @@ entry; entries are numbered starting from $j=0$.
   For any $A \in \CliffordCS$ with lde $k$, there exist permutation
   matrices $L$ and $R$ such that $\rho_1^k(LAR)$ or $\rho_1^k(LAR)^T$
   equals one of the following
-\[
+$$
   (i)\begin{bmatrix}
     1 & 0 & 0 & 0\\
     0 & 1 & 0 & 0\\
@@ -687,7 +688,7 @@ entry; entries are numbered starting from $j=0$.
   \quad(ii)\begin{bmatrix}
     1 & 1 & 0 & 0\\
     1 & 1 & 0 & 0\\
-    0 & 0 & 0 & 0\\
+    0 & 0 & 0\\
     0 & 0 & 0 & 0
   \end{bmatrix},
   \quad (iii)\begin{bmatrix}
@@ -696,8 +697,8 @@ entry; entries are numbered starting from $j=0$.
   0 & 0 & 1 & 1\\
   0 & 0 & 1 & 1
   \end{bmatrix},
-\]
-\[
+$$
+$$
   (iv)\begin{bmatrix}
     1 & 1 & 1 & 1\\
     1 & 1 & 1 & 1\\
@@ -716,7 +717,7 @@ entry; entries are numbered starting from $j=0$.
   1 & 1 & 1 & 1\\
   1 & 1 & 1 & 1
 \end{bmatrix}.
-\]
+$$
 We say $A$ has such a \emph{pattern} and write $\pat(A)$ for the
 pattern of $A$. Moreover, $A$ has pattern~(i) if and only if
 $\lde(A)=0$, i.e., when $A$ is a generalized
@@ -725,7 +726,7 @@ $\lde(A)>1$. Each Clifford operator has pattern (i), (iii), or (vi).
 \end{lemma}
 
 Note that all cases except for Case~(iv) are transposition-invariant,
-e.g., $(vi)^T=(vi)$, upto permutation of rows and columns. Before
+e.g., $(vi)^T=(vi)$, up to permutation of rows and columns. Before
 proving this lemma, we prove several useful lemmas.
 
 \begin{lemma} \label{lem:uvec} Let $v$ be a unit vector in $\D[i]^4$
@@ -738,11 +739,11 @@ proving this lemma, we prove several useful lemmas.
 \begin{proof}
   Let $w=\gamma^k v \in \zi^4$. We first show that $w$ has an even
   number of odd entries.  We have
-  \[
+  $$
     \sum_{\jay=0}^{3} \|w_\jay\|^2 = \norm{w}^2 =
     |\gamma|^{2k}\norm{v}^2 = (\gamma^{\dagger}\gamma)^k\equiv 0
     \Mod{\gamma}.
-  \]
+  $$
   Therefore, an even number of indices $\jay \in \{0,\ldots,3\}$
   satisfy $\|w_\jay\|^2$ odd. By
   Lemma~\ref{lem:parity-dagger-norm}, an even number of the $w_\jay$
@@ -758,7 +759,7 @@ proving this lemma, we prove several useful lemmas.
   the second digits of the odd entries zero, yielding
   $(10,10,0c,0d)^T$. Applying $X_0\CK X_0$ (equivalently, applying $K$
   to the pair of odd entries) produces $(00,01,0c,0d)^T$ or
-  $(01,00,0c,0d)^T$. Since multiplication by unitatries preserves unit
+  $(01,00,0c,0d)^T$. Since multiplication by unitaries preserves unit
   vectors, this is the residue of a unit vector with lde $k-1$.  When
   $k>1$, its $(1, k{-}1)$ residue must have the form $(1,1,0,0)^T$ up
   to a permutation, so $c=1$ and $d=0$.
@@ -774,7 +775,7 @@ proving this lemma, we prove several useful lemmas.
   Let $u,v$ be unit vectors in $\D[i]^4$ with lde $k>0$ such that
   $u \perp v$, i.e., $u{\da}v = 0$. Then there exists a generalized
   permutation matrix $Q$ such that $\rho_1^k(Q[u|v])$ equals one of
-  \[
+  $$
   \begin{bmatrix}
     1 & 1 \\
     1 & 1 \\
@@ -805,20 +806,20 @@ proving this lemma, we prove several useful lemmas.
     1 & 1 \\
     1 & 1 
   \end{bmatrix}.
-\]
+$$
 \end{lemma}
 
 \begin{proof}
   By Lemma~\ref{lem:uvec}, each column can have only an even number of
-  1s. Upto a permutation of rows, the only missing case is
-  \[
+  1s. Up to a permutation of rows, the only missing case is
+  $$
   \begin{bmatrix}
     1 & 0 \\
     1 & 1 \\
     0 & 1 \\
     0 & 0 
   \end{bmatrix}.
-\]
+$$
 Then
 $\rho_1^k(u\da v)=\sum_{\jay=0}^{3} \rho_1^k(u_\jay^{\dagger}{v_\jay})
 = 1$, contradicting $\rho_1^k(u\da v)=\rho_1^k(0) = 0$. In other
@@ -853,8 +854,8 @@ $(1,k)$-residue equal to~$1$ must be even.
   \end{itemize}
 \end{lemma}
 Each inequality is in fact an equality, since by
-Remark~\ref{rmk:dec1}, K acting on a pair of entries decrease the lde
-at most by 1 (for the cases with two K gates, only the outer K
+Remark~\ref{rmk:dec1}, $K$ acting on a pair of entries decreases the
+lde by at most 1 (for the cases with two $K$ gates, only the outer $K$
 decreases the lde; see the proof). The proof proceeds by case analysis
 on $\rho_1^k(A)$. Since $k>0$, Case~(i) is excluded, so we begin with
 Case~(ii).
@@ -862,52 +863,52 @@ Case~(ii).
 \subsubsection{Case ii}
 If $k>1$, by Lemma~\ref{lem:uvec}, up to left and right multiplication
 by generalized permutations, $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
     10 & 1a & 0b & 0\bar{b}\\
     01 & 0c & 0d & 0e\\
     00 & 0\bar{c} & 0f & 0g
   \end{bmatrix},
-\]
+$$
 where $\bar{b}=b\oplus 1$ and $b,c,d,e,f,g$ are indeterminates
 (henceforth we use indeterminates in residue matrices without explicit
 declaration). We claim $a=0$ and $b=c=1$. Taking the inner product of
 the first two columns gives
-\[10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.\] The inner product of
+$$10 + 1a + 00 + 00 = 00 \Rightarrow a = 0.$$ The inner product of
 the second and third rows gives $c = 1$; similarly, $b =
 1$. Now $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
     10 & 10 & 01 & 00\\
     01 & 01 & 0d & 0e\\
     00 & 00 & 0f & 0g
   \end{bmatrix}.
-\]
+$$
 Moreover, since $k>1$ and the third and fourth rows (columns) have lde
 $k-1>0$, Lemma~\ref{lem:uvec} gives $d=f$, $d=e$, and $e=g$, so
 $d=e=f=g$. Now $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
     10 & 10 & 01 & 00\\
     01 & 01 & 0d & 0d\\
-    00 & 00 & 0d & 0d
+    00 & 00 & 0d
   \end{bmatrix}.
-\]
+$$
 Applying $K_1 S_1$ on the left reduces this to Case~(iv).
 
 If $k=1$, up to left and right multiplication by generalized
 permutations, $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 00 & 00\\
     10 & 1a & 00 & 00\\
-    00 & 00 & 00 & 00\\
+    00 & 00 & 00\\
     00 & 00 & 00 & 00
   \end{bmatrix},
-\]
+$$
 
 As before, $a=0$. Applying $X_0 \cdot \CK \cdot X_0$ on the left
 decreases the lde to 0, reaching pattern~(i).
@@ -919,45 +920,45 @@ decreases the lde to 0, reaching pattern~(i).
   two rows (columns) with even entries are stable under multiplication
   by~$i$, i.e., we have the liberty of updating the two generalized
   permutations by a factor of CS gate without affecting their
-  purpose. Also if a generalized permutation $P$ is implementable
-  uisng one CS gate, then $P\cdot CS$ is implementable using no CS
+  purpose. Also, if a generalized permutation $P$ is implementable
+  using one CS gate, then $P\cdot CS$ is implementable using no CS
   gate.
 \end{remark}
 
 \subsubsection{Case iii}
 If $k>1$, by Lemma~\ref{lem:uvec}, up to left and right multiplication
 by generalized permutations, $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
     10 & 1a & 0b & 0\bar{b}\\
     01 & 0c & 10 & 10\\
     00 & 0\bar{c} & 10 & 1d
   \end{bmatrix},
-\]
+$$
 The inner product of the first two columns gives $a = 0$.  The inner
 product of the second and third rows gives $c = 0$; similarly,
 $b = 0$. Now $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
     10 & 10 & 00 & 01\\
     01 & 00 & 10 & 10\\
     00 & 01 & 10 & 10
   \end{bmatrix}.
-\]
+$$
 Applying $K_1S_1$ on the left reduces this to Case~(vi).
 
 If $k=1$, by Lemma~\ref{lem:uvec}, up to left and right multiplication
 by generalized permutations, $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 00 & 00\\
     10 & 1a & 00 & 00\\
     00 & 00 & 10 & 10\\
     00 & 00 & 10 & 1d
   \end{bmatrix}.
-\]
+$$
 As before, $a=0$ and $d=0$. Applying $K_1$ on the left decreases the
 lde to 0, reaching pattern~(i).
 
@@ -968,14 +969,14 @@ lde to 0, reaching pattern~(i).
 This case occurs only when $k>1$. By Lemma~\ref{lem:uvec}, up to left
 and right multiplication by generalized permutations, $\pat(A)$
 refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
     10 & 1a & 1b & 1c\\
     01 & 0d & 0e & 0f\\
     00 & 0\bar{d} & 0\bar{e} & 0\bar{f}
   \end{bmatrix}.
-\]
+$$
 The inner product of the first two columns gives $a = 0$; similarly,
 $b=c=0$. Since the third row has lde $k-1>0$, either $d=e=f=1$ or
 exactly one of $d,e,f$ is~$1$ and the rest are~$0$. In the latter
@@ -983,20 +984,20 @@ case, up to a column permutation, we may assume $d=1$ and $e=f=0$.  In
 both cases, right multiplication by $K_1$ decreases the lde, and
 moreover, up to permutations of rows and columns, reaching $(1, k-1)$-
 residue
-\[
+$$
   \begin{bmatrix}
     1 & 0 & 1 & 0 \\
     p & \bar{p} & q & \bar{q}\\
     x & x & y & y\\
     z & z & w & w
   \end{bmatrix}.
-\]
-Since $k-1>0$. Taking inner product of the first two columns gives
-$x = z$, similarly $y=w$. Then $p=1$ since each column (row) has even
-number of odd entries; similarly $q=1$. Taking inner product of the
-first and the third rows gives $x = y$. Taking inner product of the
-first two rows gives $p = q$. Depening on $x=0$ or $1$, the target
-pattern is (ii) or (v).
+$$
+Since $k-1>0$, taking the inner product of the first two columns gives
+$x = z$; similarly, $y=w$. Then $p=1$ since each column (row) has an
+even number of odd entries; similarly, $q=1$. Taking the inner product
+of the first and third rows gives $x = y$. Taking the inner product of
+the first two rows gives $p = q$. Depending on whether $x=0$ or $1$,
+the target pattern is (ii) or (v).
 
 
 \begin{remark}
@@ -1008,26 +1009,26 @@ pattern is (ii) or (v).
 This case occurs only when $k>1$. By Lemma~\ref{lem:uvec}, up to left
 and right multiplication by generalized permutations, $\pat(A)$
 refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
     10 & 1a & 00 & 01\\
     10 & 1b & 10 & 1f\\
     10 & 1c & 1e & 10
   \end{bmatrix},
-\]
+$$
 We claim $a=0$ and $b=c=e=1$. The inner product of the first two rows
 gives $a =0.$ The inner product of the first and third rows gives
 $b = 1$; similarly, $c = 1$. The inner product of the second and
 third columns gives $e = 1$; similarly, $f=1$. Now the pattern is
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 01 & 00\\
     10 & 10 & 00 & 01\\
     10 & 11 & 10 & 11\\
     10 & 11 & 11 & 10
   \end{bmatrix},
-\]
+$$
 Applying $K_1$ on the left reduces this to Case~(iv).
 
 \subsubsection{Case vi}
@@ -1035,50 +1036,50 @@ Applying $K_1$ on the left reduces this to Case~(iv).
 This case occurs only when $k>1$. By Lemma~\ref{lem:uvec}, up to left
 and right multiplication by generalized permutations, $\pat(A)$
 refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
     10 & 1a & 1d & 1g\\
     10 & 1b & 1e & 1h\\
     10 & 1c & 1f & 1j
   \end{bmatrix},
-\]
+$$
 The inner product of the first two columns shows that $a,b,c$ cannot
 all be~$1$. Up to a row permutation, we may assume $a=0$, which gives
 $b = c$; similarly, $d = g$.
 
 If $b=c=1$ and $d=g=1$, then $\pat(A)$ is
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
     10 & 10 & 11 & 11\\
     10 & 11 & 1e & 1h\\
     10 & 11 & 1f & 1j
   \end{bmatrix},
-\]
+$$
 The inner product of the first and third columns gives $f = \bar{e}$;
 similarly, $h=\bar{e}$ and $j=\bar{f}$. Now $\pat(A)$ is
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
     10 & 10 & 11 & 11\\
     10 & 11 & 1e & 1\bar{e}\\
     10 & 11 & 1\bar{e} & 1e
   \end{bmatrix}.
-\]
+$$
 We show this pattern is impossible by examining the
 $(3,k)$-residue. Up to multiplication by powers of $-1$ on appropriate
-rows and columns (acheived by multiplication of two appropriate
+rows and columns (achieved by multiplication by two appropriate
 diagonal matrices on the left and right), the $(3,k)$-residue refines
 to
-\[
+$$
   \begin{bmatrix}
     101 & 101 & 101 & 101\\
     101 & 10x & 11u & 11p\\
     101 & 11y & 1ev & 1\bar{e}q\\
     101 & 11z & 1\bar{e}w & 1er
   \end{bmatrix}.
-\]
+$$
 The inner products of the first column with the second and third
 columns give
 \begin{align*}
@@ -1093,39 +1094,39 @@ The inner product of the second and third columns gives
 
 If $b=c=0$, the inner product of the first and third rows gives $e=h$;
 similarly, $f=j$. So $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
     10 & 10 & 1d & 1d\\
     10 & 10 & 1e & 1e\\
     10 & 10 & 1f & 1f
   \end{bmatrix},
-\]
+$$
 The inner product of the first and third columns gives
 $d\oplus e \oplus f = 0$, so at least one of $d,e,f$ is~$0$. Up to a
 row permutation, we may assume $d=0$. So, $\pat(A)$ refines to
-\[
+$$
   \begin{bmatrix}
     10 & 10 & 10 & 10\\
     10 & 10 & 10 & 10\\
     10 & 10 & 1e & 1e\\
     10 & 10 & 1f & 1f
   \end{bmatrix},
-\]
+$$
 The inner product of the first and third columns implies $e=f$, so
 left multiplication by $K_1$ reduces the lde, and moreover, up to
 permutations of rows and columns, reaching $(1, k-1)$-residue
-\[
+$$
   \begin{bmatrix}
     1 & x & y & z \\
     0 & \bar{x} & \bar{y} & \bar{z}\\
     1 & u & v & w\\
     0 & \bar{u} & \bar{v} & \bar{w}
   \end{bmatrix}.
-\]
-Taking inner product of the first two columns implies $x=u$, similarly
-$y=v$ and $z = w$. Depending on if $x,y,z$ are all 1 or not, the
-target pattern is (iv) or (iii).
+$$
+Taking the inner product of the first two columns implies $x=u$;
+similarly, $y=v$ and $z = w$. Depending on whether $x,y,z$ are all 1
+or not, the target pattern is (iv) or (iii).
 
 
 The case $d=g=0$ is similar.
@@ -1136,7 +1137,7 @@ This case is similar to Case~(iv), but a right multiplication by $K_1$
 is needed to decrease the lde.
 
 
-Thus we exhausts all cases. The transitions are summarized in
+Thus we have exhausted all cases. The transitions are summarized in
 Figure~\ref{fig:trans}.
 
 \begin{figure}[h]
@@ -1155,10 +1156,10 @@ Figure~\ref{fig:trans}.
 
 
 
-We say the path staring from any case and ending with (i) is
-\emph{complete}. A complete path decrease the lde of the starting
-point to 0. For $A \in \CliffordCS$, we defined $\prkc(A)$ to be the
-number of the K gates along the complete path starting from $A$.
+We say a path starting from any case and ending with (i) is
+\emph{complete}. A complete path decreases the lde of the starting
+point to 0. For $A \in \CliffordCS$, we define $\prkc(A)$ to be the
+number of K gates along the complete path starting from $A$.
 
 \begin{lemma}[prkc of a complete path]
   \label{lem:prkc}
@@ -1175,7 +1176,7 @@ number of the K gates along the complete path starting from $A$.
       (iii) & $2l-1$  & $iii \rightarrow i$, $iii \rightarrow vi \rightarrow iii \rightarrow i$   \\
       (iv) & $2l-1$  &  $iv \rightarrow ii \rightarrow i$, $iv \rightarrow ii \rightarrow iv \rightarrow ii  \rightarrow i$, $iv \rightarrow v \rightarrow iv \rightarrow ii  \rightarrow i$  \\
       (v) & $2l$  & $v \rightarrow iv \rightarrow ii  \rightarrow i$, $v \rightarrow iv \rightarrow v \rightarrow iv \rightarrow ii  \rightarrow i$  \\
-      (vi) & $2l-2$,  & $vi \rightarrow iii \rightarrow i$, $vi \rightarrow iv \rightarrow ii  \rightarrow i$, $vi \rightarrow iii \rightarrow vi \rightarrow iii  \rightarrow i$  \\
+      (vi) & $2l-2$  & $vi \rightarrow iii \rightarrow i$, $vi \rightarrow iv \rightarrow ii  \rightarrow i$, $vi \rightarrow iii \rightarrow vi \rightarrow iii  \rightarrow i$  \\
       \hline
 \end{tabular}    \caption{prkc of a complete path}
     \label{tab:rkc-path}
@@ -1198,16 +1199,16 @@ number of the K gates along the complete path starting from $A$.
 \end{lemma}
 
 \begin{proof}
-  By construction of a circuit $C$ of raw K-count $\prkc(A)$ that
-  implements $A$.  If $\lde(A) = 0$, then A is a generalized
-  permutation. We can find a circuit with using zero K gate that
-  implements $A$ described in Section~\ref{ssec:gp}. If $\lde(A) > 0$,
+  We prove this by constructing a circuit $C$ of raw K-count $\prkc(A)$
+  that implements $A$.  If $\lde(A) = 0$, then $A$ is a generalized
+  permutation. We can find a circuit using zero K gates that
+  implements $A$ as described in Section~\ref{ssec:gp}. If $\lde(A) > 0$,
   by Lemma~\ref{tab:rkc-path}, and merging adjacent generalized
   permutations as needed, there exist generalized permutations
   $L_1,L_2,\ldots,L_p,R_1,R_2,\ldots,R_q$ such that
-    \[
+    $$
       \lde(L_pK_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_q) = 0, \text{ i.e.,}
-    \]
+    $$
     there exists a generalized permutation $P$ such that
     \begin{equation*}
       L_pK_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_q = P.
@@ -1222,9 +1223,9 @@ number of the K gates along the complete path starting from $A$.
     $\rkc(C) = \prkc(A)$.
 \end{proof}
 
-Note that proof of Lemma~\ref{lem:alg} gives an algorithm for exact
+Note that the proof of Lemma~\ref{lem:alg} gives an algorithm for exact
 synthesis of a two-qubit Clifford+CS operator $A$ with raw K-count
-$\prkc(A) = 2\lde(A) - \s{0,1,2}$. We name such defined function
+$\prkc(A) = 2\lde(A) - \s{0,1,2}$. We denote this function by
 $\synth : \CliffordCS \rightarrow \cCIR$. 
 
 \subsection{Complexity}
@@ -1234,12 +1235,13 @@ the time complexity of $\synth$ is $O(\lde(A))$ for any input
 $A \in \CliffordCS$.
 
 
-\section{synth is K-optimal}
+\section{$\synth$ is K-optimal}
 
-To prove $\synth$ is K-optimal, we first prove the ``local'' and
-the complete path tarnsition in Figure~\ref{fig:trans} is K-optimal. To
-show the later, we first define gate count metrics and other possible
-ways of decreasing the lde.
+To prove that $\synth$ is K-optimal, we first prove that the local
+transitions and the complete path transitions in
+Figure~\ref{fig:trans} are K-optimal. To show the latter, we first
+define gate count metrics and other possible ways of decreasing the
+lde.
 
 
 \begin{definition}
@@ -1272,90 +1274,91 @@ ways of decreasing the lde.
 
 \begin{definition}
   An lde-descent (abbreviated as descent) of $A\in\CliffordCS$ is
-  $L,R \in \CliffordCS$ such $\lde(LAR) \le \lde(A)$. Since $L,R$ can
-  be written as a alternating sequecne of $K_1$ and generalized
-  permutations (c.f. Equation~\ref{eq:ccs-k}), equivalently, a descent
+  $L,R \in \CliffordCS$ such that $\lde(LAR) < \lde(A)$. Since $L,R$
+  can be written as an alternating sequence of $K_1$ and generalized
+  permutations (cf.\ Equation~\ref{eq:ccs-k}), equivalently, a descent
   of $A$ is generalized permutations
   $L_1,L_2,...,L_p, R_1,R_2,...,R_q$ such that
-  $\lde(L_p\cdots K_1L_2K_1L_1AR_1K_1R_2K_1\cdots R_q) \le \lde(A)$, a
+  $\lde(L_p\cdots K_1L_2K_1L_1AR_1K_1R_2K_1\cdots R_q) < \lde(A)$, a
   sub-descent of which is $L_1,L_2,...,L_{p'}, R_1,R_2,...,R_{q'}$ for
   some $1\le p' \le p$ and $1\le q' \le q$. We call the remaining part
   of the descent (including all K gates) the exterior. Clearly any
-  path in Figure~\ref{fig:trans} describes one of the lde-descents, we
-  can it path descent; a complete path descent is a complete path,
-  i.e., the lde decrease to 0. The K-count of an descent is the number
-  of K gate used in the descent. A K-optimal descent is the one of the
-  minimum K-count. We will abuse the notation of $\rkc$ and $\kc$ on
-  descents. We write $n$-descent to emphasize the lde decrease is $n$.
+  path in Figure~\ref{fig:trans} describes one of the lde-descents; we
+  call it a path descent. A complete path descent is a complete path,
+  i.e., the lde decreases to 0. The K-count of a descent is the number
+  of K gates used in the descent. A K-optimal descent is one of
+  minimum K-count. We abuse the notation of $\rkc$ and $\kc$ on
+  descents. We write $n$-descent to emphasize that the lde decrease
+  is $n$.
 \end{definition}
 
 
 \begin{lemma}[Path 1-descent is optimal]
   Any path 1-descent for $A\in \CliffordCS$ with $\lde(A)>0$ (i.e., an
-  lde-decreasing edge or an lde-preserving edge followed by a
-  lde-decreasing edge in Figure~\ref{fig:trans}) is a K-optimal.
+  lde-decreasing edge or an lde-preserving edge followed by an
+  lde-decreasing edge in Figure~\ref{fig:trans}) is K-optimal.
 \end{lemma}
 \begin{proof}
-  This is trivial if $\rho^k_1(A)=(vi)$ or $(vi)$ or
-  $\rho^1_1(A)=(iii)$, since one needs at least one K gate to changes
-  the lde, and starting from these cases, one K gate decrease the lde
+  This is trivial if $\rho^k_1(A)=(vi)$ or $(iv)$ or
+  $\rho^1_1(A)=(iii)$, since one needs at least one K gate to change
+  the lde, and starting from these cases, one K gate decreases the lde
   by 1.
 
   For cases $\rho^k_1(A)=(ii)$ or $(v)$, or $\rho^k_1(A)=(iii)$ with
-  $k>0$, each path has two K gates, which we claim is optimal. This is
-  because the ways of using 1 K gate is finite (in $K_1L_1AR_1$ or
-  $L_1AR_1K_1$, both generalized permutations $L_1$ and $R_1$ are
-  finite). We can enumerate them all and check none of them works.
+  $k>1$, each path has two K gates, which we claim is optimal. This is
+  because the number of ways to use 1 K gate is finite (in $K_1L_1AR_1$
+  or $L_1AR_1K_1$, both generalized permutations $L_1$ and $R_1$ are
+  finite). We can enumerate them all and check that none of them works.
 \end{proof}
 
 \begin{lemma}[K-count 1 1-descent is pattern-locking]
-  Any K-count 1 1-descent has the same source-target pattern as a
+  Any K-count 1 1-descent has the same source-target pattern as an
   undashed edge in Figure~\ref{fig:trans} prescribes.
 \end{lemma}
 
 \begin{proof}
-  There are finite many K-count 1 1-descents from each residue
+  There are finitely many K-count 1 1-descents from each residue
   pattern. We can check that the claim holds for each of them. Here we
-  give a another proof.
+  give another proof.
 
   
   For a K-count 1 1-descent from pattern $S$ to pattern $T$, we show
-  the edge $S \rightarrow T$ appears in Figure~\ref{fig:trans}. It is
-  easier to consider the reverse, i.e., $S$ is a 1-ascent from $T$. If
-  $T = (i)$, then applying an lde-increasing K gate will double the
-  odd entries (over the 1 higher lde); hence $S=(iii)$. If $T=(ii)$,
+  that the edge $S \rightarrow T$ appears in
+  Figure~\ref{fig:trans}. It is easier to consider the reverse, i.e.,
+  $S$ is a 1-ascent from $T$. If $T = (i)$, then applying an
+  lde-increasing K gate will double the odd entries (over the 1 higher
+  lde); hence $S=(iii)$. If $T=(ii)$, then applying an lde-increasing
+  K gate will double the odd entries; hence $S=(iv)$. If $T=(iii)$,
   then applying an lde-increasing K gate will double the odd entries;
-  hence $S=(iv)$. If $T=(iii)$, then applying an lde-increasing K gate
-  will double the odd entries; hence $S=(vi)$. If $T=(iv)$, then
-  applying an lde-increasing K gate will double the odd entries; hence
-  $S=(vi)$. If $T=(v)$, then applying an lde-increasing K gate will
-  produce 8 odd entries in two rows(or columns); hence $S=(vi)$. If
-  $T=(vi)$, there is no K-count 1 1-ascent from pattern $vi$.
+  hence $S=(vi)$. If $T=(iv)$, then applying an lde-increasing K gate
+  will double the odd entries; hence $S=(vi)$. If $T=(v)$, then
+  applying an lde-increasing K gate will produce 8 odd entries in two
+  rows (or columns); hence $S=(vi)$. If $T=(vi)$, there is no K-count
+  1 1-ascent from pattern vi.
 \end{proof}
 
 
-Repeated use of the K-optimal 1-descents is not necessary giving an
+Repeated use of K-optimal 1-descents does not necessarily give an
 ``overall'' K-optimal descent for, say, decreasing the lde from 10 to
-0. But using the patter-locking property and the fact that the
-lde-decreasing process is one-by-one commented in
-Remark~\ref{rmk:dec1}, we can prove a complete path descent is
-K-optimal. In other words, there is no ``short-cut'' for decreasing
-the lde, say, from 10 to 0.
+0. But using the pattern-locking property and the fact that the lde
+decreases one step at a time (Remark~\ref{rmk:dec1}), we can prove
+that a complete path descent is K-optimal. In other words, there is no
+shortcut for decreasing the lde, say, from 10 to 0.
 
 
 \begin{lemma}[The exterior of a K-optimal descent is K-optimal]
   \label{lem:shell-here}
   For $A \in \CliffordCS$ with lde $l$, if
-  $L_p\cdots K_1L_2K_1L_1AR_1K_1R_2K_1\cdots R_q$ is a K-optimal
+  $L_pK_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_q$ is a K-optimal
   descent, then any exterior $p',q'$ of it is a K-optimal descent of
   $L_{p'}K_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_{q'}$.
 \end{lemma}
 
 \begin{proof}
-  Suppose not, then there exists another descent $E$ of
-  $L_{p'}K_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_{q'}$ with less
-  number of K gates. Replacing the exterior by $E$ gives a descent of
-  less number of K gates, contradicts the K-optimality.
+  Suppose not; then there exists another descent $E$ of
+  $L_{p'}K_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_{q'}$ with fewer
+  K gates. Replacing the exterior by $E$ gives a descent with fewer
+  K gates, contradicting K-optimality.
 \end{proof}
 
 
@@ -1367,9 +1370,9 @@ the lde, say, from 10 to 0.
 \begin{proof}
   Equivalently, any K-count 1 0-descent from pattern ii or v cannot
   reach pattern vi. As in the proof of Lemma~\ref{lem:main2}, we can,
-  without loss of generality, assume the $(2,l)$-residue of ii and vi
+  without loss of generality, assume the $(2,l)$-residue of ii and v
   are
-  \[
+  $$
     \begin{bmatrix}
       10 & 10 & 01 & 00\\
       10 & 10 & 01 & 00\\
@@ -1382,31 +1385,31 @@ the lde, say, from 10 to 0.
       10 & 11 & 10 & 11\\
       10 & 11 & 11 & 10
     \end{bmatrix}.
-  \]
+  $$
   Then any K-count 1 0-descent from them cannot produce pattern
-  vi. Note that this lemma can also be showed by enumeration, since
-  there are finite many K-count 1 0-descent from pattern vi.
+  vi. Note that this lemma can also be shown by enumeration, since
+  there are finitely many K-count 1 0-descents from pattern vi.
 \end{proof}
 
 
-\begin{lemma}[complete path descent is optimal]
+\begin{lemma}[Complete path descent is optimal]
   For $A\in \CliffordCS$ with lde $l$, the complete path descent of
-  $A$ i.e., the path $l$-descent of $A$ is K-optimal.
+  $A$, i.e., the path $l$-descent of $A$, is K-optimal.
 \end{lemma}
 \begin{proof}
   By induction on $\lde(A)$. If $\lde(A)=0$, the empty path
   $0$-descent is K-optimal. Suppose for $\lde(A) = l >0$, the path
   $l$-descent from $A$ is K-optimal. For $A$ with $\lde(A)= l+1$, let
-  $L_pK_1\cdots L_2K_1L_1AR_1K_1R_2\cdots K_1R_q$ be a K-optimal
+  $L_pK_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_q$ be a K-optimal
   $(l+1)$-descent, for some $p,q$, and call it $D$. Then there exists
   a sub-descent $1\le p'\le p, 1\le q' \le q$ of minimal K-count, call
   it $D_1$, such that, if we let
   $M = L_{p'}K_1\cdots L_2K_1L_1AR_1K_1R_2K_1\cdots R_{q'}$,
-  $\lde(M) = l$. By induction hypothesis, the path $l$-descent
-  starting from $M$, call it $H$, is a K-optimal, and so is the
+  $\lde(M) = l$. By the induction hypothesis, the path $l$-descent
+  starting from $M$, call it $H$, is K-optimal, and so is the
   exterior, call it $E$, of the sub-descent. Thus,
   $\kc(E) =\rkc(E) = \prkc(M)$. Since $D_1$ is of minimal K-count, the
-  K-count 1 exterior $E_1$ of it decrease the lde from $l+1$ to $l$
+  K-count 1 exterior $E_1$ of it decreases the lde from $l+1$ to $l$
   (otherwise, this exterior can be stripped off, contradicting
   minimality). By pattern-locking, the possible pattern-pairs for $E$
   are
@@ -1425,49 +1428,49 @@ the lde, say, from 10 to 0.
   $\rho^{l+1}_1(A) \rightarrow \rho^l_1(M) =iii \rightarrow i, iv
   \rightarrow ii, iv \rightarrow v$, then
   $\prkc(A) = 2(l+1) -1 = 1 + 2l = \rkc(D_1) + \rkc(E) = \kc(D)$,
-  i.e., path $(l+1)$-descent of $A$ is K-optimal. If
+  i.e., the path $(l+1)$-descent of $A$ is K-optimal. If
   $\rho^{l+1}_1(A) \rightarrow \rho^l_1(M) =vi \rightarrow iii, vi
   \rightarrow iv$, then
   $\prkc(A) = 2(l+1) -2 = 1 + (2l-1) = \rkc(D_1) + \rkc(E)$, i.e.,
-  path $(l+1)$-descent of $A$ is K-optimal.
+  the path $(l+1)$-descent of $A$ is K-optimal.
 
   
   If $\rkc(D_1) = 2$. By pattern-locking, the possible pattern-pairs
-  for $E_1$ is
+  for $E_1$ are
   $iii \rightarrow i, iv \rightarrow ii, iv \rightarrow v, vi
   \rightarrow iii, vi \rightarrow iv$. If $E_1$ has pattern-pairs
   $iii \rightarrow i, iv \rightarrow ii, iv \rightarrow v$, then
   $\kc(D) =\rkc(D_1) + \rkc(E) = 2 + 2l = 2 (l+1) \ge \prkc(A)$, i.e.,
-  path $(l+1)$-descent of $A$ is K-optimal. If $E_1$ has pattern-pairs
+  the path $(l+1)$-descent of $A$ is K-optimal. If $E_1$ has pattern-pairs
   $vi \rightarrow iii, vi \rightarrow iv$, then $D_1$ is
   lde-preserving and has pattern-pair
-  $\rho^{l+1}_1(A) \rightarrow vi$. The later forces $\rho^{l+1}_1(A)$
+  $\rho^{l+1}_1(A) \rightarrow vi$. The latter forces $\rho^{l+1}_1(A)$
   to be not $ii$ or $v$ by Lemma~\ref{lem:vi-preserving}. Thus
   $\rkc(D_1) + \rkc(E) = 2 + (2l-1) = 2 (l+1) -1 \ge \prkc(A)$, i.e.,
-  path $(l+1)$-descent of $A$ is K-optimal.
+  the path $(l+1)$-descent of $A$ is K-optimal.
 \end{proof}
 
 
 \subsection{Highlights}
 
 \begin{corollary}\label{thm:main}
-  For any $A \in \CliffordCS$, let $k=\prkc(A)$, $\synth$ outputs a
+  For any $A \in \CliffordCS$, let $k=\prkc(A)$. Then $\synth$ outputs a
   K-optimal circuit $C$ implementing $A$, using $k$ K gates, at most
-  $k+1$ CS gates and at most $9(k+1) + k = 10k+9$ gates, up to a
+  $k+1$ CS gates, and at most $9(k+1) + k = 10k+9$ gates, up to a
   global phase.
 \end{corollary}
 
 
 \begin{proof}[Proof of Theorem \ref{thm:main}]
-  Suppose $\synth$ is not K-optimal, then we can synthesis A with less
-  K-count than $\prkc(A)$, then we can transform this synthesis to a
-  descent of $A$ using less K-count, contradicting the K-optimalty of
-  path $\lde(A)$-desecent.
+  Suppose $\synth$ is not K-optimal; then we can synthesize $A$ with a
+  smaller K-count than $\prkc(A)$, and we can transform this synthesis
+  to a descent of $A$ using fewer K gates, contradicting the
+  K-optimality of the path $\lde(A)$-descent.
 
   The output is an alternating sequence of generalized permutations
   and $K_1$ gates as in Equation~\ref{eq:ccs-k}, with the K-count $k$
   being optimal. Then there are $k+1$ generalized permutations, each
-  is implementable by at most 1 CS gate and at most 9 gates, up to a
+  implementable by at most 1 CS gate and at most 9 gates, up to a
   global phase. Thus the claim holds.
 \end{proof}
 
@@ -1479,18 +1482,18 @@ the lde, say, from 10 to 0.
 \end{theorem}
 
 \begin{proof}
-  Any Clifford+CS circuit $A$ is an alternating sequence of Clifford
-  parts $C_i$ and a $\CS$ gate
+  Any Clifford+CS operator $A$ can be implemented by an alternating
+  sequence of Clifford parts $C_i$ and a $\CS$ gate
   \begin{equation} \label{eq:ccs} A = C_0 \cdot \CS \cdot C_1 \cdot
     \CS \cdot \ldots \cdot C_n.
   \end{equation}
   By enumerating all two-qubit Clifford operators, each $C_i$ is
   implementable by at most 2 $K$ gates. Then we have
-  \[
+  $$
     \kc(A) \le 2(\rcs(A) + 1) \implies \frac{\kc(A)}{2} - 1 \le \cs(A).
-  \]
+  $$
 
-  Any Clifford+CS circuit $A$ can also be written as an alternating
+  Any Clifford+CS operator $A$ can also be written as an alternating
   sequence of generalized permutations $P_i$ and $K_1$ gates (by
   replacing every $K_0$ with $\Ex \cdot K_1 \cdot \Ex$):
   \begin{equation} \label{eq:ccs-k}
@@ -1508,20 +1511,21 @@ the lde, say, from 10 to 0.
 \begin{corollary}
   Theorem~\ref{thm:csbd} implies
   $\frac{k+1}{\cs(A)} \le \frac{k+1}{\frac{k}{2} - 1}= 2 +
-  \frac{4}{k-2},$ that is the raw CS-count of the output of $\synth$
-  is at most 2 time the optimal CS-count $\cs(A)$ asymptotically.
+  \frac{4}{k-2},$ that is, the raw CS-count of the output of $\synth$
+  is at most 2 times the optimal CS-count $\cs(A)$ asymptotically.
 \end{corollary}
 
 Later we show that the K-count of Glaudell et al.'s CS-optimal
-synthsis algorithm is also at most 2 time the optimal
-asymptotically. It seems that for CS and K gate, acheiving optimality
-of one is at the cost of losing optimality of the other. But
-experiments show that our algorithm always acheiving the optimal
-CS-count, while Glaudell et al.'s rarely acheives the optimal K-count.
+synthesis algorithm is also at most 2 times optimal
+asymptotically. It seems that for the CS and K gates, achieving
+optimality of one comes at the cost of losing optimality of the
+other. But experiments show that our algorithm always achieves the
+optimal CS-count, while Glaudell et al.'s rarely achieves the optimal
+K-count.
 
 \begin{remark}
-  Theorem~\ref{thm:csbd} and Lemma~\ref{lem:prkc} implies
-  $l - 2 \le \cs(A) \le 2l + 1$, which is similar to the
+  Theorem~\ref{thm:csbd} and Lemma~\ref{lem:prkc} imply
+  $l - 2 \le \cs(A) \le 2l + 1$, which is similar to
   Proposition~6.4 of \cite{Glaudell2021}, where they have bounds
   $ \frac{l-3}{2} \le \cs(A) \le 2l + 2.$ Our method improves the
   lower bound by a factor of 2.
@@ -1544,8 +1548,8 @@ flanking CS gates in $\CS\cdot E\cdot\CS$ could be cancelled,
 contradicting CS-optimality. The cancellation follows by direct
 calculation over the finitely many generalized permutations. That
 $\kc(E) \le 2$ follows from enumerating all two-qubit Cliffords. Thus
-Glaudell et al.'s algorithm produces circuit with $K$-count at most 2
-times the optimal asymptotically.
+Glaudell et al.'s algorithm produces circuits with $K$-count at most 2
+times optimal asymptotically.
 
 
 \section{Experiment}
@@ -1651,13 +1655,13 @@ Figure~\ref{fig:k-reduction-dist}.
 
 
 \subsection{Source of improvement}
-From the data, $K$-count of Glaudell et al.\ is well approximated by
+From the data, the $K$-count of Glaudell et al.\ is well approximated by
 twice the $\CS$-count:
 \[
   K_{\mathrm{Glaudell}} \approx 2 \cdot \mathit{CS}\text{-count}.
 \]
-The data complies Lemma~\ref{lem:prkc}, i.e., our $K$-count is well
-approximated by twice the lde:
+The data are consistent with Lemma~\ref{lem:prkc}, i.e., our $K$-count
+is well approximated by twice the lde:
 \[
   K_{\mathrm{ours}} \approx 2 \cdot \mathrm{lde}.
 \]
@@ -1687,24 +1691,25 @@ Code and data are available from \cite{Bian_Kopt}.
 \section{Conclusion and future work}
 We have given an efficient, K-optimal, CS-near-optimal algorithm for
 the exact synthesis of two-qubit Clifford+$\CS$ circuits from a given
-unitary matrix. The theoretical worst-case CS-count is 2 times the
+unitary matrix. The theoretical worst-case CS-count is 2 times
 optimal, but in practice our method always achieves the optimal
 CS-count and consistently achieves a better $K$-count than the best
 previously known algorithm.
 
 The algorithm of Li et al.\ \cite{Li_2023_CT2} produces circuits whose
-$T$-count is at worst 10 times the optimal. We believe our method can
-be adapted to improve this bound. One can also try to optimaize the
-total gate count as experiments show that the raw length of the output
+$T$-count is at worst 10 times optimal. We believe our method can
+be adapted to improve this bound. One can also try to optimize the
+total gate count, as experiments show that the raw length of the output
 circuit is much below the theoretical bound. One can also try to
-extend our method to three qubit case, though the number of residue
-patterns is far more than 6 as in Lemma \ref{lem:main}, which might
-cause some difficulty and affect the tightness of the bound. Extending
-to four qubit case is clearly more diffcult. Extension to two-qubit
-Clifford+V and Clifford+Cyclotomic gate sets are promising and should
-be investigated. As experiments show, our method acheived CS-optimalty
+extend our method to the three-qubit case, though the number of
+residue patterns is far greater than the 6 in Lemma~\ref{lem:main},
+which might cause some difficulty and affect the tightness of the
+bound. Extending to the four-qubit case is clearly more
+difficult. Extensions to the two-qubit Clifford+V and
+Clifford+Cyclotomic gate sets are promising and should be
+investigated. As experiments show, our method achieved CS-optimality
 for all 12,000 randomly generated operators. Hence, we conjecture that
-our method is also CS-optimal, and the proof is left to future work.
+our method is also CS-optimal, and we leave the proof to future work.
 
 \section{Acknowledgements}
 The authors acknowledge support from the National Natural Science
@@ -1713,7 +1718,7 @@ for improving the wording of the paper; generating Haskell code
 ParseData.hs (for parsing data and drawing distribution diagrams) and
 CliffordCS.hs (the implementation of Glaudell et al.'s algorithm);
 drawing Figure~\ref{fig:lde-dist} and \ref{fig:k-reduction-dist} by
-feeding in our expriment data.
+feeding in our experiment data.
 
 
 %------------------------------------------------
