@@ -191,14 +191,13 @@ sets under one theory.
 
 \subsubsection{Two-qubit}
 
-Two works on two-qubit synthesis guarantee optimality of a
+Three works on two-qubit synthesis guarantee optimality of a
 non-Clifford gate: Glaudell et al.'s CS-optimal synthesis of
 Clifford+CS operators~\cite{Glaudell2021} and Li et al.'s
 T-near-optimal synthesis of Clifford+T operators~\cite{Li_2023_CT2},
-whose worst-case $T$-count is at most 10 times optimal.
-Neither considered $H$-count optimization, but for the
-former, we can deduce that its $H$-count is at most 2 times
-optimal. Glaudell et
+whose worst-case $T$-count is at most 10 times optimal.  Neither
+considered $H$-count optimization, but for the former, we can deduce
+that its $H$-count is at most 2 times optimal. Glaudell et
 al.~\cite{GlaudellJarret2026} later gave a high-performance exact
 synthesis framework for two-qubit Clifford+$T$ circuits that optimizes
 the $T$-count exactly, using a meet-in-the-middle strategy with
@@ -526,16 +525,6 @@ $\rho_3^k(x) = 1b_0b_1$ and $\rho_3^k(y) = 1b'_0b_1'$,
 		           y
 	           \end{bmatrix})
 	=
-	\rho_2^k(\begin{bmatrix}
-		         (x+y)/{\gamma} \\
-		         (x-y)/{\gamma}
-	         \end{bmatrix})
-	=
-	\LS(\rho_3^k(\begin{bmatrix}
-		             x+y \\
-		             x-y
-	             \end{bmatrix})) \\
-	=
 	\begin{bmatrix}
 		(b_0\oplus b_0')(b_1 \oplus b_1' \oplus 1) \\
 		(b_0\oplus b_0')(b_1 \oplus b_1')
@@ -619,8 +608,8 @@ They can all be implemented by Clifford+CS circuits of length at
 most $6$, up to a global phase $i^k$, using at most $1$ $\CS$
 gate. This is because
 \[
-	Z_0^{b_0}Z_1^{b_1}S_0^{b_2}S_1^{b_3}\CZ^{b_4}\CS^{b_5}\cdot i ^ k, \quad
-	b_i \in \s{0,1}, \quad k \in \s{0,1,2,3},
+	Z_0^{b_0}Z_1^{b_1}S_0^{b_2}S_1^{b_3}\CZ^{b_4}\CS^{b_5}\cdot i ^ k, \,
+	b_i \in \s{0,1}, \, k \in \s{0,1,2,3},
 \]
 are all distinct and diagonal, and their number is $4^4$, which equals
 the cardinality of the set of diagonal unitary matrices.
@@ -637,14 +626,19 @@ diagonal unitary matrix, and hence can be implemented by a circuit of
 length at most~$9$ containing at most~$1$ CS gate and no $K$ gate. The
 group of generalized permutations is a semidirect product of the
 permutation group and the diagonal unitary group. In particular, for
-any permutation matrix $P$ and diagonal matrix $D$, there exists $D'$
-such that
+any permutation matrix $P$ and diagonal matrix $D$, there exists a
+diagonal matrix $D'$ such that
 \[
 	PD = D'P
 \]
 and the CS-count (see Definition~\ref{def:count}) of $D$ and $D'$ are
 the same.
 
+There are finitely many generalied permutation Clifford+CS operators,
+and each has lde 0. Coversely, every lde 0 Clifford+CS operator is a
+generalized permutation. This is because a unit vector of lde 0 can
+only has the form $(i^k,0,0,0)^T$ for $k\in \s{0,1,2,3}$ upto a
+permutation of rows.
 
 % ----------------------------------------------------------------------
 \section{The exact synthesis algorithm}\label{ssec:synthesis}
@@ -673,8 +667,8 @@ norm~1. For a vector $v$, the notation $v_j$ refers to its $j$th
 entry; entries are numbered starting from $j=0$.
 
 \begin{lemma}\label{lem:main}
-	For any $A \in \CliffordCS$ with lde $k$, there exist permutation
-	matrices $L$ and $R$ such that $\rho_1^k(LAR)$ or $\rho_1^k(LAR)^T$
+	For any $A \in \CliffordCS$ with lde $l$, there exist permutation
+	matrices $L$ and $R$ such that $\rho_1^l(LAR)$ or $\rho_1^l(LAR)^T$
 	equals one of the following
 	\[
 		(i)\begin{bmatrix}
@@ -1214,10 +1208,11 @@ number of K gates along the complete path starting from $A$.
 	\[
 		A = L_1^{-1}iK_1L_2^{-1}iK_1\cdots L_p^{-1}PR_q^{-1}iK_1\cdots R_2^{-1}iK_1R_1^{-1}.
 	\]
-	Let $C$ be the right-hand side with each generalized permutation
-	$L_j^{-1}i$ and $R_j^{-1}i$ and $P$ replaced by a circuit that
-	implements it as described in Section~\ref{ssec:gp}. Note
-	$\rkc(C) = \prkc(A)$.
+	Let $C$ be the right-hand side with each generalized
+        permutation $L_j^{-1}i$ and $R_j^{-1}i$ and
+        $ L_p^{-1}PR_q^{-1}$ replaced by a circuit that implements it
+        as described in Section~\ref{ssec:gp}. Note
+        $\rkc(C) = \prkc(A)$.
 \end{proof}
 
 Note that the proof of Lemma~\ref{lem:alg} gives an algorithm for exact
@@ -1226,19 +1221,18 @@ $\prkc(A) = 2\lde(A) - \s{0,1,2}$. We denote this function by
 $\synth : \CliffordCS \to \cCIR$.
 
 \subsection{Complexity}
-Each iteration reduces the lde by at least 1, using only finitely many
-operations. Since unitaries with lde~0 are generalized permutations,
-the time complexity of $\synth$ is $O(\lde(A))$ for any input
+Since each iteration reduces the lde by 1, using only finitely many
+operations, and unitaries with lde~0 are generalized permutations, the
+time complexity of $\synth$ is $O(\lde(A))$ for any input
 $A \in \CliffordCS$.
 
 
 \section{$\synth$ is K-optimal}
 
 To prove that $\synth$ is K-optimal, we first prove that the local
-transitions and the complete path transitions in
-Figure~\ref{fig:trans} are K-optimal. To show the latter, we first
-define gate count metrics and other possible ways of decreasing the
-lde.
+path transitions and the complete path transitions in
+Figure~\ref{fig:trans} are K-optimal. To do so, we first define gate
+count metrics and other possible ways of decreasing the lde.
 
 
 \begin{definition}
@@ -1270,23 +1264,23 @@ lde.
 
 
 \begin{definition}
-	An lde-descent (abbreviated as descent) of $A\in\CliffordCS$ is
-	$L,R \in \CliffordCS$ such that $\lde(LAR) < \lde(A)$. Since $L,R$
-	can be written as an alternating sequence of $K_1$ and generalized
-	permutations (cf.\ Equation~\eqref{eq:ccs-k}), equivalently, a descent
-	of $A$ is generalized permutations
-	$L_1,L_2,\dots,L_p, R_1,R_2,\dots,R_q$ such that
-	$\lde(L_p\cdots K_1L_2K_1L_1AR_1K_1R_2K_1\cdots R_q) < \lde(A)$, a
-	sub-descent of which is $L_1,L_2,\dots,L_{p'}, R_1,R_2,\dots,R_{q'}$ for
-	some $1\le p' \le p$ and $1\le q' \le q$. We call the remaining part
-	of the descent (including all K gates) the exterior. Clearly any
-	path in Figure~\ref{fig:trans} describes one of the lde-descents; we
-	call it a path descent. A complete path descent is a complete path,
-	i.e., the lde decreases to 0. The K-count of a descent is the number
-	of K gates used in the descent. A K-optimal descent is one of
-	minimum K-count. We abuse the notation of $\rkc$ and $\kc$ on
-	descents. We write $n$-descent to emphasize that the lde decrease
-	is $n$.
+  An lde-descent (abbreviated as descent) of $A\in\CliffordCS$ is
+  $L,R \in \CliffordCS$ such that $\lde(LAR) \le \lde(A)$. Since $L,R$
+  can be written as an alternating sequence of $K_1$ and generalized
+  permutations (cf.\ Equation~\eqref{eq:ccs-k}), equivalently, a
+  descent of $A$ is generalized permutations
+  $L_1,L_2,\dots,L_p, R_1,R_2,\dots,R_q$ such that
+  $\lde(L_p\cdots K_1L_2K_1L_1AR_1K_1R_2K_1\cdots R_q) \le \lde(A)$, a
+  sub-descent of which is $L_1,L_2,\dots,L_{p'}, R_1,R_2,\dots,R_{q'}$
+  for some $1\le p' \le p$ and $1\le q' \le q$. We call the remaining
+  part of the descent (including all K gates) the exterior. Clearly
+  any path in Figure~\ref{fig:trans} describes one of the
+  lde-descents; we call it a path descent. A complete path descent is
+  a complete path, i.e., the lde decreases to 0. The K-count of a
+  descent is the number of K gates used in the descent. A K-optimal
+  descent is one of minimum K-count. We abuse the notation of $\rkc$
+  and $\kc$ on descents. We write $n$-descent to emphasize that the
+  lde decrease is $n$.
 \end{definition}
 
 
@@ -1296,16 +1290,17 @@ lde.
 	lde-decreasing edge in Figure~\ref{fig:trans}) is K-optimal.
 \end{lemma}
 \begin{proof}
-	This is trivial if $\rho^k_1(A)=(vi)$ or $(iv)$ or
-	$\rho^1_1(A)=(iii)$, since one needs at least one K gate to change
-	the lde, and starting from these cases, one K gate decreases the lde
-	by 1.
+  Let $l=\lde(A)$. This is trivial if $\rho^l_1(A)=(vi)$ or $(iv)$ or
+  $\rho^1_1(A)=(iii)$, since one needs at least one K gate to change
+  the lde, and starting from these cases, one K gate decreases the lde
+  by 1.
 
-	For cases $\rho^k_1(A)=(ii)$ or $(v)$, or $\rho^k_1(A)=(iii)$ with
-	$k>1$, each path has two K gates, which we claim is optimal. This is
-	because the number of ways to use 1 K gate is finite (in $K_1L_1AR_1$
-	or $L_1AR_1K_1$, both generalized permutations $L_1$ and $R_1$ are
-	finite). We can enumerate them all and check that none of them works.
+  For cases $\rho^l_1(A)=(ii)$ or $(v)$, or $\rho^l_1(A)=(iii)$ with
+  $l>1$, each path has two K gates, which we claim is optimal. This is
+  because the number of ways to use 1 K gate is finite (in
+  $K_1L_1AR_1$ or $L_1AR_1K_1$, both generalized permutations $L_1$
+  and $R_1$ are finite). We can enumerate them all and check that none
+  of them works.
 \end{proof}
 
 \begin{lemma}[K-count 1 1-descent is pattern-locking]
@@ -1319,19 +1314,20 @@ lde.
 	give another proof.
 
 
-	For a K-count 1 1-descent from pattern $S$ to pattern $T$, we show
-	that the edge $S \rightarrow T$ appears in
-	Figure~\ref{fig:trans}. It is easier to consider the reverse, i.e.,
-	$S$ is a 1-ascent from $T$. If $T = (i)$, then applying an
-	lde-increasing K gate will double the odd entries (over the 1 higher
-	lde); hence $S=(iii)$. If $T=(ii)$, then applying an lde-increasing
-	K gate will double the odd entries; hence $S=(iv)$. If $T=(iii)$,
-	then applying an lde-increasing K gate will double the odd entries;
-	hence $S=(vi)$. If $T=(iv)$, then applying an lde-increasing K gate
-	will double the odd entries; hence $S=(vi)$. If $T=(v)$, then
-	applying an lde-increasing K gate will produce 8 odd entries in two
-	rows (or columns); hence $S=(vi)$. If $T=(vi)$, there is no K-count
-	1 1-ascent from pattern vi.
+	For a K-count 1 1-descent from pattern $S$ to pattern $T$, we
+        show that the edge $S \rightarrow T$ appears in
+        Figure~\ref{fig:trans}. It is easier to consider the reverse,
+        i.e., $S$ is a 1-ascent from $T$. If $T = (i)$, then applying
+        an lde-increasing K gate will double the odd entries (over the
+        1 higher lde); hence $S=(iii)$. If $T=(ii)$, then applying an
+        lde-increasing K gate will double the odd entries; hence
+        $S=(iv)$. If $T=(iii)$, then applying an lde-increasing K gate
+        will double the odd entries; hence $S=(vi)$. If $T=(iv)$, then
+        applying an lde-increasing K gate will double the odd entries;
+        hence $S=(vi)$. If $T=(v)$, then applying an lde-increasing K
+        gate will produce 8 odd entries in two rows (or columns);
+        hence $S=(iv)$. If $T=(vi)$, there is no K-count 1 1-ascent
+        from pattern vi.
 \end{proof}
 
 
