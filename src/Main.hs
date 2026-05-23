@@ -34,6 +34,8 @@ import ThreeSquares
 import System.Environment (getArgs)
 import System.Exit (exitFailure)
 
+main = main_ok
+
 main_data = do
   sequence_ $ map g100 $ [1..120]
 
@@ -337,7 +339,7 @@ main_read_write = do
   -- hPutStrLn h $ concat $ intersperse "\n" (map show pts)
   -- hClose h
 
-main = do
+main_cli_patterns = do
   sequence_ $ map print $ nub $ map cof $  map u4of cli_2k_mod_phase
 
 

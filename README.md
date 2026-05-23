@@ -1,5 +1,4 @@
-# Data and Code for "K-optimal and CS-near-optimal Exact Synthesis of
-  Two-Qubit Clifford+CS Operators"
+# Data and Code for "K-optimal and CS-near-optimal Exact Synthesis of Two-Qubit Clifford+CS Operators"
 
 ## Data
 

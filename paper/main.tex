@@ -96,18 +96,19 @@ Clifford+T operators has mainly focused on minimizing the CS- or
 T-count, since these gates are more expensive than Clifford operators
 in certain scenarios. However, work on T-gate optimization
 \cite{Soken2014,AmyTOpt2014,Heyfron_2019,Kissinger2020,debeaudrap2020fast,de_Beaudrap_2020}
-has suggested that the H gate is an ``obstruction'' to T-optimization
-methods. Quoting from \cite{Soken2014}: ``It has been shown that
-T-depth optimizations can be implemented efficiently for circuits
+has suggested that the H gate is a bottleneck for T-optimization
+methods. Quoting from \cite{Soken2014}: ``It has been shown that T
+-depth optimizations can be implemented efficiently for circuits
 consisting only of T and CNOT gates and that H gates impede the
-optimization significantly.''
+optimization significantly''
+
 
 We propose a method that produces circuits with a minimal number of
 $K$ (i.e., scaled $H$) gates and a near-minimal number of CS gates,
-thereby alleviating this obstruction. The problem of simultaneously
+thereby mitigating this bottleneck. The problem of simultaneously
 minimizing two different gate counts is also of mathematical interest:
 previous work on single-qubit Clifford+T synthesis achieved the
-minimum use of both the Hadamard and $T$ gates
+simultaneous minimum use of the Hadamard and $T$ gates
 \cite{matsumoto2008,kliuchnikov2013fast, giles2013remarks}, and
 extending this to the multi-qubit case has been an open problem.
 
@@ -179,7 +180,7 @@ related works.
 \subsubsection{Single-qubit and single-qudit}
 For single-qubit Clifford+$T$ synthesis, the works
 \cite{matsumoto2008,kliuchnikov2013fast,giles2013remarks} achieved the
-minimum use of both the Hadamard and $T$ gates. The works
+simultaneous minimum use of both the Hadamard and $T$ gates. The works
 \cite{Glaudell_2019,Prakash2018} achieved the minimum $T$-count for
 single-qutrit Clifford+$T$ synthesis. The work \cite{Amolak2020}
 considered single-qudit Clifford+$T$ synthesis. Forest et
@@ -599,8 +600,8 @@ length at most $3$; see Table~\ref{perm24}.
 \end{table}
 
 \subsection{Diagonal unitary matrices}
-The only diagonal unitary matrices with entries in $\D[i]$ (and
-$\Z[i])$ are of the form
+The only diagonal unitary matrices with entries in $\D[i]$ and
+$\Z[i]$ are of the form
 \[
 	\text{diag}(i^a,i^b,i^c,i^d), \text{ where } a,b,c,d \in \s{0,1,2,3}.
 \]
@@ -634,10 +635,10 @@ diagonal matrix $D'$ such that
 and the CS-count (see Definition~\ref{def:count}) of $D$ and $D'$ are
 the same.
 
-There are finitely many generalied permutation Clifford+CS operators,
-and each has lde 0. Coversely, every lde 0 Clifford+CS operator is a
-generalized permutation. This is because a unit vector of lde 0 can
-only has the form $(i^k,0,0,0)^T$ for $k\in \s{0,1,2,3}$ upto a
+There are finitely many generalized permutation Clifford+CS operators,
+and each has lde 0. Conversely, every lde 0 Clifford+CS operator is a
+generalized permutation. This is because a unit vector with lde 0 can
+only have the form $(i^k,0,0,0)^T$ for $k\in \s{0,1,2,3}$, up to a
 permutation of rows.
 
 % ----------------------------------------------------------------------
@@ -1230,7 +1231,7 @@ $A \in \CliffordCS$.
 \section{$\synth$ is K-optimal}
 
 To prove that $\synth$ is K-optimal, we first prove that the local
-path transitions and the complete path transitions in
+case transitions and the complete path transitions in
 Figure~\ref{fig:trans} are K-optimal. To do so, we first define gate
 count metrics and other possible ways of decreasing the lde.
 
@@ -1353,6 +1354,7 @@ shortcut for decreasing the lde, say, from 10 to 0.
 	K gates. Replacing the exterior by $E$ gives a descent with fewer
 	K gates, contradicting K-optimality.
 \end{proof}
+
 
 
 \begin{lemma}
@@ -1703,9 +1705,8 @@ The authors acknowledge support from the National Natural Science
 Foundation of China under Grant 92465202. We have used Claude Opus 4.6
 for improving the wording of the paper, generating the distribution
 diagrams (Figures~\ref{fig:lde-dist} and~\ref{fig:k-reduction-dist}),
-and generating initial versions of the Haskell code ParseData.hs and
-CliffordCS.hs. All generated content has been verified for correctness
-by the authors.
+and generating initial versions of the Haskell code CliffordCS.hs. All
+generated content has been verified for correctness by the authors.
 
 
 %------------------------------------------------
