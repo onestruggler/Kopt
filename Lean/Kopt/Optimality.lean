@@ -1,15 +1,15 @@
 /-
-  Kopt2.Optimality — Section 5 of Bian & Feng (CS-bound side).
+  Kopt.Optimality — Section 5 of Bian & Feng (CS-bound side).
 
   The K-optimality theorem (`is_kc_optimal`) and Lemma 4.6 (`lemma_4_6`)
-  live in Kopt2.Synth. This file packages the CS-bound side of §5
+  live in Kopt.Synth. This file packages the CS-bound side of §5
   (Theorem `thm:csbd`) and the asymptotic CS-near-optimal corollary.
 -/
-import Kopt2.Synth
+import Kopt.Synth
 
-namespace Kopt2
+namespace Kopt
 
-open Kopt2
+open Kopt
 
 /-! ## §5  Theorem thm:csbd: kc/2 - 1 ≤ cs ≤ kc + 1
 
@@ -101,4 +101,4 @@ theorem cs_bound_in_lde (A : Mat4) (l : Nat) (p : Pattern)
     rw [h_kc_eq_prkc]; exact_mod_cast Pattern.prkc_le_two_l l p
   omega
 
-end Kopt2
+end Kopt

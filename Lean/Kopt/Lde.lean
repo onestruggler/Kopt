@@ -1,5 +1,5 @@
 /-
-  Kopt2.Lde — Section 4's input class: matrices over D[i] with bookkeeping
+  Kopt.Lde — Section 4's input class: matrices over D[i] with bookkeeping
   for the least denominator exponent.
 
   In the paper, A ∈ Clifford+CS is a 4×4 unitary with entries in D[i] = ℤ[½, i].
@@ -13,12 +13,12 @@
   precise pattern depends on which permutations are chosen — this matches
   the paper's "for some L, R, ρ₁ˡ(LAR) = pattern P" formulation.
 -/
-import Kopt2.Synthesis
-import Kopt2.Cliffords
+import Kopt.Synthesis
+import Kopt.Cliffords
 
-namespace Kopt2
+namespace Kopt
 
-open Kopt2
+open Kopt
 
 /-! ## Matrices over D[i], represented by (numerator in ℤ[i], lde). -/
 
@@ -91,4 +91,4 @@ def IsLenOptimal (A : Mat4) (k : Nat) : Prop :=
   (∃ c : Circuit, Circuit.eval c = A ∧ Circuit.rlen c = k) ∧
   (∀ c : Circuit, Circuit.eval c = A → k ≤ Circuit.rlen c)
 
-end Kopt2
+end Kopt

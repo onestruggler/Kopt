@@ -1,68 +1,86 @@
+###############################################################################
+# Lean (Lake build system)                                                    #
+###############################################################################
+.lake/
+build/
+*.olean
+*.olean.hash
+*.ilean
+*.ilean.hash
+*.trace
+
+###############################################################################
+# Agda                                                                        #
+###############################################################################
 *.agdai
+_build/
 MAlonzo/**
-dist
-dist-*
-cabal-dev
-Main
+# Generated HTML highlighting (regenerate with `agda --html`)
+Agda/html/
+
+###############################################################################
+# Haskell                                                                     #
+###############################################################################
+# Compiled object / interface files
 *.o
 *.hi
+*.dyn_o
+*.dyn_hi
 *.hie
 *.chi
 *.chs.h
-*.dyn_o
-*.dyn_hi
-.hpc
-.hsenv
+*.prof
+*.eventlog
+*.hp
+
+# Compiled binary (the project's `Main` executable)
+Haskell/Main
+Haskell/Main-bak
+
+# Build directories
+dist
+dist-*
+dist-newstyle/
+.stack-work/
+cabal-dev
 .cabal-sandbox/
 cabal.sandbox.config
-*.prof
-*.aux
-*.log
-*.out
-*.*~
-*.hp
-*.eventlog
-.stack-work/
 cabal.project.local
 cabal.project.local~
 .HTF/
+.hpc
+.hsenv
 .ghc.environment.*
-*.pdf
-paper/currentcir.tex
-*.agdai
-*~
-*.orig
-*.nav
-*.snm
-*.synctex.gz
-*.toc
-## Core latex/pdflatex auxiliary files:
+
+###############################################################################
+# LaTeX (compiler-generated auxiliary files)                                  #
+###############################################################################
+# Core latex/pdflatex auxiliary files
 *.aux
-*.lof
 *.log
-*.lot
-*.fls
 *.out
 *.toc
+*.lof
+*.lot
+*.fls
 *.fmt
 *.fot
 *.cb
 *.cb2
 .*.lb
 
-## Intermediate documents:
+# Beamer
+*.nav
+*.snm
+*.pre
+*.vrb
+
+# Intermediate documents
 *.dvi
 *.xdv
 *-converted-to.*
-# these rules might exclude image files for figures etc.
-# *.ps
-# *.eps
-# *.pdf
 
-## Generated if empty string is given at "Please type another file name for output:"
-.pdf
-
-## Bibliography auxiliary files (bibtex/biblatex/biber):
+# Bibliography
 *.bbl
 *.bcf
 *.blg
@@ -70,7 +88,7 @@ paper/currentcir.tex
 *-blx.bib
 *.run.xml
 
-## Build tool auxiliary files:
+# Build tool auxiliary files
 *.fdb_latexmk
 *.synctex
 *.synctex(busy)
@@ -78,53 +96,28 @@ paper/currentcir.tex
 *.synctex.gz(busy)
 *.pdfsync
 
-## Build tool directories for auxiliary files
-# latexrun
+# Build tool directories
 latex.out/
 
-## Auxiliary and intermediate files from other packages:
-# algorithms
+# Project-specific generated TeX file
+paper/currentcir.tex
+
+# Other LaTeX packages
 *.alg
 *.loa
-
-# achemso
 acs-*.bib
-
-# amsthm
 *.thm
-
-# beamer
-*.nav
-*.pre
-*.snm
-*.vrb
-
-# changes
 *.soc
-
-# comment
 *.cut
-
-# cprotect
 *.cpt
-
-# elsarticle (documentclass of Elsevier journals)
 *.spl
-
-# endnotes
 *.ent
-
-# fixme
 *.lox
-
-# feynmf/feynmp
 *.mf
 *.mp
 *.t[1-9]
 *.t[1-9][0-9]
 *.tfm
-
-#(r)(e)ledmac/(r)(e)ledpar
 *.end
 *.?end
 *.[1-9]
@@ -139,8 +132,6 @@ acs-*.bib
 *.eledsec[1-9][0-9]R
 *.eledsec[1-9][0-9][0-9]
 *.eledsec[1-9][0-9][0-9]R
-
-# glossaries
 *.acn
 *.acr
 *.glg
@@ -149,46 +140,23 @@ acs-*.bib
 *.glsdefs
 *.lzo
 *.lzs
-
-# uncomment this for glossaries-extra (will ignore makeindex's style files!)
-# *.ist
-
-# gnuplottex
 *-gnuplottex-*
-
-# gregoriotex
 *.gaux
 *.gtex
-
-# htlatex
 *.4ct
 *.4tc
 *.idv
 *.lg
 *.trc
 *.xref
-
-# hyperref
 *.brf
-
-# knitr
 *-concordance.tex
-# TODO Comment the next line if you want to keep your tikz graphics files
-*.tikz
 *-tikzDictionary
-
-# listings
 *.lol
-
-# luatexja-ruby
 *.ltjruby
-
-# makeidx
 *.idx
 *.ilg
 *.ind
-
-# minitoc
 *.maf
 *.mlf
 *.mlt
@@ -196,119 +164,61 @@ acs-*.bib
 *.slf[0-9]*
 *.slt[0-9]*
 *.stc[0-9]*
-
-# minted
 _minted*
 *.pyg
-
-# morewrites
 *.mw
-
-# nomencl
 *.nlg
 *.nlo
 *.nls
-
-# pax
 *.pax
-
-# pdfpcnotes
 *.pdfpc
-
-# sagetex
 *.sagetex.sage
 *.sagetex.py
 *.sagetex.scmd
-
-# scrwfile
 *.wrt
-
-# sympy
 *.sout
 *.sympy
 sympy-plots-for-*.tex/
-
-# pdfcomment
 *.upa
 *.upb
-
-# pythontex
 *.pytxcode
 pythontex-files-*/
-
-# tcolorbox
 *.listing
-
-# thmtools
 *.loe
-
-# TikZ & PGF
 *.dpth
 *.md5
 *.auxlock
-
-# todonotes
 *.tdo
-
-# vhistory
 *.hst
 *.ver
-
-# easy-todo
 *.lod
-
-# xcolor
 *.xcp
-
-# xmpincl
 *.xmpi
-
-# xindy
 *.xdy
-
-# xypic precompiled matrices and outlines
 *.xyc
 *.xyd
-
-# endfloat
 *.ttt
 *.fff
-
-# Latexian
 TSWLatexianTemp*
 
-## Editors:
-# WinEdt
+# Editors (LaTeX-focused)
 *.bak
 *.sav
-
-# Texpad
 .texpadtmp
-
-# LyX
 *.lyx~
-
-# Kile
 *.backup
-
-# gummi
 .*.swp
-
-# KBibTeX
 *~[0-9]*
-
-# TeXnicCenter
 *.tps
-
-# auto folder when using emacs and auctex
 ./auto/*
 *.el
-
-# expex forward references with \gathertags
 *-tags.tex
-
-# standalone packages
 *.sta
-
-# Makeindex log files
 *.lpz
+
+###############################################################################
+# Editor / OS / general                                                       #
+###############################################################################
+*~
+*.orig
+*.*~

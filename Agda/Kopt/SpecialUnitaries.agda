@@ -63,7 +63,7 @@ ofℤ n = mkZI n (+ 0)
 -- For K0/K1, we drop the 1/γ scaling and remember it via the K-count metric.
 gateMatrix : Gate → Mat4
 
--- K₀ = K ⊗ I (scaled by γ). Matches src/Clifford.hs: rows 0/2 paired,
+-- K₀ = K ⊗ I (scaled by γ). Matches Haskell/Clifford.hs: rows 0/2 paired,
 -- rows 1/3 paired; entries (0,0)=(0,2)=1, (1,1)=(1,3)=1, (2,0)=1, (2,2)=-1,
 -- (3,1)=1, (3,3)=-1.
 gateMatrix K0 0F 0F = 1ZI

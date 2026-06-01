@@ -1,5 +1,5 @@
 /-
-  Kopt2.Algebra — Section 2 of Bian & Feng.
+  Kopt.Algebra — Section 2 of Bian & Feng.
 
   ℤ[i] is realized as `Zsqrtd (-1)` (Mathlib's Z√(-1) = Gaussian integers),
   which gives us `CommRing` and friends for free. This makes algebraic
@@ -16,7 +16,7 @@
 -/
 import Mathlib
 
-namespace Kopt2
+namespace Kopt
 
 /-! ## §2.1  Gaussian integers ℤ[i] = Zsqrtd (-1) -/
 
@@ -263,4 +263,4 @@ end Bit
 /-- A binary n-digit residue. -/
 abbrev Residue (n : Nat) := Fin n → Bit
 
-end Kopt2
+end Kopt

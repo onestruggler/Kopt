@@ -1,5 +1,5 @@
 /-
-  Kopt2.Cliffords — translation of `cli_2k_mod_phase` from src/Clifford.hs.
+  Kopt.Cliffords — translation of `cli_2k_mod_phase` from Haskell/Clifford.hs.
 
   Per Bian & Feng's paper Section 5 (proof of Theorem `thm:csbd` and the
   proof that any 2-qubit Clifford is implementable with at most 2 K gates):
@@ -20,13 +20,13 @@
   Every "by enumeration over the finite Clifford group" claim in the paper
   thus reduces to a finite check over this 11520-list.
 -/
-import Kopt2.SpecialUnitaries
+import Kopt.SpecialUnitaries
 
-namespace Kopt2
+namespace Kopt
 
 /-! ### `perms` — 24 permutation circuits, length ≤ 3 each.
 
-    Translated verbatim from `perm_cirs'` in `src/Clifford.hs:11616-11642`.
+    Translated verbatim from `perm_cirs'` in `Haskell/Clifford.hs:11616-11642`.
     The permutation `[a₀,a₁,a₂,a₃]` sends basis vector `eᵢ ↦ e_{aᵢ}`. -/
 
 def perms : List Circuit := [
@@ -132,7 +132,7 @@ theorem gpDiagCirsModPhase_length : gpDiagCirsModPhase.length = 256 := by native
 
 /-! ### `c15` — 15 short K-suffix circuits.
 
-    Translated verbatim from `c15` (src/Clifford.hs:11549). Each entry uses
+    Translated verbatim from `c15` (Haskell/Clifford.hs:11549). Each entry uses
     at most 2 K-gates. Together with permutations and diagonals, these
     suffice to express every Clifford modulo a global phase. -/
 
@@ -165,7 +165,7 @@ theorem c15_rcs_zero : ∀ c ∈ c15, Circuit.rcs c = 0 := by decide
 
 /-! ### `cli2kModPhase` — the 46080 canonical Clifford circuits, mod phase.
 
-    Translated from `cli_2k_mod_phase` (src/Clifford.hs:11554). Cardinality
+    Translated from `cli_2k_mod_phase` (Haskell/Clifford.hs:11554). Cardinality
     24 · 128 · 15 = 46080. Each `A ∈ Clifford+CS` factors uniquely (up to a
     global phase i^k) as `P · D · C` with `P ∈ perms`, `D ∈ cdiag` (Clifford-
     only diagonal), `C ∈ c15`. The CS gates of A live entirely inside the
@@ -333,7 +333,7 @@ theorem genPermCircuit_id_eval :
 
 /-! ### Finitely-indexed generalized permutations
 
-    `GenPerm` (in Kopt2.SpecialUnitaries) uses `Equiv.Perm (Fin 4)` for the
+    `GenPerm` (in Kopt.SpecialUnitaries) uses `Equiv.Perm (Fin 4)` for the
     permutation (finite, 24) and `Fin 4 → Int` for the phases (infinite —
     Int is unbounded). Phases are only used mod 4, so we can replace the
     Int with `Fin 4 → Fin 4`, yielding the finite type
@@ -414,7 +414,7 @@ example : (findGenPermFinCircuit ⟨Equiv.refl _, fun _ => 0⟩).isSome := by
     6144 × 6144 = ~38M circuit evaluations (each a length-≤12 matrix product
     over ℤ[i]), which exceeds the build timeout.
 
-    The Haskell driver `src/Clifford.hs` verifies the equivalent claim
+    The Haskell driver `Haskell/Clifford.hs` verifies the equivalent claim
     (`precomputed_mat_gperms`). We axiomatize here. -/
 axiom cgpermsModPhase_covers : cgpermsModPhase_covers_all
 
@@ -455,4 +455,4 @@ theorem genPermFinCircuit_rlen (gp : GenPermFin) :
     Circuit.rlen (genPermFinCircuit gp) ≤ 12 :=
   cgpermsModPhase_rlen_le_twelve _ (genPermFinCircuit_mem gp)
 
-end Kopt2
+end Kopt

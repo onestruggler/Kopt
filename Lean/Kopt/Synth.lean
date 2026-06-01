@@ -1,5 +1,5 @@
 /-
-  Kopt2.Synth — the synthesis algorithm, its existence + correctness, and
+  Kopt.Synth — the synthesis algorithm, its existence + correctness, and
   the K-optimality lower bound.
 
   Section 4.6:
@@ -37,11 +37,11 @@
   Clifford group) remain axiomatized, and `kc_ge_prkc` is **proved** by
   induction using them.
 -/
-import Kopt2.Lde
+import Kopt.Lde
 
-namespace Kopt2
+namespace Kopt
 
-open Kopt2
+open Kopt
 
 namespace UnitaryDi
 
@@ -853,4 +853,4 @@ theorem kc_le_two_l (A : UnitaryDi) :
 
 end UnitaryDi
 
-end Kopt2
+end Kopt

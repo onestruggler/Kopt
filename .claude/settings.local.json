@@ -74,7 +74,8 @@
       "WebFetch(domain:www.mathstat.dal.ca)",
       "Bash(agda Kopt/Algebra.agda)",
       "Bash(echo \"exit: $?\")",
-      "Bash(agda --html --html-dir=html Kopt.agda)"
+      "Bash(agda --html --html-dir=html Kopt.agda)",
+      "Bash(git ls-files *)"
     ]
   }
 }

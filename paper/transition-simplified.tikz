@@ -1,0 +1,56 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (0, 0) {};
+		\node [style=none] (1) at (0, 0) {};
+		\node [style=none] (2) at (0, 0) {i};
+		\node [style=none] (5) at (-7.5, -6.25) {iv};
+		\node [style=none] (6) at (7.5, 0) {};
+		\node [style=none] (7) at (7.5, 0) {};
+		\node [style=none] (8) at (7.5, 0) {iii};
+		\node [style=none] (11) at (0, -6.25) {v};
+		\node [style=none] (14) at (7.5, -6.25) {vi};
+		\node [style=none] (17) at (-4.5, -2.75) {$\times K_1 \text{ or } K_1\times$};
+		\node [style=none] (18) at (8, -5.5) {};
+		\node [style=none] (19) at (8, -1) {};
+		\node [style=none] (20) at (9.25, -3.25) {$K_1\times$};
+		\node [style=none] (22) at (7, -5.5) {};
+		\node [style=none] (24) at (7, -1) {};
+		\node [style=none] (26) at (5.75, -3) {$K_1 \times $};
+		\node [style=none] (28) at (-6.5, -6.75) {};
+		\node [style=none] (29) at (-0.75, -6.75) {};
+		\node [style=none] (30) at (-3.75, -6.75) {$K_1 \times$};
+		\node [style=none] (32) at (-6.5, 0) {};
+		\node [style=none] (33) at (-7.5, 0) {ii};
+		\node [style=none] (34) at (-8, -5.5) {};
+		\node [style=none] (35) at (-8, -1) {};
+		\node [style=none] (36) at (-9, -3.25) {$K_1 \times$};
+		\node [style=none] (37) at (1, 0) {};
+		\node [style=none] (38) at (6.5, 0) {};
+		\node [style=none] (39) at (3.75, -0.5) {if lde =1,};
+		\node [style=none] (40) at (-7, -1) {};
+		\node [style=none] (41) at (-7, -5.5) {};
+		\node [style=none] (42) at (-3.75, -0.5) {if lde =1, };
+		\node [style=none] (46) at (-1, 0) {};
+		\node [style=none] (47) at (-3.75, -1) {$\CK \times$};
+		\node [style=none] (48) at (3.75, -1) {$K_1 \times$};
+		\node [style=none] (49) at (9.25, -2.75) {else,};
+		\node [style=none] (50) at (-9, -2.75) {else,};
+		\node [style=none] (51) at (-0.75, -5.75) {};
+		\node [style=none] (52) at (-6.5, -5.75) {};
+		\node [style=none] (53) at (-3.25, -4.5) {$\times K_1 \text{ or } K_1\times$};
+		\node [style=none] (54) at (7, -6.75) {};
+		\node [style=none] (55) at (-7.5, -7) {};
+		\node [style=none] (56) at (0, -8.75) {$K_1 \times $};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=dased-directed, bend left=15] (19.center) to (18.center);
+		\draw [style=diredge, bend left=15] (22.center) to (24.center);
+		\draw [style=dased-directed, bend left=15] (29.center) to (28.center);
+		\draw [style=dased-directed, bend right=15] (35.center) to (34.center);
+		\draw [style=diredge] (38.center) to (37.center);
+		\draw [style=diredge, bend right=15] (41.center) to (40.center);
+		\draw [style=diredge] (32.center) to (46.center);
+		\draw [style=diredge, bend left=15] (52.center) to (51.center);
+		\draw [style=diredge, bend left, looseness=1.25] (54.center) to (55.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

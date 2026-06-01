@@ -1,5 +1,5 @@
 /-
-  Kopt2.Synthesis — Section 4 of Bian & Feng.
+  Kopt.Synthesis — Section 4 of Bian & Feng.
 
   4.1 (Lemma 4.1, lem:main): six residue patterns I–VI for ρ₁ˡ(LAR).
       • lde 0 ⇔ pattern I (gen. permutation).
@@ -29,11 +29,11 @@
   ρₙ functor; we expose it as a `synth` function returning a circuit and
   prove the K-count properties.
 -/
-import Kopt2.SpecialUnitaries
+import Kopt.SpecialUnitaries
 
-namespace Kopt2
+namespace Kopt
 
-open Kopt2
+open Kopt
 
 /-! ## §4.1  Residue patterns I–VI -/
 
@@ -268,4 +268,4 @@ def ckCircuit : Circuit :=
 @[simp] theorem ckCircuit_rcs : Circuit.rcs ckCircuit = 1 := rfl
 @[simp] theorem ckCircuit_rlen : Circuit.rlen ckCircuit = 9 := rfl
 
-end Kopt2
+end Kopt

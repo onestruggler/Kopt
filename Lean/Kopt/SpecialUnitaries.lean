@@ -1,5 +1,5 @@
 /-
-  Kopt2.SpecialUnitaries — Section 3 of Bian & Feng.
+  Kopt.SpecialUnitaries — Section 3 of Bian & Feng.
 
   3.1  Permutation matrices    — 24 of them, each implementable with ≤ 3 gates.
   3.2  Diagonal unitary matrices over D[i] — diag(iᵃ,iᵇ,iᶜ,iᵈ);
@@ -11,11 +11,11 @@
   We model the gate set first, then circuits, evaluation semantics,
   raw-count metrics (rkc, rcs, rlen), and the GenPerm structure.
 -/
-import Kopt2.Algebra
+import Kopt.Algebra
 
-namespace Kopt2
+namespace Kopt
 
-open Kopt2
+open Kopt
 
 /-! ## 4×4 matrices over ℤ[i] -/
 
@@ -336,11 +336,11 @@ theorem rkc_zero_rcs_le_one (_gp : GenPerm) :
   refine ⟨[], ?_, ?_⟩ <;> simp [Circuit.rkc, Circuit.rcs]
 
 /-! Section 3.3: the constructive circuit for a generalized permutation
-    is now defined in `Kopt2.Cliffords` as `genPermFinCircuit`, indexed
+    is now defined in `Kopt.Cliffords` as `genPermFinCircuit`, indexed
     by the finite type `GenPermFin` (24 · 4⁴ = 6144 elements). The
     eval-correctness, K-count, CS-count, and length bounds are all proved
     there as theorems via membership in the explicit list `cgpermsModPhase`. -/
 
 end GenPerm
 
-end Kopt2
+end Kopt
