@@ -15,7 +15,7 @@
 --   * The SU(4) -> SO(6) isomorphism via the wedge product (Section 3)
 --   * Optimal CS-count synthesis via FFP pattern matching (Section 4)
 
-module CliffordCS where
+module Glaudell where
 
 import Data.List (foldl', intercalate, sort, sortBy, groupBy, find)
 import Data.Ord (comparing)

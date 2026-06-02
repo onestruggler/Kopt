@@ -15,7 +15,7 @@ import Quantum.Synthesis.Matrix
 import Data.List
 import Clifford
 import Test.QuickCheck hiding (label)
-import CliffordCS hiding (main' , lde , H1, H0)
+import Glaudell hiding (main' , lde , H1, H0)
 import Translations
 import System.IO
 import System.Environment
@@ -28,8 +28,7 @@ import Graphics.Rendering.Chart.Easy
 import Graphics.Rendering.Chart.Grid
 --import Graphics.Rendering.Chart.Backend.Diagrams(toFile, renderableToFile)
 
-import Kopt2
-import ThreeSquares
+import Kopt
 
 import System.Environment (getArgs)
 import System.Exit (exitFailure)
@@ -148,7 +147,7 @@ gen_matk k
       return $ u4of $ cli_2k_mod_phase !! n
   | otherwise = undefined
   where
-    (a,b,c) = get_three_squares (2 ^ k- 1)
+    (a,b,c) = undefined --get_three_squares (2 ^ k- 1)
 
 
 (====) :: U4Di -> U4Di -> Bool

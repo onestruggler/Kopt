@@ -4,7 +4,7 @@ module Translations where
 import Clifford
 import SO6
 import qualified U4Di as UD
-import CliffordCS hiding (main)
+import Glaudell hiding (main)
 import System.Environment
 import Test.QuickCheck
 
@@ -26,34 +26,34 @@ rows_of_mat4E :: [a] -> [[a]]
 rows_of_mat4E = rows_of_list 4
 
 t2_of_cs2_gate :: Gate2 -> CliffordT2
-t2_of_cs2_gate CliffordCS.H1 = SO6.H0
-t2_of_cs2_gate CliffordCS.H2 = SO6.H1
-t2_of_cs2_gate CliffordCS.S1g = SO6.S0
-t2_of_cs2_gate CliffordCS.S2g = SO6.S1
-t2_of_cs2_gate CliffordCS.CZg = SO6.CZ
-t2_of_cs2_gate CliffordCS.CSg = SO6.CS
+t2_of_cs2_gate Glaudell.H1 = SO6.H0
+t2_of_cs2_gate Glaudell.H2 = SO6.H1
+t2_of_cs2_gate Glaudell.S1g = SO6.S0
+t2_of_cs2_gate Glaudell.S2g = SO6.S1
+t2_of_cs2_gate Glaudell.CZg = SO6.CZ
+t2_of_cs2_gate Glaudell.CSg = SO6.CS
 
 
 t2_of_cs2 :: Circuit2 -> [CliffordT2]
 t2_of_cs2 = map t2_of_cs2_gate
 
 cs2_of_t2_gate :: CliffordT2 -> [Gate2]
-cs2_of_t2_gate SO6.H0 = [CliffordCS.H1]
-cs2_of_t2_gate SO6.H1 = [CliffordCS.H2]
-cs2_of_t2_gate SO6.S0 = [CliffordCS.S1g]
-cs2_of_t2_gate SO6.S1 = [CliffordCS.S2g]
-cs2_of_t2_gate SO6.CZ = [CliffordCS.CZg]
-cs2_of_t2_gate SO6.CS = [CliffordCS.CSg]
+cs2_of_t2_gate SO6.H0 = [Glaudell.H1]
+cs2_of_t2_gate SO6.H1 = [Glaudell.H2]
+cs2_of_t2_gate SO6.S0 = [Glaudell.S1g]
+cs2_of_t2_gate SO6.S1 = [Glaudell.S2g]
+cs2_of_t2_gate SO6.CZ = [Glaudell.CZg]
+cs2_of_t2_gate SO6.CS = [Glaudell.CSg]
 
-cs2_of_t2_gate SO6.Z0 = [CliffordCS.S1g, CliffordCS.S1g]
-cs2_of_t2_gate SO6.Z1 = [CliffordCS.S2g, CliffordCS.S2g]
+cs2_of_t2_gate SO6.Z0 = [Glaudell.S1g, Glaudell.S1g]
+cs2_of_t2_gate SO6.Z1 = [Glaudell.S2g, Glaudell.S2g]
 
-cs2_of_t2_gate SO6.X0 = [CliffordCS.H1,CliffordCS.S1g, CliffordCS.S1g,CliffordCS.H1]
-cs2_of_t2_gate SO6.X1 = [CliffordCS.H2,CliffordCS.S2g, CliffordCS.S2g,CliffordCS.H2]
+cs2_of_t2_gate SO6.X0 = [Glaudell.H1,Glaudell.S1g, Glaudell.S1g,Glaudell.H1]
+cs2_of_t2_gate SO6.X1 = [Glaudell.H2,Glaudell.S2g, Glaudell.S2g,Glaudell.H2]
 
 
-cs2_of_t2_gate CX = [CliffordCS.H2,CliffordCS.CZg,CliffordCS.H2]
-cs2_of_t2_gate XC = [CliffordCS.H1,CliffordCS.CZg,CliffordCS.H1]
+cs2_of_t2_gate CX = [Glaudell.H2,Glaudell.CZg,Glaudell.H2]
+cs2_of_t2_gate XC = [Glaudell.H1,Glaudell.CZg,Glaudell.H1]
 
 cs2_of_t2_gate Ex = cs2_of_t2_gate CX ++ cs2_of_t2_gate XC ++ cs2_of_t2_gate CX
 cs2_of_t2_gate WI = []
@@ -76,9 +76,9 @@ su4_of_mat4 (Mat4 k e) = matrix $ rows_of_mat4E $ map aux e
   where
     dof x = Dyadic x (fromIntegral (k `div` 2))
     dof' x = Dyadic x (fromIntegral ((k+1) `div` 2))
-    auxe :: CliffordCS.ZOmega -> DOmega
+    auxe :: Glaudell.ZOmega -> DOmega
     auxe (ZO d c b a) = Omega (dof a) (dof b) (dof c) (dof d)
-    auxo :: CliffordCS.ZOmega -> DOmega
+    auxo :: Glaudell.ZOmega -> DOmega
     auxo x@(ZO d c b a) = Omega (dof' a) (dof' b) (dof' c) (dof' d) * roottwo
     aux = if even k then auxe else undefined
 

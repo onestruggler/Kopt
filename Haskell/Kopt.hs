@@ -1,7 +1,9 @@
-module Main where
+{-# LANGUAGE TemplateHaskell #-}
+module Kopt where
 
 import U4Di hiding (I, II)
 import qualified U4Di as UD
+import qualified SO6 as SO6
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
 import qualified Quantum.Synthesis.MultiQubitSynthesis as MS
@@ -13,9 +15,17 @@ import Quantum.Synthesis.Matrix
 import Data.List
 import Clifford
 import Test.QuickCheck
+import Glaudell hiding (main' , lde , H1, H0)
+import Translations
+import LookupTable
+import qualified Data.Map.Strict as Map
+import qualified Data.HashMap.Strict as HM
 
 
-data SixCases = I | II | III | IIIt | IV | V | Vt | VI deriving (Show, Eq, Ord)
+-- | Six cases and the corresponding pattern matrices.
+
+-- note that V^T = V upto row and column permutations.
+data SixCases = I | II | III | IV | IVt | V | VI deriving (Show, Eq, Ord)
 
 case_i :: U4 Z2
 case_i = 1
@@ -26,10 +36,11 @@ case_ii = (constant_mat 1 :: U2 Z2 ) `oplus` (0 :: U2 Z2)
 case_iii :: U4 Z2
 case_iii = (constant_mat 1 :: U2 Z2 ) `oplus` (constant_mat 1 :: U2 Z2)
 
-case_iiit = matrix_transpose case_iii
-
 case_iv :: U4 Z2
 case_iv = ((constant_mat 1 :: U2 Z2) `stack_horizontal` (constant_mat 1 :: U2 Z2)) `stack_vertical` ((0 :: U2 Z2) `stack_horizontal` (0 :: U2 Z2))
+
+case_ivt = matrix_transpose case_iv
+
 
 case_vt :: U4 Z2
 case_vt = ((constant_mat 1 :: U2 Z2) `stack_horizontal` (constant_mat 1 :: U2 Z2)) `stack_vertical` ((0 :: U2 Z2) `stack_horizontal` (constant_mat 1 :: U2 Z2))
@@ -40,33 +51,17 @@ case_vi :: U4 Z2
 case_vi = ((constant_mat 1 :: U2 Z2) `stack_horizontal` (constant_mat 1 :: U2 Z2)) `stack_vertical` ((constant_mat 1 :: U2 Z2) `stack_horizontal` (constant_mat 1 :: U2 Z2))
 
 
-case_vi_rho2tr :: U2 [Z2]
-case_vi_rho2tr = matrix_of_rows [[[Odd,Even],[Odd,Even]],[[Odd,Odd],[Odd,Odd]]]
-
-case_vi_rho2br :: U2 [Z2]
-case_vi_rho2br = matrix_of_rows [[[Odd,Even],[Odd,Odd]],[[Odd,Odd],[Odd,Even]]]
-
-case_vi_rho2br' :: U2 [Z2]
-case_vi_rho2br' = matrix_of_rows [[[Odd,Odd],[Odd,Even]],[[Odd,Even],[Odd,Odd]]]
-
-case_vi_rho2 :: U4 [Z2]
-case_vi_rho2 = ((constant_mat 1 :: U2 [Z2]) `stack_horizontal` case_vi_rho2tr) `stack_vertical` ((matrix_transpose case_vi_rho2tr) `stack_horizontal` case_vi_rho2br')
-
-
-
-
 pat :: SixCases -> U4 Z2
 pat I = case_i
 pat II = case_ii
 pat III = case_iii
-pat IIIt = case_iiit
 pat IV = case_iv
+pat IVt = case_ivt
 pat V = case_v
-pat Vt = case_vt
 pat VI = case_vi
 
--- note Vt = V.
-six_cases = [I,II,III,IV,V,VI,IIIt]
+-- note V^T = V.
+six_cases = [I,II,III,IV,V,VI,IVt]
 
 lde :: U4Di -> Integer
 lde = lamdenomexp
@@ -92,7 +87,8 @@ type DCir = [CliffordT2]
 type PDCir = [CliffordT2]
 
 -- Given a matrix m, return its pattern p and also the generalized
--- permutation matrices L and R such that rho (LAR) = p.
+-- permutation matrices L and R such that rho (LAR) = p. Moreover, if
+-- lde(m) > 0, then both L and R are permutation matrices.
 lemma_six :: U4Di -> (SixCases, PermCir, PermCir)
 lemma_six m
   | lde m == 0 = (I, l0, [])
@@ -107,8 +103,8 @@ constant_mat :: (Nat a, Num n) => n -> Matrix a a n
 constant_mat c = matrix_of_function (\ x y -> c)
 
 test_lemma_six = do
-  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
-  let ps = nub$ map (\(p,l,r) -> p) $ map lemma_six m
+  m <- generate $ vectorOf 10000 (arbitrary :: Gen U4Di)
+  let ps = nub $ sort $ map (\(p,l,r) -> p) $ map lemma_six m
   print ps
 
 cof :: U4Di -> SixCases
@@ -126,123 +122,507 @@ ims v = product $ map (\(oo, ix) -> im oo ix) xs'
     xs' = zip xs [0..]
 
 dcir :: U4Di -> DCir
-dcir m = unJust $ find (\x -> u4of x == m) diag_cirs
+dcir = gperm_of -- unJust $ find (\x -> u4of x == m) diag_cirs
+
+
+
+dcir_fast :: U4Di -> [CliffordT2]
+dcir_fast = gperm_of
+
+
+
+case_iv_2bl :: U2 [Z2]
+case_iv_2bl = matrix_of_rows [[[Even, Odd],[Even, Odd]],[[Even,Even],[Even,Even]]]
+
+case_iv_2br :: Z2 -> U2 [Z2]
+case_iv_2br e = let f = e + 1 in matrix_of_rows [[[Even, e],[Even, e]],[[Even, f],[Even,f]]]
+
+case_iv_2 :: [U4 [Z2]]
+case_iv_2 = [((constant_mat 1 :: U2 [Z2]) `stack_horizontal` (constant_mat 1 :: U2 [Z2])) `stack_vertical` (( case_iv_2bl) `stack_horizontal` case_iv_2br e) | e <- [Even, Odd]]
+
+case_ivt_2 :: [U4 [Z2]]
+case_ivt_2 = [((constant_mat 1 :: U2 [Z2]) `stack_vertical` (constant_mat 1 :: U2 [Z2])) `stack_horizontal` ( (matrix_transpose case_iv_2bl) `stack_vertical` (matrix_transpose (case_iv_2br e))   ) | e <- [Even, Odd]]
+
+-- Given a matrix m with pattern IV, find genearalized matrices L and
+-- R such that rho2 (LAR) =
+
+-- 10 10 10 10
+-- 10 10 10 10
+-- 01 01 0e 0e
+-- 00 00 0f 0f
+
+-- where e is an indeterminate and f = e+1.
+
+refine_iv :: U4Di -> (PDCir, PDCir)
+refine_iv m = case cof m of
+  IV -> (lcir4p ++ lcir4d ++ l , r ++ rcir4d ++ rcir4p)
+  _ -> error "refine: not iv"
+  where
+    k = lamdenomexp m
+    (p,l,r) = lemma_six m
+    m2 = rho k 2 (u4of l * m * u4of r)
+
+    rcir4' = 
+      im (matrix_index m2 0 0) 0
+      * im (matrix_index m2 0 1) 1
+      * im (matrix_index m2 0 2) 2
+      * im (matrix_index m2 0 3) 3
+      
+    rcir4d = dcir rcir4'
+
+    m2' = m2 * rho 0 2 rcir4'
+
+    lcir4' = if matrix_index m2' 1 0 == [Odd,Even] then
+      1 else
+      im (matrix_index m2' 1 0) 1 *
+      im [Odd,Odd] 2
+      
+    lcir4d = dcir $ lcir4'
+
+    m2'' = rho 0 2 lcir4' * m2'
+    lcir4p = if matrix_index m2'' 2 0 == [Even, Odd] then [] else [CX]
+    m2''' = rho 0 2 (u4of lcir4p) * m2''
+    rcir4p = if matrix_index m2''' 2 1 == [Even, Odd] then [] else
+      if matrix_index m2''' 2 2 == [Even, Odd] then [Ex] else [CX,Ex]
+
+test_refine_iv = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == IV) m
+  let lrs = map (\x -> (refine_iv x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` case_iv_2, p2)) lrs
+
+refine_ivt :: U4Di -> (PDCir, PDCir)
+refine_ivt m = case cof m of
+  IVt -> (inv_cir r , inv_cir l)
+  _ -> error "refine: not ivt"
+  where
+    (l,r) = refine_iv (dagger m)
+
+test_refine_ivt = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == IVt) m
+  print $ cof $ dagger (head ps)
+  let lrs = map (\x -> (refine_ivt x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` (case_ivt_2), p2)) lrs
+
+
+-- Given a matrix m with pattern II, find genearalized matrices L and
+-- R such that if lde m > 1, rho2 (LAR) =
+
+-- 10 10 01 00
+-- 10 10 01 00
+-- 01 01 0d 0d
+-- 00 00 0d 0d
+
+-- if lde m = 1, rho2 (LAR) =
+
+-- 10 10 00 00
+-- 10 10 00 00
+-- 00 00 0d 0e
+-- 00 00 0f 0g
+
+pii2 :: Z2 -> U4 [Z2]
+pii2 d = matrix_of_rows [
+  [[1,0],[1,0],[0,1],[0,0]],
+  [[1,0],[1,0],[0,1],[0,0]],
+  [[0,1],[0,1],[0,d],[0,d]],
+  [[0,0],[0,0],[0,d],[0,d]]
+  ]
+
+pii2k1 :: Z2 -> Z2 -> Z2 -> Z2 -> U4 [Z2]
+pii2k1 d e f g = matrix_of_rows [
+  [[1,0],[1,0],[0,0],[0,0]],
+  [[1,0],[1,0],[0,0],[0,0]],
+  [[0,0],[0,0],[0,d],[0,e]],
+  [[0,0],[0,0],[0,f],[0,g]]
+  ]
+
+refine_ii :: U4Di -> (PDCir, PDCir)
+refine_ii m = case cof m of
+  II -> case lde m of
+    1 -> (dcir l' ++ l , r ++ dcir r')
+    _ -> (l'' ++ dcir l' ++ l , r ++ dcir r' ++ r'')
+  px -> error $ "cannot refine " ++ show px
+  where
+    k = lamdenomexp m
+    (p,l,r) = lemma_six m
+    mres = rho k 2 (u4of l * m * u4of r)
+
+    r' = if matrix_index mres 0 0 + matrix_index mres 0 1 == [Even,Even] then
+      im (matrix_index mres 0 0) 0 *
+      im (matrix_index mres 0 1) 1
+      else
+      im (matrix_index mres 0 0) 0 *
+      im (matrix_index mres 0 1) 1 *
+      im [Odd,Odd] 3
+      
+    mres' = mres * rho 0 2 r'
+
+    l' = if matrix_index mres' 1 0 == [Odd,Even] then
+      1 else
+      im (matrix_index mres' 1 0) 1
+      * im [Odd,Odd] 3
+
+    mres'' = rho 0 2 l' * mres'
+    
+    l'' = if matrix_index mres'' 2 0 == [Even, Odd] then [] else [CX]
+    
+    mres''' = rho 0 2 (u4of l'') * mres''
+    
+    r'' = if matrix_index mres''' 0 2 == [Even, Odd] then [] else [CX]
+
+
+test_refine_ii = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == II) m
+  let lrs = map (\x -> (refine_ii x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` [pii2 d | d <- [Even,Odd]], p2)) lrs
+
+test_refine_iik1 = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == II && lde x == 1) m
+  let lrs = map (\x -> (refine_ii x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` [pii2k1 d e f g | d <- [Even,Odd], e <- [Even,Odd], f <- [Even,Odd], g <- [Even,Odd] ], p2)) lrs
+
+
+
+-- Given a matrix m with pattern III, find genearalized matrices L and
+-- R such that if lde m > 1, rho2 (LAR) =
+
+-- 10 10 01 00
+-- 10 10 00 01
+-- 01 00 10 10
+-- 00 01 10 10
+
+-- if lde m = 1, rho2 (LAR) =
+
+-- 10 10 00 00
+-- 10 10 00 00
+-- 00 00 10 10
+-- 00 00 10 10
+
+piii2 :: U4 [Z2]
+piii2 = matrix_of_rows [
+  [[1,0],[1,0],[0,1],[0,0]],
+  [[1,0],[1,0],[0,0],[0,1]],
+  [[0,1],[0,0],[1,0],[1,0]],
+  [[0,0],[0,1],[1,0],[1,0]]
+  ]
+
+piii2k1 :: U4 [Z2]
+piii2k1 = matrix_of_rows [
+  [[1,0],[1,0],[0,0],[0,0]],
+  [[1,0],[1,0],[0,0],[0,0]],
+  [[0,0],[0,0],[1,0],[1,0]],
+  [[0,0],[0,0],[1,0],[1,0]]
+  ]
+
+
+refine_iii :: U4Di -> (PDCir, PDCir)
+refine_iii m = case cof m of
+  III -> case lde m of
+    1 -> (dcir l' ++ l , r ++ dcir r')
+    _ -> (l'' ++ dcir l' ++ l , r ++ dcir r' ++ r'')
+  px -> error $ "cannot refine " ++ show px
+  where
+    k = lamdenomexp m
+    (p,l,r) = lemma_six m
+    mres = rho k 2 (u4of l * m * u4of r)
+
+    r' =
+      im (matrix_index mres 0 0) 0 *
+      im (matrix_index mres 0 1) 1 *
+      im (matrix_index mres 2 2) 2 *
+      im (matrix_index mres 2 3) 3
+      
+    mres' = mres * rho 0 2 r'
+
+    l' = 
+      im (matrix_index mres' 0 0) 0 *
+      im (matrix_index mres' 1 0) 1 *
+      im (matrix_index mres' 3 2) 3
+
+    mres'' = rho 0 2 l' * mres'
+    
+    l'' = if matrix_index mres'' 2 0 == [Even, Odd] then [] else [CX]
+    
+    mres''' = rho 0 2 (u4of l'') * mres''
+    
+    r'' = if matrix_index mres''' 0 2 == [Even, Odd] then [] else [CX]
+
+
+test_refine_iii = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == III) m
+  let lrs = map (\x -> (refine_iii x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` [piii2 ], p2)) lrs
+
+test_refine_iiik1 = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == III && lde x == 1) m
+  let lrs = map (\x -> (refine_iii x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` [piii2k1 ], p2)) lrs
+
+
+
+
+-- Given a matrix m with pattern V, find genearalized matrices L and
+-- R such that if lde m > 1, rho2 (LAR) =
+
+
+-- 10 10 01 00
+-- 10 10 00 01
+-- 10 11 10 11
+-- 10 11 11 10
+
+
+pv2 :: U4 [Z2]
+pv2 = matrix_of_rows [
+  [[1,0],[1,0],[0,1],[0,0]],
+  [[1,0],[1,0],[0,0],[0,1]],
+  [[1,0],[1,1],[1,0],[1,1]],
+  [[1,0],[1,1],[1,1],[1,0]]
+  ]
+
+
+refine_v :: U4Di -> (PDCir, PDCir)
+refine_v m = case cof m of
+  V -> (dcir l' ++ l , r ++ dcir r' ++ r'' ++ dcir r''')
+  px -> error $ "cannot refine " ++ show px
+  where
+    k = lamdenomexp m
+    (p,l,r) = lemma_six m
+    mres = rho k 2 (u4of l * m * u4of r)
+
+    l' =
+      im (matrix_index mres 0 0) 0 *
+      im (matrix_index mres 1 0) 1 *
+      im (matrix_index mres 2 0) 2 *
+      im (matrix_index mres 3 0) 3
+      
+    mres' = rho 0 2 l' * mres
+
+    r' =
+      im (matrix_index mres' 0 1) 1
+      
+    mres'' = mres' * rho 0 2 r'
+    
+    r'' = if matrix_index mres'' 0 2 == [Even, Odd] then [] else [CX]
+    
+    mres''' = mres'' * rho 0 2 (u4of r'')
+
+    r''' =
+      im (matrix_index mres''' 2 2) 2 *
+      im (matrix_index mres''' 3 3) 3
+
+
+
+test_refine_v = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == V) m
+  let lrs = map (\x -> (refine_v x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` [pv2 ], p2)) lrs
+
+
+
+-- Given a matrix m with pattern VI, find genearalized matrices L and
+-- R such that if lde m > 1, rho2 (LAR) =
+
+
+-- 10 10 01 00
+-- 10 10 00 01
+-- 10 11 10 11
+-- 10 11 11 10
+
+
+pvi2 :: Z2 -> U4 [Z2]
+pvi2 e = matrix_of_rows [
+  [[1,0],[1,0],[1,0],[1,0]],
+  [[1,0],[1,0],[1,0],[1,0]],
+  [[1,0],[1,0],[1,e],[1,e]],
+  [[1,0],[1,0],[1,e],[1,e]]
+  ]
+
+
+refine_vi :: U4Di -> (PDCir, PDCir)
+refine_vi m = case cof m of
+  VI -> (l''' ++ l'' ++ dcir l' ++ l , r ++ dcir r' ++ r''')
+  px -> error $ "cannot refine " ++ show px
+  where
+    k = lamdenomexp m
+    (p,l,r) = lemma_six m
+    mres = rho k 2 (u4of l * m * u4of r)
+
+    l' = 
+      im (matrix_index mres 0 0) 0 *
+      im (matrix_index mres 1 0) 1 *
+      im (matrix_index mres 2 0) 2 *
+      im (matrix_index mres 3 0) 3
+      
+    mres' = rho 0 2 l' * mres
+
+    r' = 
+      im (matrix_index mres' 0 1) 1 *
+      im (matrix_index mres' 0 2) 2 *
+      im (matrix_index mres' 0 3) 3
+      
+    mres'' = mres' * rho 0 2 r'
+    
+    l'' =
+      if matrix_index mres'' 1 1 == [Odd, Even] then [] else
+      if matrix_index mres'' 2 1 == [Odd, Even] then [Ex] else [Ex,CX]
+    
+    mres''' = rho 0 2 (u4of l'') * mres''
+
+    l''' =
+      if matrix_index mres''' 1 2 == [Odd, Even] then [] else
+      if matrix_index mres''' 2 2 == [Odd, Even] then [Ex] else [Ex,CX]
+
+    r''' =
+      if matrix_index mres''' 2 1 == [Odd, Even] then [] else
+      if matrix_index mres''' 2 2 == [Odd, Even] then [Ex] else [CX,Ex]
+
+
+
+
+test_refine_vi = do
+  m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ps = filter (\x -> let (p,l,r) = lemma_six x in p == VI) m
+  let lrs = map (\x -> (refine_vi x, x)) ps
+  sequence_ $ map print $ nub $  map (\((ll,rr),x) -> let p2 = rhok 2 (u4of ll * x * u4of rr) in (p2 `elem` [pvi2 e | e <- [Even, Odd] ], p2)) lrs
+
+
+
+
+refine :: U4Di -> (PDCir, PDCir)
+refine m = case cof m of
+  II -> refine_ii m
+  III -> refine_iii m
+  IV -> refine_iv m
+  IVt -> refine_ivt m
+  V -> refine_v m
+  VI -> refine_vi m
+
+    
 
 decrease1_lde :: U4Di -> (PDCir, PDCir)
 decrease1_lde m
   | lde m == 0 = ([],[])
   | otherwise = case cof m of
       I -> error "lde=0"
-      III -> (ll, rr)
-      IIIt -> (ll3t, rr3t)
-      II -> (ll2, rr2)
-      IV -> (ll4, rr4)
-      V -> (ll5, rr5)
-      VI -> (ll6, rr6)
+      II -> case lde m of
+        1 -> ([X0,CK,X0] ++ lref, rref)
+        _ -> ([K1,S1] ++ lref, rref)
+      III -> case lde m of
+        1 -> ([K1] ++ lref, rref)
+        _ -> ([K1,S1] ++ lref, rref)
+      IV -> (lref, rref ++ [K1])
+      IVt -> (inv_cir rih, inv_cir lih)
+      V -> ([K1] ++ lref, rref)
+      VI -> ([K1] ++ lref, rref)
       where
-        (m' , k) = lamdenomexp_decompose m
-        (p,l,r) = lemma_six m
-        m2 = rho k 2 (u4of l * m * u4of r)
-        m2r = rows_of_matrix m2
-        m2r' = SM.vector (head m2r) :: Vector Four [Z2]
-        
-        rcir' = ims m2r'
-        rcir = dcir rcir'
-        m2'3a = m2 * rho 0 2 rcir'
-        
-        lcir' = im (matrix_index m2'3a 1 0) 1
-          * im (matrix_index m2'3a 2 0) 2
-          * im (matrix_index m2'3a 3 0) 3
-        lcir = dcir lcir'
-        
-        m2'3 = rho 0 2 lcir' * m2 * rho 0 2 rcir'        
-        sp =   if (matrix_index m2'3 2 0 == matrix_index m2'3 2 1) then [K1]
-          else if (matrix_index m2'3 2 0 == matrix_index m2'3 2 2) then [K0]
-          else if (matrix_index m2'3 2 0 == matrix_index m2'3 2 3) then [CX,K0]
-          else error "cannot find sp"
-        -- todo: exchange CX and rcir, merge r and CX.
-        rr = r ++ rcir ++ sp
-        ll = lcir ++ l
-
-        sp3t = if (matrix_index m2'3 0 2 == matrix_index m2'3 1 2) then [K1]
-          else if (matrix_index m2'3 0 2 == matrix_index m2'3 2 2) then [K0]
-          else if (matrix_index m2'3 0 2 == matrix_index m2'3 3 2) then [K0, CX]
-          else error "cannot find sp3t"
-        rr3t = r ++ rcir
-        ll3t = sp3t ++ lcir ++ l
-
-
-        sp2r = if k == 1 then [X0,CK,X0] else []
-        sp2l = if k == 1 then [] else [K1,S1]
-        rr2 = r ++ rcir ++ sp2r
-        ll2 = sp2l ++ lcir ++ l
-
-        rcir4' = im (matrix_index m2 0 0) 0
-          * im (matrix_index m2 0 1) 1
-          * im (matrix_index m2 2 2) 2
-          * im (matrix_index m2 2 3) 3
-        rcir4 = dcir rcir4'
-
-        m2'4a = m2 * rho 0 2 rcir4'
-        
-        lcir4 = dcir $ im (matrix_index m2'4a 1 0) 1
-          *  im (matrix_index m2'4a 3 2) 3
-        
-        sp4l = if k == 1 then [K1] else [K1, S1]
-        rr4 = r ++ rcir4
-        ll4 = sp4l ++ lcir4 ++ l
-
-        rcir5' = im (matrix_index m2 0 0) 0
-          * im (matrix_index m2 0 1) 1
-          * im (matrix_index m2 2 2) 2
-          * im (matrix_index m2 3 3) 3
-        rcir5 = dcir rcir5'
-        m2' = m2 * rho 0 2 rcir5'
-        lcir5 = dcir $ im (matrix_index m2' 1 0) 1
-          * im (matrix_index m2' 2 0) 2
-          * im (matrix_index m2' 3 0) 3
-        
-        sp5l = [K1]
-        rr5 = r ++ rcir5
-        ll5 = sp5l ++ lcir5 ++ l
-
-        rcir6' = im (matrix_index m2 0 0) 0
-          * im (matrix_index m2 0 1) 1
-          * im (matrix_index m2 0 2) 2
-          * im (matrix_index m2 0 3) 3
-        rcir6 = dcir rcir6'
-        m6r = m2 * rho 0 2 rcir6'
-        lcir6' = im (matrix_index m6r 1 0) 1
-          * im (matrix_index m6r 2 0) 2
-          * im (matrix_index m6r 3 0) 3
-        lcir6 = dcir lcir6'
-        
-        m6lr = rho 0 2 lcir6' * m6r
-        
-        sp6l = if (matrix_index m6lr 1 1 == [Odd,Even]) then []
-          else if (matrix_index m6lr 2 1 == [Odd,Even]) then [Ex]
-          else if (matrix_index m6lr 3 1 == [Odd,Even]) then [Ex,CX]
-          else error "cannot find sp6"
-          
-        m6lr' = rho 0 2 (u4of sp6l) * m6lr
-
-        (sp6l' , sp6r) = if (matrix_index m6lr' 1 2 == [Odd,Even]) then ([K1],[]) else
-          if (matrix_index m6lr' 2 1 /= [Odd,Even]) then ([K1],[]) else error "vi-3, this case shouldn't happen" -- ([],[K1])
-          
-        rr6 = r ++ rcir6 ++ sp6r
-        ll6 = sp6l' ++ sp6l ++ lcir6 ++ l
+        (lref,rref) = refine m
+        (lih, rih) = decrease1_lde (dagger m)
+      
 
 
 synth' :: Int -> U4Di -> ([CliffordT2], [CliffordT2])
 synth' j m
-  | j <= 0 = ([],[])
+  | j < 0 = ([],[])
 synth' ss m
-  | lde m == 0 = (inv_cir (unJust $ find (\x -> u4of x == m) gperms), [])
+  | lde m == 0 = (inv_cir (gperm_of m), [])
   | otherwise = (li ++ l1, r1 ++ ri)
   where
     (l1,r1) = decrease1_lde m
     m' = u4of l1 * m * u4of r1
     (li, ri) = synth' (ss-1) m'
+
+synth :: U4Di -> [CliffordT2]
+synth m = ret
+  where
+  (l,r) = synth' (fromIntegral $ lde m * 2) m
+  ret = optimize_gp $ inv_cir (r ++ l)
+
+decompose_ck :: CliffordT2 -> [CliffordT2]
+decompose_ck CK = [CZ,Z0,S0,Z1,S1,K1,CS,K1,S1,UD.II]
+decompose_ck x = [x]
+
+desugar_ck :: [CliffordT2] -> [CliffordT2]
+desugar_ck = concat . map decompose_ck
+
+optimize_gp' :: [CliffordT2] -> [CliffordT2]
+optimize_gp' [] = []
+optimize_gp' (K0 : t) = K0 : optimize_gp' t
+optimize_gp' (K1 : t) = K1 : optimize_gp' t
+optimize_gp' xs@(h : t) = gp' ++ optimize_gp' rem
+  where
+    gp = takeWhile (\x -> x /= K0 && x /= K1) xs
+    rem = dropWhile (\x -> x /= K0 && x /= K1) xs
+    gp' = gperm_of (u4of gp)
+
+optimize_gp :: [CliffordT2] -> [CliffordT2]
+optimize_gp = optimize_gp' . desugar_ck
+
+
+
+all_cli_CP :: [[CliffordT2]]
+all_cli_CP = [gp ++ c | gp <- gperms, c <- c15]
+
+
+optimize_cli' :: [CliffordT2] -> [CliffordT2]
+optimize_cli' [] = []
+optimize_cli' (CS : t) = CS : optimize_cli' t
+optimize_cli' xs@(h : t) = cli' ++ optimize_cli' rem
+  where
+    cli = takeWhile (\x -> x /= CS) xs
+    rem = dropWhile (\x -> x /= CS) xs
+    cli' = unJust $ find (\x -> u4of x == u4of cli) all_cli_CP
+
+optimize_cli'_fast :: [CliffordT2] -> [CliffordT2]
+optimize_cli'_fast [] = []
+optimize_cli'_fast (CS : t) = CS : optimize_cli'_fast t
+optimize_cli'_fast xs@(h : t) = cli' ++ optimize_cli'_fast rem
+  where
+    cli = takeWhile (\x -> x /= CS) xs
+    rem = dropWhile (\x -> x /= CS) xs
+    cli' = cli_of2k (u4of cli)
+
+
+
+
+pc_cli_2k = $(precomputed_mat_cliQ2k ())
+pc_gperms = $(precomputed_mat_gpermsQ ())
+pc_gperms_map = $(precomputed_mat_gpermsQ_map ())
+pc_gperms_hash = $(precomputed_mat_gpermsQ_hash ())
+
+cli_of2k :: U4Di -> [CliffordT2]
+cli_of2k x = if lde x <= 2 then ret else error $ "lde>2, not a Clifford" ++ show x
+  where
+    f = (\x -> (
+                                  (lamdenomexp x,
+                                   (map (\(Cplx x y) -> (x, y)) (concat (rows_of_matrix (fst (lamdenomexp_decompose x))))))
+                                  , x)
+                                  )
+    mzzs = map (\k -> fst (f (x * u4of (replicate k UD.II)))) [0..3]
+    rets = filter (/= Nothing) $ map (\x -> lookup x pc_cli_2k) mzzs
+    ret = unJust $ head rets
+
+gperm_of :: U4Di -> [CliffordT2]
+gperm_of x = if lde x <= 2 then ret else error "lde>2, not a Clifford"
+  where
+    f = (\x -> (
+                                  (lamdenomexp x,
+                                   (map (\(Cplx x y) -> (x, y)) (concat (rows_of_matrix (fst (lamdenomexp_decompose x))))))
+                                  , x)
+                                  )
+    mzzs = map (\k -> fst (f (x * u4of (replicate k UD.II)))) [0..3]
+    rets = filter (/= Nothing) $ map (\x -> HM.lookup x pc_gperms_hash) mzzs
+    ret = unJust $ head rets
+
+
+optimize_cli :: [CliffordT2] -> [CliffordT2]
+optimize_cli = optimize_cli'_fast . desugar_ck
+
 
 
 test_dec1 = do
@@ -267,8 +647,8 @@ test_dec2 = do
 test_syn = do
   m <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
   let ps = m -- filter (\x -> let (p,l,r) = lemma_six x in p == IV) m
-  let lrs = map (\x -> (synth' (fromIntegral $ lde x * 2+3) x, x)) ps
-  sequence_ $ map print $  filter (\(a,b,c,d,e) -> e == True) $ map (\((ll,rr),x) -> (cof x, lde x, lde (u4of ll * x * u4of rr), lde (u4of ll * x * u4of rr) == 0, u4of (inv_cir (ll++rr)) == x)) lrs
+  let lrs = map (\x -> (synth x, x)) ps
+  sequence_ $ map print $  filter (\(a,b,c,d,e,f,g) -> True) $ map (\(ret,x) -> (cof x, lde x, u4of ret == x, kc ret, csc ret, length ret, fromIntegral (kc ret) / fromIntegral (lde x))) lrs
 
 kc :: Cir -> Int
 kc xs = length $ filter (\x -> x == K0 || x == K1 || x == H1 || x == H0) xs
@@ -277,11 +657,79 @@ csc :: Cir -> Int
 csc xs = length $ filter (\x -> x == CS) xs
 
 
-main = test_syn
+cli_of :: (SO6 DRootTwo) -> [SO6.CliffordT2]
+cli_of xm = []
+  where
+    (mm, lde) = denomexp_decompose xm
+
+
+    
+synthcs :: [SO6.CliffordT2] -> [CliffordT2]
+synthcs x = optimize_cli $ map f $ simp ret
+  where
+    m4 = evalCircuit4 $ cs2_of_t2 x
+
+    ret = case synthesizeFromMat4 m4 of
+      Right sr -> t2_of_sr sr
+      Left msg -> error msg
+
+    t2_of_sr :: SynthResult -> [CliffordT2]
+    t2_of_sr (SynthResult srgs srcli) = ss ++ mycli
+      where
+        conj2 x = t2_of_cs2 $ conjugator2 x
+        ss = map t2_of_t2 $ concat $ map (\x -> conj2 x ++ [SO6.CS] ++ SO6.inv_cir (conj2 x) ) srgs
+        c = u4of (inv_cir ss) * u4of ((map t2_of_t2 x))
+        mycli = cli_of2k c
+
+    f H0 = K0
+    f H1 = K1
+    f x = x
+    
+
+grouping :: Int -> [a] -> [[a]]
+grouping k [] = []
+grouping k xs@(h:t) = take k xs : grouping k (drop k xs)
+
+    
+test_compare = do
+  ms1 <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let ms = map product $ grouping 50 ms1
+  let lrs = map (\x -> let x' = synth x in (x, x', synthcs (map t2_of_t2' x'))) ms
+  print ("lde" , "mycs", "ocs", "mykc", "Julien's kc")
+  sequence_ $ map print $ map (\(x, a,b) -> (lde x, csc a, csc b, kc a, kc b)) lrs
+
+test_comparek = do
+  ms <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let lrs = map (\x -> let x' = synth x in (x, x', synthcs (map t2_of_t2' x'))) ms
+  sequence_ $ map print $ map (\(x, a,b) -> (lde x, kc a, kc b, fromIntegral (csc b) / fromIntegral (lde x), fromIntegral (csc a) / fromIntegral (lde x))) lrs
+
+cal1 = do
+  let ms = map u4of [concat $ replicate 10 [CK,KC]]
+  let lrs = map (\x -> let x' = synth x in (x, x', synthcs (map t2_of_t2' x'))) ms
+  print ("lde" , "mycs", "ocs", "mykc", "Julien's kc")
+  sequence_ $ map print $ map (\(x, a,b) -> (lde x, csc a, csc b, kc a, kc b)) lrs
+--  print $ let a = synth $ u4of $ concat $ replicate 20 [CK,KC] in
+--    let b = synthcs (map t2_of_t2' a) in (kc a, csc a, kc b , csc b, a , b)
+
+cal2 = do
+  print $ let a = synth $ u4of $ concat $ replicate 30 [CK,KC] in
+    let b = synthcs (map t2_of_t2' a) in (lde (u4of a), csc b, csc a, kc a, kc b)
+
+
+test_compare_lde_cs = do
+  ms <- generate $ vectorOf 1000 (arbitrary :: Gen U4Di)
+  let lrs = map (\x -> let x' = synth x in (x, x', synthcs (map t2_of_t2' x'))) ms
+  sequence_ $ map print $ map (\(x, a,b) -> (lde x, csc a, csc b, fromIntegral (csc a) / fromIntegral (csc b))) lrs
+
 
 
 instance Num [Z2] where
   (+) x y = zipWith (+) x y
+  
+  -- (*) [] y = []
+  -- (*) x [] = []
+  -- (*) (x:[]) (y:[]) = (x*y) :[]
+  
   (*) (Odd:Even:[]) y = y
   (*) (Odd:Odd:[]) y = y + rs y
     where
@@ -292,6 +740,8 @@ instance Num [Z2] where
   (*) (Even:Even:[]) y = [Even,Even]
     where
       rs [y1,y2] = [Even, y1]
+
+  (*) x y = error $ "*: not defined for " ++ show x ++ ", " ++ show y
 
   abs = id
   signum = id
@@ -353,6 +803,7 @@ dag3 :: (Z2,Z2,Z2) -> (Z2,Z2,Z2)
 dag3 (a,b,c) = (a,b,c+1)
 
 
+
 is_unitv x = sum (zipWith (*) (map dag3 x) x) == 0
 
 is_perp x y = sum (zipWith (*) (map dag3 x) y) == 0
@@ -381,10 +832,13 @@ eq_mod_cpd x y = elem ( u4of (x ++ inv_cir y) ) $ map u4of cgperms
 eq_u4 :: [CliffordT2] -> [CliffordT2] -> Bool
 eq_u4 x y = u4of x == u4of y
 
-c15 = [[],[K0],[K1],[K0,S0],[K0,CX],[K0,K1],[K1,S1],[K0,S0,CX],[K0,S0,K1],[K0,CX,K0],[K0,K1,S1],[K0,S0,CX,K0],[K0,S0,CX,K1],[K0,S0,K1,S1],[K0,S0,K1,XC]]
 
 ce = do
   cosetEnumAR' (eq_mod_cpd) (map (\x -> [x]) [UD.II,X0,X1,Z0,Z1,S0,S1,CX,XC,CZ,Ex,K0,K1] ++ []) ([[]],[[]])
+
+ce_skcz = do
+  cosetEnumAR' (eq_mod_cpd) (map (\x -> [x]) [S0,S1,CZ,Ex,K0,K1] ++ []) ([[]],[[]])
+
 
 ce1 = do
   cosetEnumAR' (eq_u4) (map (\x -> [x]) [UD.II,X0,X1,Z0,Z1,S0,S1,CX,XC,CZ,Ex,K0,K1] ++ []) ([[]],[[]])
@@ -407,3 +861,18 @@ cosetEnumAR' m gs (cs, (h:t)) = do
   print $ (length cs, length (t ++ snd rh))
 --  if length cs > 50 then return ([],[]) else
   cosetEnumAR' m gs (fst rh, t ++ snd rh)
+
+
+-- | Experiments
+
+case_vi_rho2tr :: U2 [Z2]
+case_vi_rho2tr = matrix_of_rows [[[Odd,Even],[Odd,Even]],[[Odd,Odd],[Odd,Odd]]]
+
+case_vi_rho2br :: U2 [Z2]
+case_vi_rho2br = matrix_of_rows [[[Odd,Even],[Odd,Odd]],[[Odd,Odd],[Odd,Even]]]
+
+case_vi_rho2br' :: U2 [Z2]
+case_vi_rho2br' = matrix_of_rows [[[Odd,Odd],[Odd,Even]],[[Odd,Even],[Odd,Odd]]]
+
+case_vi_rho2 :: U4 [Z2]
+case_vi_rho2 = ((constant_mat 1 :: U2 [Z2]) `stack_horizontal` case_vi_rho2tr) `stack_vertical` ((matrix_transpose case_vi_rho2tr) `stack_horizontal` case_vi_rho2br')

@@ -908,14 +908,14 @@ decreases the lde to 0, reaching pattern~(i).
 
 \begin{remark}
 	\label{rmk:dummy}
-	The two generalized permutations used to refine the pattern can be
-	chosen to be CS-free. This is because the $(2,k)$-residues of the
-	two rows (columns) with even entries are stable under multiplication
-	by~$i$, i.e., we have the liberty of updating the two generalized
-	permutations by a factor of CS gate without affecting their
-	purpose. Also, if a generalized permutation $P$ is implementable
-	using one CS gate, then $P\cdot CS$ is implementable using no CS
-	gate.
+	The two generalized permutations used to refine the pattern
+        can be chosen to be CS-free. This is because the
+        $(2,k)$-residues of the two rows (columns) with even entries
+        are stable under multiplication by~$i$, i.e., we have the
+        liberty of updating the two generalized permutations by a
+        factor of CS gate without affecting their purpose. Also, if a
+        generalized permutation $P$ is implementable using one CS
+        gate, then $P\cdot \CS$ is implementable using no $\CS$ gate.
 \end{remark}
 
 \subsubsection{Case iii}
@@ -1705,7 +1705,7 @@ The authors acknowledge support from the National Natural Science
 Foundation of China under Grant 92465202. We have used Claude Opus 4.6
 for improving the wording of the paper, generating the distribution
 diagrams (Figures~\ref{fig:lde-dist} and~\ref{fig:k-reduction-dist}),
-and generating initial versions of the Haskell code CliffordCS.hs. All
+and generating initial versions of the Haskell code Glaudell.hs. All
 generated content has been verified for correctness by the authors.
 
 
