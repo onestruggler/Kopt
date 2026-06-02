@@ -75,7 +75,11 @@
       "Bash(agda Kopt/Algebra.agda)",
       "Bash(echo \"exit: $?\")",
       "Bash(agda --html --html-dir=html Kopt.agda)",
-      "Bash(git ls-files *)"
+      "Bash(git ls-files *)",
+      "Bash(pdflatex -interaction=batchmode main.tex)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error main.tex)",
+      "Bash(echo \"FAIL exit=$?\")",
+      "Read(//tmp/**)"
     ]
   }
 }
